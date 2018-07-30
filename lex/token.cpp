@@ -30,9 +30,9 @@ regex_table::regex_table() :table{
 	make_pair(std::regex(R"fuck(continue)fuck"),token::tokcontinue),
 	make_pair(std::regex(R"fuck(auto)fuck"),token::tokauto),
 	make_pair(std::regex(R"fuck(extern)fuck"),token::tokextern),
-	make_pair(std::regex(R"fuck(static)fuck"),token::tokstatic),
+	make_pair(std::regex(R"fuck(static)fuck"),token::tokstatic),	
+	make_pair(std::regex(R"fuck(-?[0-9]+((\.[0-9]+)([eE]-?[0-9]+)|(\.[0-9]+)|([eE]-?[0-9]+))[fF]?)fuck"),token::double_literal),
 	make_pair(std::regex(R"fuck(-?(0|[1-9][0-9]*|0[xX][0-9a-fA-F]+|0[0-7]+)[uU]?[lL]{0,2})fuck"),token::int_literal),
-	make_pair(std::regex(R"fuck([0-9]+(\.[0-9]+)?([eE]-?[0-9]+)?f?)fuck"),token::double_literal),
 	make_pair(std::regex(R"fuck('.')fuck"),token::char_literal),
 	make_pair(std::regex(R"fuck(".*")fuck"),token::string_literal),
 	make_pair(std::regex(R"fuck([a-zA-Z_][0-9a-zA-Z_]*)fuck"),token::identifier),
@@ -47,7 +47,7 @@ regex_table::regex_table() :table{
 	make_pair(std::regex(R"fuck(>>=)fuck"),token::shrass),
 	make_pair(std::regex(R"fuck(\|=)fuck"),token::orass),
 	make_pair(std::regex(R"fuck(&=)fuck"),token::andass),
-	make_pair(std::regex(R"fuck(^=)fuck"),token::xorass),
+	make_pair(std::regex(R"fuck(\^=)fuck"),token::xorass),
 	make_pair(std::regex(R"fuck(==)fuck"),token::equal),
 	make_pair(std::regex(R"fuck(\|\|)fuck"),token::lor),
 	make_pair(std::regex(R"fuck(&&)fuck"),token::land),
@@ -174,7 +174,7 @@ lex(std::string const& s) {
 		bool unsucc = true;
 		for (auto& e : reg.table) {
 			std::smatch m;
-			if (std::regex_search(it, s.end(), m, e.first) && m.position(0) == 0) {
+			if (std::regex_search(it, s.end(), m, e.first, std::regex_constants::match_continuous)) {
 				std::string str = m[0].str();
 				res.emplace_back(e.second, str);
 				//std::cerr << reg.name[e.second] << " \"" << str <<"\""<< std::endl;
