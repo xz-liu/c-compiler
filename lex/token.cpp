@@ -2,193 +2,221 @@
 #include "lex.h"
 
 regex_table::regex_table() :table{
-	make_pair(std::regex(R"fuck(typedef)fuck"),token::toktypedef),
-	make_pair(std::regex(R"fuck(void)fuck"),token::tokvoid),
-	make_pair(std::regex(R"fuck(const)fuck"),token::tokconst),
-	make_pair(std::regex(R"fuck(char)fuck"),token::tokchar),
-	make_pair(std::regex(R"fuck(int)fuck"),token::tokint),
-	make_pair(std::regex(R"fuck(unsigned)fuck"),token::tokunsigned),
-	make_pair(std::regex(R"fuck(short)fuck"),token::tokshort),
-	make_pair(std::regex(R"fuck(long)fuck"),token::toklong),
-	make_pair(std::regex(R"fuck(float)fuck"),token::tokfloat),
-	make_pair(std::regex(R"fuck(double)fuck"),token::tokdouble),
-	make_pair(std::regex(R"fuck(sizeof)fuck"),token::toksizeof),
-	make_pair(std::regex(R"fuck(struct)fuck"),token::tokstruct),
-	make_pair(std::regex(R"fuck(enum)fuck"),token::tokenum),
-	make_pair(std::regex(R"fuck(union)fuck"),token::tokunion),
-	make_pair(std::regex(R"fuck(if)fuck"),token::tokif),
-	make_pair(std::regex(R"fuck(else)fuck"),token::tokelse),
-	make_pair(std::regex(R"fuck(do)fuck"),token::tokdo),
-	make_pair(std::regex(R"fuck(for)fuck"),token::tokfor),
-	make_pair(std::regex(R"fuck(while)fuck"),token::tokwhile),
-	make_pair(std::regex(R"fuck(return)fuck"),token::tokreturn),
-	make_pair(std::regex(R"fuck(goto)fuck"),token::tokgoto),
-	make_pair(std::regex(R"fuck(switch)fuck"),token::tokswitch),
-	make_pair(std::regex(R"fuck(case)fuck"),token::tokcase),
-	make_pair(std::regex(R"fuck(default)fuck"),token::tokdefault),
-	make_pair(std::regex(R"fuck(break)fuck"),token::tokbreak),
-	make_pair(std::regex(R"fuck(continue)fuck"),token::tokcontinue),
-	make_pair(std::regex(R"fuck(auto)fuck"),token::tokauto),
-	make_pair(std::regex(R"fuck(extern)fuck"),token::tokextern),
-	make_pair(std::regex(R"fuck(static)fuck"),token::tokstatic),	
-	make_pair(std::regex(R"fuck(-?[0-9]+((\.[0-9]+)([eE]-?[0-9]+)|(\.[0-9]+)|([eE]-?[0-9]+))[fF]?)fuck"),token::double_literal),
-	make_pair(std::regex(R"fuck(-?(0|[1-9][0-9]*|0[xX][0-9a-fA-F]+|0[0-7]+)[uU]?[lL]{0,2})fuck"),token::int_literal),
-	make_pair(std::regex(R"fuck('.')fuck"),token::char_literal),
-	make_pair(std::regex(R"fuck(".*")fuck"),token::string_literal),
-	make_pair(std::regex(R"fuck([a-zA-Z_][0-9a-zA-Z_]*)fuck"),token::identifier),
-	make_pair(std::regex(R"fuck(\+\+)fuck"),token::inc),
-	make_pair(std::regex(R"fuck(--)fuck"),token::dec),
-	make_pair(std::regex(R"fuck(\+=)fuck"),token::addass),
-	make_pair(std::regex(R"fuck(-=)fuck"),token::subass),
-	make_pair(std::regex(R"fuck(\*=)fuck"),token::mulass),
-	make_pair(std::regex(R"fuck(/=)fuck"),token::divass),
-	make_pair(std::regex(R"fuck(%=)fuck"),token::modass),
-	make_pair(std::regex(R"fuck(<<=)fuck"),token::shlass),
-	make_pair(std::regex(R"fuck(>>=)fuck"),token::shrass),
-	make_pair(std::regex(R"fuck(\|=)fuck"),token::orass),
-	make_pair(std::regex(R"fuck(&=)fuck"),token::andass),
-	make_pair(std::regex(R"fuck(\^=)fuck"),token::xorass),
-	make_pair(std::regex(R"fuck(==)fuck"),token::equal),
-	make_pair(std::regex(R"fuck(\|\|)fuck"),token::lor),
-	make_pair(std::regex(R"fuck(&&)fuck"),token::land),
-	make_pair(std::regex(R"fuck(!=)fuck"),token::nequal),
-	make_pair(std::regex(R"fuck(<=)fuck"),token::lequal),
-	make_pair(std::regex(R"fuck(>=)fuck"),token::gequal),
-	make_pair(std::regex(R"fuck(<<)fuck"),token::shl),
-	make_pair(std::regex(R"fuck(>>)fuck"),token::shr),
-	make_pair(std::regex(R"fuck(\.)fuck"),token::point),
-	make_pair(std::regex(R"fuck(->)fuck"),token::arrow),
-	make_pair(std::regex(R"fuck(\.{3})fuck"),token::tokellipsis),
-	make_pair(std::regex(R"fuck(;)fuck"),token::semicolon),
-	make_pair(std::regex(R"fuck(:)fuck"),token::colon),
-	make_pair(std::regex(R"fuck(\?)fuck"),token::question),
-	make_pair(std::regex(R"fuck(\{)fuck"),token::lbrace),
-	make_pair(std::regex(R"fuck(\})fuck"),token::rbrace),
-	make_pair(std::regex(R"fuck(\[)fuck"),token::lbracket),
-	make_pair(std::regex(R"fuck(\])fuck"),token::rbracket),
-	make_pair(std::regex(R"fuck(\()fuck"),token::lparenthesis),
-	make_pair(std::regex(R"fuck(\))fuck"),token::rparenthesis),
-	make_pair(std::regex(R"fuck(\+)fuck"),token::add),
-	make_pair(std::regex(R"fuck(-)fuck"),token::sub),
-	make_pair(std::regex(R"fuck(\*)fuck"),token::mul),
-	make_pair(std::regex(R"fuck(/)fuck"),token::div),
-	make_pair(std::regex(R"fuck(%)fuck"),token::mod),
-	make_pair(std::regex(R"fuck(!)fuck"),token::not),
-	make_pair(std::regex(R"fuck(~)fuck"),token::bnot),
-	make_pair(std::regex(R"fuck(&)fuck"),token::band),
-	make_pair(std::regex(R"fuck(\|)fuck"),token::bor),
-	make_pair(std::regex(R"fuck(>)fuck"),token::greater),
-	make_pair(std::regex(R"fuck(<)fuck"),token::less),
-	make_pair(std::regex(R"fuck(=)fuck"),token::assign),
-	make_pair(std::regex(R"fuck([\r\n\t\s]+)fuck"),token::whitespace),
-	make_pair(std::regex(R"fuck(,)fuck"),token::comma)
-} {
-	name.emplace(token::toktypedef, "toktypedef");
-	name.emplace(token::tokvoid, "tokvoid");
-	name.emplace(token::tokconst, "tokconst");
-	name.emplace(token::tokchar, "tokchar");
-	name.emplace(token::tokint, "tokint");
-	name.emplace(token::tokunsigned, "tokunsigned");
-	name.emplace(token::tokshort, "tokshort");
-	name.emplace(token::toklong, "toklong");
-	name.emplace(token::tokfloat, "tokfloat");
-	name.emplace(token::tokdouble, "tokdouble");
-	name.emplace(token::toksizeof, "toksizeof");
-	name.emplace(token::tokstruct, "tokstruct");
-	name.emplace(token::tokenum, "tokenum");
-	name.emplace(token::tokunion, "tokunion");
-	name.emplace(token::tokif, "tokif");
-	name.emplace(token::tokelse, "tokelse");
-	name.emplace(token::tokdo, "tokdo");
-	name.emplace(token::tokfor, "tokfor");
-	name.emplace(token::tokwhile, "tokwhile");
-	name.emplace(token::tokreturn, "tokreturn");
-	name.emplace(token::tokgoto, "tokgoto");
-	name.emplace(token::tokswitch, "tokswitch");
-	name.emplace(token::tokcase, "tokcase");
-	name.emplace(token::tokdefault, "tokdefault");
-	name.emplace(token::tokbreak, "tokbreak");
-	name.emplace(token::tokcontinue, "tokcontinue");
-	name.emplace(token::tokauto, "tokauto");
-	name.emplace(token::tokextern, "tokextern");
-	name.emplace(token::tokstatic, "tokstatic");
-	name.emplace(token::int_literal, "int_literal");
-	name.emplace(token::double_literal, "double_literal");
-	name.emplace(token::char_literal, "char_literal");
-	name.emplace(token::string_literal, "string_literal");
-	name.emplace(token::identifier, "identifier");
-	name.emplace(token::inc, "inc");
-	name.emplace(token::dec, "dec");
-	name.emplace(token::addass, "addass");
-	name.emplace(token::subass, "subass");
-	name.emplace(token::mulass, "mulass");
-	name.emplace(token::divass, "divass");
-	name.emplace(token::modass, "modass");
-	name.emplace(token::shlass, "shlass");
-	name.emplace(token::shrass, "shrass");
-	name.emplace(token::orass, "orass");
-	name.emplace(token::andass, "andass");
-	name.emplace(token::xorass, "xorass");
-	name.emplace(token::equal, "equal");
-	name.emplace(token::lor, "lor");
-	name.emplace(token::land, "land");
-	name.emplace(token::nequal, "nequal");
-	name.emplace(token::lequal, "lequal");
-	name.emplace(token::gequal, "gequal");
-	name.emplace(token::shl, "shl");
-	name.emplace(token::shr, "shr");
-	name.emplace(token::point, "point");
-	name.emplace(token::arrow, "arrow");
-	name.emplace(token::tokellipsis, "tokellipsis");
-	name.emplace(token::semicolon, "semicolon");
-	name.emplace(token::colon, "colon");
-	name.emplace(token::question, "question");
-	name.emplace(token::lbrace, "lbrace");
-	name.emplace(token::rbrace, "rbrace");
-	name.emplace(token::lbracket, "lbracket");
-	name.emplace(token::rbracket, "rbracket");
-	name.emplace(token::lparenthesis, "lparenthesis");
-	name.emplace(token::rparenthesis, "rparenthesis");
-	name.emplace(token::add, "add");
-	name.emplace(token::sub, "sub");
-	name.emplace(token::mul, "mul");
-	name.emplace(token::div, "div");
-	name.emplace(token::mod, "mod");
-	name.emplace(token::not, "not");
-	name.emplace(token::bnot, "bnot");
-	name.emplace(token::band, "band");
-	name.emplace(token::bor, "bor");
-	name.emplace(token::greater, "greater");
-	name.emplace(token::less, "less");
-	name.emplace(token::assign, "assign");
-	name.emplace(token::whitespace, "whitespace");
-	name.emplace(token::comma, "comma");
+	make_pair(std::regex(R"QWERTY(typedef)QWERTY"),token::toktypedef),
+	make_pair(std::regex(R"QWERTY(void)QWERTY"),token::tokvoid),
+	make_pair(std::regex(R"QWERTY(const)QWERTY"),token::tokconst),
+	make_pair(std::regex(R"QWERTY(char)QWERTY"),token::tokchar),
+	make_pair(std::regex(R"QWERTY(int)QWERTY"),token::tokint),
+	make_pair(std::regex(R"QWERTY(unsigned)QWERTY"),token::tokunsigned),
+	make_pair(std::regex(R"QWERTY(short)QWERTY"),token::tokshort),
+	make_pair(std::regex(R"QWERTY(long)QWERTY"),token::toklong),
+	make_pair(std::regex(R"QWERTY(float)QWERTY"),token::tokfloat),
+	make_pair(std::regex(R"QWERTY(double)QWERTY"),token::tokdouble),
+	make_pair(std::regex(R"QWERTY(sizeof)QWERTY"),token::toksizeof),
+	make_pair(std::regex(R"QWERTY(struct)QWERTY"),token::tokstruct),
+	make_pair(std::regex(R"QWERTY(enum)QWERTY"),token::tokenum),
+	make_pair(std::regex(R"QWERTY(union)QWERTY"),token::tokunion),
+	make_pair(std::regex(R"QWERTY(if)QWERTY"),token::tokif),
+	make_pair(std::regex(R"QWERTY(else)QWERTY"),token::tokelse),
+	make_pair(std::regex(R"QWERTY(do)QWERTY"),token::tokdo),
+	make_pair(std::regex(R"QWERTY(for)QWERTY"),token::tokfor),
+	make_pair(std::regex(R"QWERTY(while)QWERTY"),token::tokwhile),
+	make_pair(std::regex(R"QWERTY(return)QWERTY"),token::tokreturn),
+	make_pair(std::regex(R"QWERTY(goto)QWERTY"),token::tokgoto),
+	make_pair(std::regex(R"QWERTY(switch)QWERTY"),token::tokswitch),
+	make_pair(std::regex(R"QWERTY(case)QWERTY"),token::tokcase),
+	make_pair(std::regex(R"QWERTY(default)QWERTY"),token::tokdefault),
+	make_pair(std::regex(R"QWERTY(break)QWERTY"),token::tokbreak),
+	make_pair(std::regex(R"QWERTY(continue)QWERTY"),token::tokcontinue),
+	make_pair(std::regex(R"QWERTY(auto)QWERTY"),token::tokauto),
+	make_pair(std::regex(R"QWERTY(extern)QWERTY"),token::tokextern),
+	make_pair(std::regex(R"QWERTY(static)QWERTY"),token::tokstatic),
+	make_pair(std::regex(R"QWERTY(pragma)QWERTY"),token::tokpragma),
+	make_pair(std::regex(R"QWERTY(include)QWERTY"),token::tokinclude),
+	make_pair(std::regex(R"QWERTY(define)QWERTY"),token::tokdefine),
+	make_pair(std::regex(R"QWERTY(undef)QWERTY"),token::tokundef),
+	make_pair(std::regex(R"QWERTY(ifdef)QWERTY"),token::tokifdef),
+	make_pair(std::regex(R"QWERTY(elif)QWERTY"),token::tokelif),
+	make_pair(std::regex(R"QWERTY(endif)QWERTY"),token::tokendif),
+	make_pair(std::regex(R"QWERTY(-?[0-9]+((\.[0-9]+)([eE]-?[0-9]+)|(\.[0-9]+)|([eE]-?[0-9]+))[fF]?)QWERTY"),token::double_literal),
+	make_pair(std::regex(R"QWERTY(-?(0|[1-9][0-9]*|0[xX][0-9a-fA-F]+|0[0-7]+)[uU]?[lL]{0,2})QWERTY"),token::int_literal),
+	make_pair(std::regex(R"QWERTY('.')QWERTY"),token::char_literal),
+	make_pair(std::regex(R"QWERTY(".*")QWERTY"),token::string_literal),
+	make_pair(std::regex(R"QWERTY(<[a-zA-Z_\]+(\.[a-zA-Z_\]+)?>)QWERTY"),token::include_file),
+	make_pair(std::regex(R"QWERTY([a-zA-Z_][0-9a-zA-Z_]*)QWERTY"),token::identifier),
+	make_pair(std::regex(R"QWERTY(\+\+)QWERTY"),token::inc),
+	make_pair(std::regex(R"QWERTY(--)QWERTY"),token::dec),
+	make_pair(std::regex(R"QWERTY(\+=)QWERTY"),token::addass),
+	make_pair(std::regex(R"QWERTY(-=)QWERTY"),token::subass),
+	make_pair(std::regex(R"QWERTY(\*=)QWERTY"),token::mulass),
+	make_pair(std::regex(R"QWERTY(/=)QWERTY"),token::divass),
+	make_pair(std::regex(R"QWERTY(%=)QWERTY"),token::modass),
+	make_pair(std::regex(R"QWERTY(<<=)QWERTY"),token::shlass),
+	make_pair(std::regex(R"QWERTY(>>=)QWERTY"),token::shrass),
+	make_pair(std::regex(R"QWERTY(\|=)QWERTY"),token::orass),
+	make_pair(std::regex(R"QWERTY(&=)QWERTY"),token::andass),
+	make_pair(std::regex(R"QWERTY(\^=)QWERTY"),token::xorass),
+	make_pair(std::regex(R"QWERTY(==)QWERTY"),token::equal),
+	make_pair(std::regex(R"QWERTY(\|\|)QWERTY"),token::lor),
+	make_pair(std::regex(R"QWERTY(&&)QWERTY"),token::land),
+	make_pair(std::regex(R"QWERTY(!=)QWERTY"),token::nequal),
+	make_pair(std::regex(R"QWERTY(<=)QWERTY"),token::lequal),
+	make_pair(std::regex(R"QWERTY(>=)QWERTY"),token::gequal),
+	make_pair(std::regex(R"QWERTY(<<)QWERTY"),token::shl),
+	make_pair(std::regex(R"QWERTY(>>)QWERTY"),token::shr),
+	make_pair(std::regex(R"QWERTY(\.)QWERTY"),token::point),
+	make_pair(std::regex(R"QWERTY(->)QWERTY"),token::arrow),
+	make_pair(std::regex(R"QWERTY(\.{3})QWERTY"),token::tokellipsis),
+	make_pair(std::regex(R"QWERTY(##)QWERTY"),token::hashhash),
+	make_pair(std::regex(R"QWERTY(#)QWERTY"),token::hash),
+	make_pair(std::regex(R"QWERTY(;)QWERTY"),token::semicolon),
+	make_pair(std::regex(R"QWERTY(:)QWERTY"),token::colon),
+	make_pair(std::regex(R"QWERTY(\?)QWERTY"),token::question),
+	make_pair(std::regex(R"QWERTY(\{)QWERTY"),token::lbrace),
+	make_pair(std::regex(R"QWERTY(\})QWERTY"),token::rbrace),
+	make_pair(std::regex(R"QWERTY(\[)QWERTY"),token::lbracket),
+	make_pair(std::regex(R"QWERTY(\])QWERTY"),token::rbracket),
+	make_pair(std::regex(R"QWERTY(\()QWERTY"),token::lparenthesis),
+	make_pair(std::regex(R"QWERTY(\))QWERTY"),token::rparenthesis),
+	make_pair(std::regex(R"QWERTY(\+)QWERTY"),token::add),
+	make_pair(std::regex(R"QWERTY(-)QWERTY"),token::sub),
+	make_pair(std::regex(R"QWERTY(\*)QWERTY"),token::mul),
+	make_pair(std::regex(R"QWERTY(/)QWERTY"),token::div),
+	make_pair(std::regex(R"QWERTY(%)QWERTY"),token::mod),
+	make_pair(std::regex(R"QWERTY(!)QWERTY"),token::not),
+	make_pair(std::regex(R"QWERTY(~)QWERTY"),token::bnot),
+	make_pair(std::regex(R"QWERTY(&)QWERTY"),token::band),
+	make_pair(std::regex(R"QWERTY(\|)QWERTY"),token::bor),
+	make_pair(std::regex(R"QWERTY(\^)QWERTY"),token::bxor),
+	make_pair(std::regex(R"QWERTY(>)QWERTY"),token::greater),
+	make_pair(std::regex(R"QWERTY(<)QWERTY"),token::less),
+	make_pair(std::regex(R"QWERTY(=)QWERTY"),token::assign),
+	make_pair(std::regex(R"QWERTY(,)QWERTY"),token::comma),
+	make_pair(std::regex(R"QWERTY([\r\n\t\s]+)QWERTY"),token::whitespace)
+
+
+} {}
+token_name_type::token_name_type() {
+	_name.emplace(token::toktypedef, "toktypedef");
+	_name.emplace(token::tokvoid, "tokvoid");
+	_name.emplace(token::tokconst, "tokconst");
+	_name.emplace(token::tokchar, "tokchar");
+	_name.emplace(token::tokint, "tokint");
+	_name.emplace(token::tokunsigned, "tokunsigned");
+	_name.emplace(token::tokshort, "tokshort");
+	_name.emplace(token::toklong, "toklong");
+	_name.emplace(token::tokfloat, "tokfloat");
+	_name.emplace(token::tokdouble, "tokdouble");
+	_name.emplace(token::toksizeof, "toksizeof");
+	_name.emplace(token::tokstruct, "tokstruct");
+	_name.emplace(token::tokenum, "tokenum");
+	_name.emplace(token::tokunion, "tokunion");
+	_name.emplace(token::tokif, "tokif");
+	_name.emplace(token::tokelse, "tokelse");
+	_name.emplace(token::tokdo, "tokdo");
+	_name.emplace(token::tokfor, "tokfor");
+	_name.emplace(token::tokwhile, "tokwhile");
+	_name.emplace(token::tokreturn, "tokreturn");
+	_name.emplace(token::tokgoto, "tokgoto");
+	_name.emplace(token::tokswitch, "tokswitch");
+	_name.emplace(token::tokcase, "tokcase");
+	_name.emplace(token::tokdefault, "tokdefault");
+	_name.emplace(token::tokbreak, "tokbreak");
+	_name.emplace(token::tokcontinue, "tokcontinue");
+	_name.emplace(token::tokauto, "tokauto");
+	_name.emplace(token::tokextern, "tokextern");
+	_name.emplace(token::tokstatic, "tokstatic");
+	_name.emplace(token::tokpragma, "tokpragma");
+	_name.emplace(token::tokinclude, "tokinclude");
+	_name.emplace(token::tokdefine, "tokdefine");
+	_name.emplace(token::tokundef, "tokundef");
+	_name.emplace(token::tokifdef, "tokifdef");
+	_name.emplace(token::tokelif, "tokelif");
+	_name.emplace(token::tokendif, "tokendif");
+	_name.emplace(token::double_literal, "double_literal");
+	_name.emplace(token::int_literal, "int_literal");
+	_name.emplace(token::char_literal, "char_literal");
+	_name.emplace(token::string_literal, "string_literal");
+	_name.emplace(token::include_file, "include_file");
+	_name.emplace(token::identifier, "identifier");
+	_name.emplace(token::inc, "inc");
+	_name.emplace(token::dec, "dec");
+	_name.emplace(token::addass, "addass");
+	_name.emplace(token::subass, "subass");
+	_name.emplace(token::mulass, "mulass");
+	_name.emplace(token::divass, "divass");
+	_name.emplace(token::modass, "modass");
+	_name.emplace(token::shlass, "shlass");
+	_name.emplace(token::shrass, "shrass");
+	_name.emplace(token::orass, "orass");
+	_name.emplace(token::andass, "andass");
+	_name.emplace(token::xorass, "xorass");
+	_name.emplace(token::equal, "equal");
+	_name.emplace(token::lor, "lor");
+	_name.emplace(token::land, "land");
+	_name.emplace(token::nequal, "nequal");
+	_name.emplace(token::lequal, "lequal");
+	_name.emplace(token::gequal, "gequal");
+	_name.emplace(token::shl, "shl");
+	_name.emplace(token::shr, "shr");
+	_name.emplace(token::point, "point");
+	_name.emplace(token::arrow, "arrow");
+	_name.emplace(token::tokellipsis, "tokellipsis");
+	_name.emplace(token::hashhash, "hashhash");
+	_name.emplace(token::hash, "hash");
+	_name.emplace(token::semicolon, "semicolon");
+	_name.emplace(token::colon, "colon");
+	_name.emplace(token::question, "question");
+	_name.emplace(token::lbrace, "lbrace");
+	_name.emplace(token::rbrace, "rbrace");
+	_name.emplace(token::lbracket, "lbracket");
+	_name.emplace(token::rbracket, "rbracket");
+	_name.emplace(token::lparenthesis, "lparenthesis");
+	_name.emplace(token::rparenthesis, "rparenthesis");
+	_name.emplace(token::add, "add");
+	_name.emplace(token::sub, "sub");
+	_name.emplace(token::mul, "mul");
+	_name.emplace(token::div, "div");
+	_name.emplace(token::mod, "mod");
+	_name.emplace(token::not, "not");
+	_name.emplace(token::bnot, "bnot");
+	_name.emplace(token::band, "band");
+	_name.emplace(token::bor, "bor");
+	_name.emplace(token::bxor, "bxor");
+	_name.emplace(token::greater, "greater");
+	_name.emplace(token::less, "less");
+	_name.emplace(token::assign, "assign");
+	_name.emplace(token::comma, "comma");
+	_name.emplace(token::whitespace, "whitespace");
 }
 
-std::vector<std::pair<token, std::string>>
+token_name_type token_name;
+
+std::vector<token_pair>
 lex(std::string const& s) {
 	static regex_table reg;
-	std::vector<std::pair<token, std::string>> res;
+	std::vector<token_pair > res;
 	auto it = s.begin();
 	while (it != s.end()) {
 		bool unsucc = true;
 		for (auto& e : reg.table) {
 			std::smatch m;
-			if (std::regex_search(it, s.end(), m, e.first, std::regex_constants::match_continuous)) {
+			if (std::regex_search(it, s.end(), m, e.first,
+				std::regex_constants::match_continuous)) {
 				std::string str = m[0].str();
-				res.emplace_back(e.second, str);
-				//std::cerr << reg.name[e.second] << " \"" << str <<"\""<< std::endl;
+				if (e.second != token::whitespace)res.emplace_back(e.second, str);
+				//std::cerr << token_name[e.second] << " \"" << str <<"\""<< std::endl;
 				it += str.size();
 				unsucc = false; break;
 			}
 		}
 		if (unsucc) {
-			while (it != s.end())std:: cout << *it++;
+			while (it != s.end())std::cout << *it++;
 			throw("REJECTED!");
 		}
 	}
 	for (auto m : res) {
-		std::cerr <<"{"<< reg.name[m.first] << " ,\"" << m.second << "\"}," ;
+		std::cerr << "{" << token_name[m.first] << " ,\"" << m.second << "\"},";
 	}
 	return res;
 }
