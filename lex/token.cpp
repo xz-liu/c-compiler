@@ -42,7 +42,7 @@ regex_table::regex_table() :table{
 	make_pair(std::regex(R"QWERTY(-?[0-9]+((\.[0-9]+)([eE]-?[0-9]+)|(\.[0-9]+)|([eE]-?[0-9]+))[fF]?)QWERTY"),token::double_literal),
 	make_pair(std::regex(R"QWERTY(-?(0|[1-9][0-9]*|0[xX][0-9a-fA-F]+|0[0-7]+)[uU]?[lL]{0,2})QWERTY"),token::int_literal),
 	make_pair(std::regex(R"QWERTY('.')QWERTY"),token::char_literal),
-	make_pair(std::regex(R"QWERTY(".*")QWERTY"),token::string_literal),
+	make_pair(std::regex(R"QWERTY(".*?[^\\]")QWERTY"),token::string_literal),
 	make_pair(std::regex(R"QWERTY(<[a-zA-Z_\\/]+(\.[a-zA-Z_\\/]+)?>)QWERTY"),token::include_file),
 	make_pair(std::regex(R"QWERTY([a-zA-Z_][0-9a-zA-Z_]*)QWERTY"),token::identifier),
 	make_pair(std::regex(R"QWERTY(\+\+)QWERTY"),token::inc),

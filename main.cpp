@@ -48,11 +48,9 @@ int main() {
 				std::cout << vlit_chr[r.second];
 				break;
 			case type_token::string_literal:
-
 				std::cout << vlit_str[r.second];
 				break;
 			case type_token::include_file:
-
 				std::cout << vlit_file[r.second];
 				break;
 			case type_token::identifier:
