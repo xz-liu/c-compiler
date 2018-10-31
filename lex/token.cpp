@@ -1,5 +1,6 @@
 #include "token.h"
 #include "lex.h"
+#include "../error/error.h"
 
 regex_table::regex_table() :table{
 	make_pair(std::regex(R"QWERTY(typedef)QWERTY"),token::toktypedef),
@@ -42,7 +43,7 @@ regex_table::regex_table() :table{
 	make_pair(std::regex(R"QWERTY(-?(0|[1-9][0-9]*|0[xX][0-9a-fA-F]+|0[0-7]+)[uU]?[lL]{0,2})QWERTY"),token::int_literal),
 	make_pair(std::regex(R"QWERTY('.')QWERTY"),token::char_literal),
 	make_pair(std::regex(R"QWERTY(".*")QWERTY"),token::string_literal),
-	make_pair(std::regex(R"QWERTY(<[a-zA-Z_\]+(\.[a-zA-Z_\]+)?>)QWERTY"),token::include_file),
+	make_pair(std::regex(R"QWERTY(<[a-zA-Z_\\/]+(\.[a-zA-Z_\\/]+)?>)QWERTY"),token::include_file),
 	make_pair(std::regex(R"QWERTY([a-zA-Z_][0-9a-zA-Z_]*)QWERTY"),token::identifier),
 	make_pair(std::regex(R"QWERTY(\+\+)QWERTY"),token::inc),
 	make_pair(std::regex(R"QWERTY(--)QWERTY"),token::dec),
@@ -191,32 +192,177 @@ token_name_type::token_name_type() {
 }
 
 token_name_type token_name;
+void lex_next_word(std::string const& s, int &position, std::vector<token_pair> &table) {
+	static const regex_table reg;
+	if (position <= 0)return;
+	if (position >= s.size())return;
+	auto it = s.begin() + position;
+	bool unsucc = true;
+	for (auto &e : reg.table) {
+		std::smatch m;
+		if (std::regex_search(it, s.end(), m, e.first,
+			std::regex_constants::match_continuous)) {
+			std::string str = m[0].str();
+			if (e.second != token::whitespace)
+				table.emplace_back(e.second, str);
+			//std::cerr << token_name[e.second] << " \"" << str <<"\""<< std::endl;
+			position += str.size();
+			unsucc = false; break;
+		}
+	}
 
-std::vector<token_pair>
-lex(std::string const& s) {
+}
+#define _CASE_X_VEC(_STDF,_VLIT)\
+{\
+	auto v = _STDF ;\
+	auto f = find(_VLIT.begin(), _VLIT.end(), v);\
+	if (f == _VLIT.end())_VLIT.push_back(v);\
+	now_num = _VLIT.size() - 1;\
+}\
+
+
+std::vector<token_P2>
+lex(std::string const& s,
+	std::vector<std::string	>& vlit_str,
+	std::vector<std::int64_t>& vlit_int,
+	std::vector<double		>& vlit_dbl,
+	std::vector<char		>& vlit_chr,
+	std::vector<std::string	>& vlit_idt,
+	std::vector<std::string	>& vlit_file
+
+) {
 	static regex_table reg;
-	std::vector<token_pair > res;
+	std::vector<token_P2 > res;
 	auto it = s.begin();
 	while (it != s.end()) {
 		bool unsucc = true;
 		for (auto& e : reg.table) {
 			std::smatch m;
+			//std::cerr<<"\tTest " << token_name[e.second]<<std:: endl;
 			if (std::regex_search(it, s.end(), m, e.first,
 				std::regex_constants::match_continuous)) {
 				std::string str = m[0].str();
-				if (e.second != token::whitespace)res.emplace_back(e.second, str);
-				//std::cerr << token_name[e.second] << " \"" << str <<"\""<< std::endl;
+
+				if (e.second != token::whitespace) {
+					type_token tt = to_type_token(e.second);
+					size_t now_num;
+					switch (tt) {
+					case type_token::keyword:
+					case type_token::cpp_keyword:
+					case type_token::delimiter:
+						now_num = token_to_number(e.second);
+						break;
+					case type_token::double_literal:
+						_CASE_X_VEC(std::stod(str), vlit_dbl);
+						break;
+					case type_token::int_literal:
+						_CASE_X_VEC(std::stoll(str), vlit_int);
+						break;
+					case type_token::char_literal:
+						_CASE_X_VEC(str[1], vlit_chr);
+						break;
+					case type_token::string_literal:
+						_CASE_X_VEC(str.substr(1, str.size() - 2), vlit_str);
+						break;
+					case type_token::include_file:
+						_CASE_X_VEC(str.substr(1, str.size() - 2), vlit_file);
+						break;
+					case type_token::identifier:
+						_CASE_X_VEC(str, vlit_idt);
+						break;
+					default:
+						break;
+					}
+					res.emplace_back(tt, now_num);
+				}//std::cerr << token_name[e.second] << " \"" << str <<"\""<< std::endl;
+
 				it += str.size();
 				unsucc = false; break;
 			}
 		}
 		if (unsucc) {
-			while (it != s.end())std::cout << *it++;
-			throw("REJECTED!");
+			int cnt = 0;
+			std::string report = "Unexpected character :";
+			while (cnt < 20 && it != s.end())report.push_back(*it++);
+			throw (lex_error(report));
 		}
 	}
+	/*
 	for (auto m : res) {
 		std::cerr << "{" << token_name[m.first] << " ,\"" << m.second << "\"},";
 	}
+	*/
 	return res;
+}
+int token_to_number(token t) {
+	return (int)t;
+}
+type_token to_type_token(token t) {
+	if (token_to_number(t) >= 200) return type_token::delimiter;
+	else if (token_to_number(t) < 100)return type_token::keyword;
+	else if (token_to_number(t) < 150)return type_token::cpp_keyword;
+	else switch (t) {
+	case token::double_literal:
+		return type_token::double_literal;
+	case token::int_literal:
+		return type_token::int_literal;
+	case token::char_literal:
+		return type_token::char_literal;
+	case token::string_literal:
+		return type_token::string_literal;
+	case token::include_file:
+		return type_token::include_file;
+	case token::identifier:
+		return type_token::identifier;
+	default:
+		return type_token::identifier;
+	}
+}
+
+void assign_item(token_item &it, std::string const& s) {
+	switch (it.first) {
+	case token::char_literal:
+		it.second = s[1];
+		break;
+	case token::string_literal:
+		it.second = s.substr(1, s.size() - 2);
+		break;
+	case token::double_literal:
+		it.second = std::stod(s);
+		break;
+	case token::int_literal:
+		it.second = std::stoll(s);
+		break;
+	case token::identifier:
+		it.second = static_cast<std::string>(s);
+		break;
+	default:
+		it.second = nullptr;
+		break;
+	}
+}
+
+std::string nameof(type_token t) {
+	switch (t) {
+	case type_token::keyword:
+		return "keyword";
+	case type_token::cpp_keyword:
+		return "cpp_keyword";
+	case type_token::double_literal:
+		return "double_literal";
+	case type_token::int_literal:
+		return "int_literal";
+	case type_token::char_literal:
+		return "char_literal";
+	case type_token::string_literal:
+		return "string_literal";
+	case type_token::include_file:
+		return "include_file";
+	case type_token::identifier:
+		return "identifier";
+	case type_token::delimiter:
+		return "delimiter";
+	default:
+		return "";
+	}
 }

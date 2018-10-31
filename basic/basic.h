@@ -6,6 +6,7 @@
 #include<cctype>
 #include<cstdlib>
 #include<cstring>
+#include<any>
 #include<vector>
 #include<list>
 #include<array>
@@ -23,8 +24,10 @@
 #include<string>
 #include<numeric>
 #include<regex>
+#include<fstream>
 #include<iostream>
 #include<iomanip>
+#include<iterator>
 #include<thread>
 
 template<class Seq>
@@ -84,6 +87,5 @@ struct binary_io {
 		return u;
 	}
 };
-
 
 #endif 

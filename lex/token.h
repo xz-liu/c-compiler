@@ -32,20 +32,25 @@ enum class token {
 	tokauto,	//	auto
 	tokextern,	//	extern
 	tokstatic,	//	static
-	tokpragma,	//	pragma
+
+
+	tokpragma = 100,	//	pragma
 	tokinclude,	//	include
 	tokdefine,	//	define
 	tokundef,	//	undef
 	tokifdef,	//	ifdef
 	tokelif,	//	elif
 	tokendif,	//	endif
-	double_literal,	//	-?[0-9]+((\.[0-9]+)([eE]-?[0-9]+)|(\.[0-9]+)|([eE]-?[0-9]+))[fF]?
+
+
+	double_literal = 150,	//	-?[0-9]+((\.[0-9]+)([eE]-?[0-9]+)|(\.[0-9]+)|([eE]-?[0-9]+))[fF]?
 	int_literal,	//	-?(0|[1-9][0-9]*|0[xX][0-9a-fA-F]+|0[0-7]+)[uU]?[lL]{0,2}
 	char_literal,	//	'.'
 	string_literal,	//	".*"
-	include_file,	//	<[a-zA-Z_\]+(\.[a-zA-Z_\]+)?>
+	include_file,	//	<[a-zA-Z_\\/]+(\.[a-zA-Z_\\/]+)?>
 	identifier,	//	[a-zA-Z_][0-9a-zA-Z_]*
-	inc,	//	\+\+
+
+	inc = 200,	//	\+\+
 	dec,	//	--
 	addass,	//	\+=
 	subass,	//	-=
@@ -94,5 +99,22 @@ enum class token {
 	assign,	//	=
 	comma,	//	,
 	whitespace,	//	[\r\n\t\s]+
-	dummy,
+	dummy
 };
+
+enum class type_token {
+	keyword,
+	cpp_keyword,
+	double_literal,
+	int_literal,
+	char_literal,
+	string_literal,
+	include_file,
+	identifier,
+	delimiter
+};
+
+
+type_token to_type_token(token t);
+int token_to_number(token t);
+std::string nameof(type_token t);
