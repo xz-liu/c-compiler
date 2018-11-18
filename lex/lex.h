@@ -53,3 +53,121 @@ lex(std::string const& s,
 	std::vector<std::string	>& vlit_file
 
 );
+
+
+struct lex_data {
+	std::vector<std::string	> vlit_str;
+	std::vector<std::int64_t> vlit_int;
+	std::vector<double		> vlit_dbl;
+	std::vector<char		> vlit_chr;
+	std::vector<std::string	> vlit_idt;
+	std::vector<std::string	> vlit_file;
+
+	std::vector<token_P2> lex_result;
+
+	lex_data(std::string const&s) {
+		lex_result = lex(s, vlit_str, vlit_int, vlit_dbl, vlit_chr, vlit_idt, vlit_file);
+	}
+
+	template <class T> void output_vector(std::vector <T> const& v) {
+		for (auto &i : v) { std::cout << "{" << i << "} "; }
+		std::cout << std::endl;
+	}
+
+	template<class T1, class T2>
+	static bool same_token(T1 a, T2 b) {
+		return (int)(a) == (int)(b);
+	}
+	bool cmp_token(size_t pos, token tok) const {
+		if (pos >= lex_result.size()) return false;
+		type_token t = lex_result[pos].first;
+		switch (t) {
+		case type_token::keyword:
+		case type_token::cpp_keyword:
+		case type_token::delimiter:
+			return same_token(lex_result[pos].second, tok);
+		case type_token::double_literal:
+			return same_token(token::double_literal, tok);
+		case type_token::int_literal:
+			return same_token(token::int_literal, tok);
+		case type_token::char_literal:
+			return same_token(token::char_literal, tok);
+		case type_token::string_literal:
+			return same_token(token::string_literal, tok);
+		case type_token::identifier:
+			return same_token(token::identifier, tok);
+		case type_token::dummy:
+			return false;
+			break;
+		default:
+			break;
+		}
+		return false;
+	}
+	token get_token(size_t pos)const {
+		if (pos >= lex_result.size()) return token::dummy;
+		type_token t = lex_result[pos].first;
+		switch (t) {
+		case type_token::keyword:
+		case type_token::cpp_keyword:
+		case type_token::delimiter:
+			return token(lex_result[pos].second);
+		case type_token::double_literal:
+			return (token::double_literal);
+		case type_token::int_literal:
+			return(token::int_literal);
+		case type_token::char_literal:
+			return (token::char_literal);
+		case type_token::string_literal:
+			return (token::string_literal);
+		case type_token::identifier:
+			return (token::identifier);
+		case type_token::dummy:
+			return token::dummy;
+			break;
+		default:
+			break;
+		}
+		return token::dummy;
+	}
+	void debug() {
+		output_vector(vlit_str);
+		output_vector(vlit_int);
+		output_vector(vlit_dbl);
+		output_vector(vlit_chr);
+		output_vector(vlit_idt);
+		output_vector(vlit_file);
+		for (auto r : lex_result) {
+			std::cout << nameof(r.first) << "\t: " << r.second << " { ";
+			switch (r.first) {
+			case type_token::keyword:
+			case type_token::cpp_keyword:
+			case type_token::delimiter:
+				std::cout << token_name[r.second];
+				break;
+			case type_token::double_literal:
+				std::cout << vlit_dbl[r.second];
+				break;
+			case type_token::int_literal:
+				std::cout << vlit_int[r.second];
+				break;
+			case type_token::char_literal:
+				std::cout << vlit_chr[r.second];
+				break;
+			case type_token::string_literal:
+				std::cout << vlit_str[r.second];
+				break;
+			case type_token::include_file:
+				std::cout << vlit_file[r.second];
+				break;
+			case type_token::identifier:
+
+				std::cout << vlit_idt[r.second];
+				break;
+			default:
+				break;
+			}
+			std::cout << " }" << std::endl;
+		}
+	}
+};

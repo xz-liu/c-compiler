@@ -6,6 +6,8 @@ regex_table::regex_table() :table{
 	make_pair(std::regex(R"QWERTY(typedef)QWERTY"),token::toktypedef),
 	make_pair(std::regex(R"QWERTY(void)QWERTY"),token::tokvoid),
 	make_pair(std::regex(R"QWERTY(const)QWERTY"),token::tokconst),
+	make_pair(std::regex(R"QWERTY(volatile)QWERTY"),token::tokvolatile),
+	make_pair(std::regex(R"QWERTY(register)QWERTY"),token::tokregister),
 	make_pair(std::regex(R"QWERTY(char)QWERTY"),token::tokchar),
 	make_pair(std::regex(R"QWERTY(int)QWERTY"),token::tokint),
 	make_pair(std::regex(R"QWERTY(unsigned)QWERTY"),token::tokunsigned),
@@ -39,8 +41,8 @@ regex_table::regex_table() :table{
 	make_pair(std::regex(R"QWERTY(ifdef)QWERTY"),token::tokifdef),
 	make_pair(std::regex(R"QWERTY(elif)QWERTY"),token::tokelif),
 	make_pair(std::regex(R"QWERTY(endif)QWERTY"),token::tokendif),
-	make_pair(std::regex(R"QWERTY(-?[0-9]+((\.[0-9]+)([eE]-?[0-9]+)|(\.[0-9]+)|([eE]-?[0-9]+))[fF]?)QWERTY"),token::double_literal),
-	make_pair(std::regex(R"QWERTY(-?(0|[1-9][0-9]*|0[xX][0-9a-fA-F]+|0[0-7]+)[uU]?[lL]{0,2})QWERTY"),token::int_literal),
+	make_pair(std::regex(R"QWERTY([0-9]+((((\.[0-9]+)([eE]-?[0-9]+)|(\.[0-9]+)|([eE]-?[0-9]+))[fF]?)|[fF]))QWERTY"),token::double_literal),
+	make_pair(std::regex(R"QWERTY((0|[1-9][0-9]*|0[xX][0-9a-fA-F]+|0[0-7]+)[uU]?[lL]{0,2})QWERTY"),token::int_literal),
 	make_pair(std::regex(R"QWERTY('.')QWERTY"),token::char_literal),
 	make_pair(std::regex(R"QWERTY(".*?[^\\]")QWERTY"),token::string_literal),
 	make_pair(std::regex(R"QWERTY(<[a-zA-Z_\\/]+(\.[a-zA-Z_\\/]+)?>)QWERTY"),token::include_file),
@@ -101,6 +103,8 @@ token_name_type::token_name_type() {
 	_name.emplace(token::toktypedef, "toktypedef");
 	_name.emplace(token::tokvoid, "tokvoid");
 	_name.emplace(token::tokconst, "tokconst");
+	_name.emplace(token::tokvolatile, "tokvolatile");
+	_name.emplace(token::tokregister, "tokregister");
 	_name.emplace(token::tokchar, "tokchar");
 	_name.emplace(token::tokint, "tokint");
 	_name.emplace(token::tokunsigned, "tokunsigned");
@@ -189,6 +193,7 @@ token_name_type::token_name_type() {
 	_name.emplace(token::assign, "assign");
 	_name.emplace(token::comma, "comma");
 	_name.emplace(token::whitespace, "whitespace");
+	_name.emplace(token::dummy, "#");
 }
 
 token_name_type token_name;

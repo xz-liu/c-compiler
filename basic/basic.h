@@ -29,6 +29,7 @@
 #include<iomanip>
 #include<iterator>
 #include<thread>
+#include<sstream>
 
 template<class Seq>
 void output_list(const Seq &list) {

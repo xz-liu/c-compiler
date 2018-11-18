@@ -6,6 +6,7 @@ enum class token {
 	toktypedef,	//	typedef
 	tokvoid,	//	void
 	tokconst,	//	const
+	tokvolatile,//	volatile
 	tokchar,	//	char
 	tokint,	//	int
 	tokunsigned,	//	unsigned
@@ -30,6 +31,8 @@ enum class token {
 	tokbreak,	//	break
 	tokcontinue,	//	continue
 	tokauto,	//	auto
+	tokregister,	//	register
+
 	tokextern,	//	extern
 	tokstatic,	//	static
 
@@ -99,7 +102,7 @@ enum class token {
 	assign,	//	=
 	comma,	//	,
 	whitespace,	//	[\r\n\t\s]+
-	dummy
+	dummy =1000000
 };
 
 enum class type_token {
@@ -111,7 +114,8 @@ enum class type_token {
 	string_literal,
 	include_file,
 	identifier,
-	delimiter
+	delimiter,
+	dummy = 1000000,
 };
 
 
