@@ -89,4 +89,9 @@ struct binary_io {
 	}
 };
 
+template<class T>
+bool set_contains(std::set<T> const& s,T const& v) {
+	return s.find(v) != s.end();
+}
+
 #endif 

@@ -31,7 +31,18 @@ int main() {
 	} catch (...) {
 		std::cout << "UNKNOWN ERROR!" << std::endl;
 	}*/
-	grammar p;
+	grammar p(R"(
+		S	: E ;
+		E	: T E1 ;
+		E1	: | w0 T E1  ;
+		w0	: '+' | '-' ;
+		T	: F T1 ;
+		T1	: w1 F T1 | ;
+		w1	: '*' | '/' ;
+		F	: I | '(' E ')' ;
+		I	: int_const | float_const | id ;
+		)");
+	//grammar p;
 	p.debug();
 	while (1);
 	return 0;

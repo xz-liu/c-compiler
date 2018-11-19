@@ -1,9 +1,10 @@
 #pragma once
 #include "../lex/lex.h"
 #include "../basic/bin_tree.h"
-
+//
 struct grammar {
 private:
+	static std::string literals[];
 	std::map<std::string, int> mp;
 	std::map < std::string , token > token_map;
 	std::vector<std::string> rev_mp;
@@ -11,9 +12,9 @@ private:
 	std::map<int, std::set<int>> first;
 	std::map<int, std::set<int>> follow;
 	void cal_first(int);
-	void cal_follow(int S) {
-		 
-	}
+	void cal_first();
+	void cal_follow();
+	int id_eps,id_dummy,id_s;
 	int cnt;
 	int get_tok(std::string const&s) {
 		auto it = mp.find(s);
@@ -22,10 +23,12 @@ private:
 		mp.emplace(s, cnt++);
 		return cnt - 1;
 	}
+	void init(std::string const& s);
 public:
 	std::string const& get_name(int t) const{
 		return rev_mp[t];
 	}
+	grammar(std::string const& s);
 	grammar();
 	void debug() {
 		using std::cout;
@@ -38,15 +41,32 @@ public:
 		cout << "Productions" << endl;
 		for (auto&& x : productions) {
 			cout << rev_mp[x.first] << " :" << endl;
-			if(x.second.size()==0) {
-				cout << "EMPTY!!!!!!!!!!!!!!!!!!!!" << endl;
-				return;
-			}
+			
 			for (auto &&y : x.second) {
-				cout << "\t";
-				for (auto &&z : y)cout << rev_mp[z] << " ";
+				cout << "--\t"; 
+				if (y.size() == 0) {
+					cout << "EMPTY PRODUCTION";
+					//return;
+				}
+				for (auto &&z : y)cout<<"{" << rev_mp[z] << "} ";
 				cout << endl;
 			}
+		}
+		cout << "First Set" << endl;
+		for(auto &&x:first) {
+			cout<<'\t' << get_name(x.first) << " :";
+			for(auto&& y:x.second) {
+				cout << " " << get_name(y);
+			}
+			cout << endl;
+		}
+		cout << "Follow Set" << endl;
+		for (auto &&x : follow) {
+			cout<<"\t" << get_name(x.first) << " :";
+			for (auto&& y : x.second) {
+				cout << " " << get_name(y);
+			}
+			cout << endl;
 		}
 	}
 	int add_symbol(std::string const& s) {
@@ -69,16 +89,20 @@ public:
 	std::vector<std::vector<int>> & operator[](int S) {
 		return productions[S];
 	}
-
+		
 
 	token terminator(int i) const{
 		return terminator(get_name(i));
 	}
 	bool is_terminator(int i) const {
+		if (i == id_eps || i == id_dummy)return true;
 		return is_terminator(get_name(i));
 	}
 	bool is_terminator(std::string const& s) const{
-		return s[0] == '\'';
+		auto it = mp.find(s);
+		if (it != mp.end())if (it->second == id_eps || it->second == id_dummy)return true;
+		if (s[0] == '\'')return true;
+		return token_map.find(s) != token_map.end();
 	}
 	token terminator(std::string const&t) const {
 		auto it = token_map.find(t);

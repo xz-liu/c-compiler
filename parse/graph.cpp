@@ -262,24 +262,96 @@ const           : int_const
             | enumeration_const
             ;)";
 
+std::string grammar::literals[] = { "int_const", "char_const","float_const","id", "string","enumeration_const" };
+
 void grammar::cal_first(int S) {
-	if(is_terminator(S)) {
-		 first[S] = { S };
-	}else {
-		for(auto &&exp:this->operator[](S)) {
-			cal_first(exp[0]);
-			auto &first_y = first[exp[0]];
-			first[S].insert(first_y.begin(), first_y.end());
+	if (is_terminator(S)) {
+		first[S] = { S };// First(A) = A when A is a terminator
+	} else {
+		for (auto &&exp : this->operator[](S)) {
+			if (exp.size()) {//when A ->Y1,Y2,...,Yk
+				int k = 0;
+				while (k < exp.size()) {
+					cal_first(exp[k]);
+					if (first[exp[k]].find(id_eps) == first[exp[k]].end()) {
+						break;
+					}
+				};
+				if (k == exp.size())first[S].insert(id_eps);// Y1...Yk has eps
+				else first[S].insert(first[exp[k]].begin(), first[exp[k]].end());// Yk hasn't eps
+			} else first[S].insert(id_eps);//A -> eps
 		}
 	}
 }
+void grammar::cal_first() {
+	for (auto&& x : mp) {
+		if (is_terminator(x.second)) first[x.second] = { x.second };
+	}		
+	first[id_eps] = {};
+	bool complete = false;
+	while(!complete) {
+		for(auto &&S:productions) {
+			std::set<int>   next = first[S.first];
+			for(auto &&exp:S.second) {
+				if (exp.size()) {
+					for (auto &&Yi : exp) {
+						if (is_terminator(Yi)) {
+							next.insert(Yi);
+							break;
+						}
+						if (!set_contains(first[Yi], id_eps)) {
+							next.insert(Yi); break;
+						}
+					}
+				}
+				else { next.insert(id_eps); }
+			}
+			if(next.size()>first[S.first].size()) {
+				first[S.first] = next;
+			}
+			else { complete = true; }
+		}
+	}
 
-grammar::grammar() :cnt(0) {
-	std::string s;
-	std::stringstream cin(bnf_c);
+
+}
+void grammar::cal_follow() {
+	follow[id_s].insert(id_dummy);
+	while (true) {
+		bool new_follow = false;
+		for (auto && Sp : mp) {
+			int S = Sp.second;
+			if (is_terminator(S))continue;
+			for (auto &&exp : this->operator[](S)) {
+				for (int i = 0; i < exp.size(); i++) {
+					int now = follow[exp[i]].size();
+					if ((i == exp.size() - 1) ||
+						first[exp[i + 1]].find(id_eps) != first[exp[i + 1]].end()) {
+						follow[exp[i]].insert(follow[S].begin(), follow[S].end());
+					} else {
+						follow[exp[i]].insert(first[exp[i + 1]].begin(), first[exp[i + 1]].end());
+					}
+					new_follow |= follow[exp[i]].size() != now;
+				}
+			}
+		}
+		if (!new_follow)break;
+	}
+	for (auto&& i : follow)i.second.erase(id_eps);
+}
+
+void grammar::init(std::string const & bnf) {
+	cnt = 0;
+	std::string s, S;
+	std::stringstream cin(bnf);
+	bool _1st = true;
 	while (cin >> s) {
 		std::string t; cin >> t; // :
-		/*std::cout << "\tNEW S" << s << " " << t << std::endl;*/
+								 /*std::cout << "\tNEW S" << s << " " << t << std::endl;*/
+		if (_1st) {
+			_1st = false;
+			S = s;
+		}
 		while (t != ";") {
 			std::vector<std::string> vec;
 			while (1) {
@@ -295,6 +367,10 @@ grammar::grammar() :cnt(0) {
 		}
 	}
 	add_symbol("'dummy'");
+	add_symbol("_Eps");
+	id_eps = get_tok("_Eps");
+	id_dummy = get_tok("'dummy'");
+	id_s = get_tok(S);
 #define ADD_TOKEN(str,tok) token_map.emplace(#str,tok)
 	ADD_TOKEN('typedef', token::toktypedef);
 	ADD_TOKEN('void', token::tokvoid);
@@ -375,5 +451,23 @@ grammar::grammar() :cnt(0) {
 	ADD_TOKEN('=', token::assign);
 	ADD_TOKEN(',', token::comma);
 	ADD_TOKEN('dummy', token::dummy);
+	//	std::string grammar::literals[] = { "int_const", "char_const","float_const","id", "string","enumeration_const" };
+	ADD_TOKEN(int_const, token::int_literal);
+	ADD_TOKEN(char_const, token::char_literal);
+	ADD_TOKEN(float_const, token::double_literal);
+	ADD_TOKEN(id, token::identifier);
+	ADD_TOKEN(string, token::string_literal);
+	ADD_TOKEN(enumeration_const, token::identifier);
+	//for (auto&& x : mp)if ((x.second != id_dummy) && (x.second != id_eps))cal_first(x.second);
+	//cal_first(id_s);
+	;
+	cal_first();
+	cal_follow();
+}
 
+grammar::grammar() {
+	init(bnf_c);
+}
+grammar::grammar(std::string const& bnf) {
+	init(bnf);
 }
