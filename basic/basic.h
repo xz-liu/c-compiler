@@ -31,6 +31,15 @@
 #include<thread>
 #include<sstream>
 
+template<class Seq,class Func>
+void output_list(const Seq &list,Func && func) {
+	std::cout << "Size:" << list.size() << " Pos:" << (&list) << std::endl;
+	for (const auto &x : list) {
+		auto &&y = func(x);
+		std::cout << y << " ";
+	}
+	std::cout << std::endl;
+}
 template<class Seq>
 void output_list(const Seq &list) {
 	std::cout << "Size:" << list.size() << " Pos:" << (&list) << std::endl;
@@ -39,6 +48,7 @@ void output_list(const Seq &list) {
 	}
 	std::cout << std::endl;
 }
+
 
 using uint = unsigned int;
 using ulong = unsigned long long;

@@ -16,3 +16,7 @@ struct lr_item {
 		}return exp_s < rhs.exp_s;
 	}
 };
+struct lr_dfa {
+	std::vector < std::set<lr_item> > states;
+	std::vector<std::map<int, int>> trans;
+};

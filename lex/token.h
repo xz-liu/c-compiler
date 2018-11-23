@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../basic/basic.h"
-
 enum class token {
 	toktypedef,	//	typedef
 	tokvoid,	//	void
@@ -122,3 +121,4 @@ enum class type_token {
 type_token to_type_token(token t);
 int token_to_number(token t);
 std::string nameof(type_token t);
+std::map<std::string, token> get_token_map();

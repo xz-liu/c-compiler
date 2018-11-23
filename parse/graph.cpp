@@ -263,7 +263,7 @@ const           : int_const
             ;)";
 
 std::string grammar::literals[] = { "int_const", "char_const","float_const","id", "string","enumeration_const" };
-
+/*
 void grammar::cal_first(int S) {
 	if (is_terminator(S)) {
 		first[S] = { S };// First(A) = A when A is a terminator
@@ -283,61 +283,170 @@ void grammar::cal_first(int S) {
 		}
 	}
 }
+*/
 void grammar::cal_first() {
 	for (auto&& x : mp) {
-		if (is_terminator(x.second)) first[x.second] = { x.second };
-	}		
-	first[id_eps] = {};
-	bool complete = false;
-	while(!complete) {
-		for(auto &&S:productions) {
-			std::set<int>   next = first[S.first];
-			for(auto &&exp:S.second) {
-				if (exp.size()) {
+		// First(A) = A when A is a terminator
+		if (is_terminator(x.second)) first_set[x.second] = { x.second };
+	}
+	first_set[id_eps] = {};
+	bool complete = true;
+	do {
+		complete = true;
+		for (auto &&S : productions) {
+			std::set<int>   next = first_set[S.first];
+			for (auto &&exp : S.second) {
+				if (exp.size()) {//when A ->Y1,Y2,...,Yk
+					bool prod_all_eps = true;
 					for (auto &&Yi : exp) {
 						if (is_terminator(Yi)) {
+							prod_all_eps = false;
 							next.insert(Yi);
 							break;
 						}
-						if (!set_contains(first[Yi], id_eps)) {
-							next.insert(Yi); break;
+						if (!set_contains(first_set[Yi], id_eps)) {
+							prod_all_eps = false;
+							next.insert(first_set[Yi].begin(), first_set[Yi].end()); break;
 						}
 					}
-				}
-				else { next.insert(id_eps); }
+					if (prod_all_eps)next.insert(id_eps);
+				} else { next.insert(id_eps); }
 			}
-			if(next.size()>first[S.first].size()) {
-				first[S.first] = next;
-			}
-			else { complete = true; }
+			if (next.size() > first_set[S.first].size()) {
+				first_set[S.first] = next;
+				complete = false;
+			} 
 		}
-	}
-
+	} while (!complete);
 
 }
 void grammar::cal_follow() {
-	follow[id_s].insert(id_dummy);
+	follow_set[id_s].insert(id_dummy);
 	while (true) {
 		bool new_follow = false;
-		for (auto && Sp : mp) {
-			int S = Sp.second;
+		for (auto && Sp : productions) {
+			int S = Sp.first;
 			if (is_terminator(S))continue;
-			for (auto &&exp : this->operator[](S)) {
-				for (int i = 0; i < exp.size(); i++) {
-					int now = follow[exp[i]].size();
-					if ((i == exp.size() - 1) ||
-						first[exp[i + 1]].find(id_eps) != first[exp[i + 1]].end()) {
-						follow[exp[i]].insert(follow[S].begin(), follow[S].end());
-					} else {
-						follow[exp[i]].insert(first[exp[i + 1]].begin(), first[exp[i + 1]].end());
+			for (auto &&exp : Sp.second) {
+				if (exp.empty())continue;
+				/*std::vector<int> first_pos(exp.size());
+				auto with_eps=[&](int i)->bool{
+					if (first_pos[i] != i)return true;
+					return set_contains(first_set[exp[i]], id_eps);
+				};
+				int last = -1;
+				for (int i = exp.size()-1; i >= 0;i--) {
+					first_pos[i] = last;
+					if (is_terminator(exp[i])) {
+						 last = i;
+					} else for(auto&& x:first_set[exp[i]])if(x!=id_eps) {
+						last = i;break;
 					}
-					new_follow |= follow[exp[i]].size() != now;
+					
+				}*/
+				//output_list(exp, [&](int i) {return get_name(i); });
+				for (int i = 0; i < exp.size(); i++) {
+					if (is_terminator(exp[i]))continue;
+					int now = follow_set[exp[i]].size();
+/*
+					if (first_id==-1||with_eps(i)) {
+						follow_set[exp[i]].insert(follow_set[S].begin(), follow_set[S].end());
+					}
+					if (first_id!=-1) {
+						follow_set[exp[i]].insert(
+							first_set[exp[first_id]].begin(), first_set[exp[first_id]].end()
+						);
+					}*/
+					auto beta_1st = first_set_of_prod(exp.begin() + i + 1, exp.end());
+					if(set_contains(beta_1st,id_eps)) {
+						follow_set[exp[i]].insert(follow_set[S].begin(), follow_set[S].end());
+					}
+					follow_set[exp[i]].insert(beta_1st.begin(), beta_1st.end());
+					new_follow |= follow_set[exp[i]].size() != now;
 				}
 			}
 		}
 		if (!new_follow)break;
 	}
-	for (auto&& i : follow)i.second.erase(id_eps);
+	for (auto&& i : follow_set)i.second.erase(id_eps);
+}
+
+void grammar::fill_ll1_table() {
+	cal_first();
+	cal_follow();
+	for (auto &&all_prods : productions) {
+		auto &&S = all_prods.first;
+		int prod_rk = 0;
+		for (auto && prods : all_prods.second) {
+			bool good = false;
+			auto this_first = first_set_of_prod(prods.begin(), prods.end());
+			for(auto &&t:this_first) {
+				if(t==id_eps) {
+					for(auto&& ft: follow_set[S])
+						ll1_table[
+							std::make_pair(S, token_map.find(get_name(ft))->second)
+						].insert(std::make_pair(S, prod_rk));
+				}
+				else {
+					ll1_table[
+						std::make_pair(S, token_map.find(get_name(t))->second)
+					].insert(std::make_pair(S, prod_rk));
+				}
+			}
+			/*for (auto && Xi : prods) {
+				if (first_set[Xi].size() >= 2) {
+					continue;
+				} else if (first_set[Xi].size() && *first_set[Xi].begin() == id_eps) {
+					continue;
+				}
+				for (auto &&chr : first_set[Xi])
+					ll1_table[
+						std::make_pair(S, token_map.find(get_name(chr))->second)
+					].insert(std::make_pair(S, prod_rk));
+						good = true; break;
+			}
+			if (!good) {
+				for (auto &&chr : follow_set[S])
+					ll1_table[
+						std::make_pair(S, token_map.find(get_name(chr))->second)
+					].insert(std::make_pair(S, prod_rk));
+
+			}*/
+			prod_rk++;
+		}
+
+	}
+}
+
+bool grammar::parse_ll1(lex_data const & data, std::stack<int>& sta, int & now) {
+	int id_top = sta.top();
+	while (id_top != id_dummy) {
+		if (is_terminator(id_top)) {
+			if (data.cmp_token(now, terminator(id_top))) {
+				sta.pop();
+				now++;
+			} else { return false; }
+		} else {
+			auto r = find_ll1(id_top, data.get_token(now));
+			if (r) {
+				//std::cout << t << ", " << token_name[data.get_token(now)] << "-> '" << r->second << "'" << std::endl;
+				sta.pop();
+				for (auto it = r->begin(); it != r->end(); it++) {
+					std::stack<int> tmp = sta;
+					int n = now;
+					auto &prod = productions[it->first][it->second];
+					for (auto it = prod.rbegin(); it != prod.rend(); it++) tmp.push(*it);
+					if (parse_ll1(data, tmp, n)) {
+						sta = tmp; now = n;
+					}
+				}
+			} else {
+				return false;
+			}
+		}
+		id_top = sta.top();
+	}
+	return true;
 }
 
 void grammar::init(std::string const & bnf) {
@@ -371,103 +480,69 @@ void grammar::init(std::string const & bnf) {
 	id_eps = get_tok("_Eps");
 	id_dummy = get_tok("'dummy'");
 	id_s = get_tok(S);
-#define ADD_TOKEN(str,tok) token_map.emplace(#str,tok)
-	ADD_TOKEN('typedef', token::toktypedef);
-	ADD_TOKEN('void', token::tokvoid);
-	ADD_TOKEN('const', token::tokconst);
-	ADD_TOKEN('volatile', token::tokvolatile);
-	ADD_TOKEN('char', token::tokchar);
-	ADD_TOKEN('int', token::tokint);
-	ADD_TOKEN('unsigned', token::tokunsigned);
-	ADD_TOKEN('short', token::tokshort);
-	ADD_TOKEN('long', token::toklong);
-	ADD_TOKEN('float', token::tokfloat);
-	ADD_TOKEN('double', token::tokdouble);
-	ADD_TOKEN('sizeof', token::toksizeof);
-	ADD_TOKEN('struct', token::tokstruct);
-	ADD_TOKEN('enum', token::tokenum);
-	ADD_TOKEN('union', token::tokunion);
-	ADD_TOKEN('if', token::tokif);
-	ADD_TOKEN('else', token::tokelse);
-	ADD_TOKEN('do', token::tokdo);
-	ADD_TOKEN('for', token::tokfor);
-	ADD_TOKEN('while', token::tokwhile);
-	ADD_TOKEN('return', token::tokreturn);
-	ADD_TOKEN('goto', token::tokgoto);
-	ADD_TOKEN('switch', token::tokswitch);
-	ADD_TOKEN('case', token::tokcase);
-	ADD_TOKEN('default', token::tokdefault);
-	ADD_TOKEN('break', token::tokbreak);
-	ADD_TOKEN('continue', token::tokcontinue);
-	ADD_TOKEN('auto', token::tokauto);
-	ADD_TOKEN('register', token::tokregister);
-	ADD_TOKEN('extern', token::tokextern);
-	ADD_TOKEN('static', token::tokstatic);
-	ADD_TOKEN('++', token::inc);
-	ADD_TOKEN('--', token::dec);
-	ADD_TOKEN('+=', token::addass);
-	ADD_TOKEN('-=', token::subass);
-	ADD_TOKEN('*=', token::mulass);
-	ADD_TOKEN('/=', token::divass);
-	ADD_TOKEN('%=', token::modass);
-	ADD_TOKEN('<<=', token::shlass);
-	ADD_TOKEN('>>=', token::shrass);
-	ADD_TOKEN('|=', token::orass);
-	ADD_TOKEN('&=', token::andass);
-	ADD_TOKEN('^=', token::xorass);
-	ADD_TOKEN('==', token::equal);
-	ADD_TOKEN('||', token::lor);
-	ADD_TOKEN('&&', token::land);
-	ADD_TOKEN('!=', token::nequal);
-	ADD_TOKEN('<=', token::lequal);
-	ADD_TOKEN('>=', token::gequal);
-	ADD_TOKEN('<<', token::shl);
-	ADD_TOKEN('>>', token::shr);
-	ADD_TOKEN('.', token::point);
-	ADD_TOKEN('->', token::arrow);
-	//ADD_TOKEN('', token::tokellipsis);
-	//ADD_TOKEN('', token::hash);
-	//ADD_TOKEN('', token::hashhash);
-	ADD_TOKEN(';', token::semicolon);
-	ADD_TOKEN('?', token::question);
-	ADD_TOKEN('{', token::lbrace);
-	ADD_TOKEN('}', token::rbrace);
-	ADD_TOKEN('[', token::lbracket);
-	ADD_TOKEN(']', token::rbracket);
-	ADD_TOKEN('(', token::lparenthesis);
-	ADD_TOKEN(')', token::rparenthesis);
-	ADD_TOKEN('+', token::add);
-	ADD_TOKEN('-', token::sub);
-	ADD_TOKEN('*', token::mul);
-	ADD_TOKEN('/', token::div);
-	ADD_TOKEN('%', token::mod);
-	ADD_TOKEN('!', token::not);
-	ADD_TOKEN('~', token::bnot);
-	ADD_TOKEN('&', token::band);
-	ADD_TOKEN('|', token::bor);
-	ADD_TOKEN('^', token::bxor);
-	ADD_TOKEN('>', token::greater);
-	ADD_TOKEN('<', token::less);
-	ADD_TOKEN('=', token::assign);
-	ADD_TOKEN(',', token::comma);
-	ADD_TOKEN('dummy', token::dummy);
-	//	std::string grammar::literals[] = { "int_const", "char_const","float_const","id", "string","enumeration_const" };
-	ADD_TOKEN(int_const, token::int_literal);
-	ADD_TOKEN(char_const, token::char_literal);
-	ADD_TOKEN(float_const, token::double_literal);
-	ADD_TOKEN(id, token::identifier);
-	ADD_TOKEN(string, token::string_literal);
-	ADD_TOKEN(enumeration_const, token::identifier);
-	//for (auto&& x : mp)if ((x.second != id_dummy) && (x.second != id_eps))cal_first(x.second);
-	//cal_first(id_s);
-	;
-	cal_first();
-	cal_follow();
+	fill_ll1_table();
 }
 
-grammar::grammar() {
+
+
+grammar::grammar() :token_map(get_token_map()) {
 	init(bnf_c);
 }
-grammar::grammar(std::string const& bnf) {
+grammar::grammar(std::string const& bnf) : token_map(get_token_map()) {
 	init(bnf);
+}
+
+
+void grammar::debug() {
+	using std::cout;
+	using std::endl;
+	cout << "Symbols" << endl;
+	for (auto &&x : mp) {
+		cout << "{" << x.first << "," << x.second << "}";
+	}
+	cout << endl;
+	cout << "Productions" << endl;
+	for (auto&& x : productions) {
+		cout << rev_mp[x.first] << " :" << endl;
+
+		for (auto &&y : x.second) {
+			cout << "--\t";
+			if (y.size() == 0) {
+				cout << "EMPTY PRODUCTION";
+				//return;
+			}
+			for (auto &&z : y)cout << "{" << rev_mp[z] << "} ";
+			cout << endl;
+		}
+	}
+	cout << "First Set" << endl;
+	for (auto &&x : first_set) {
+		cout << '\t' << get_name(x.first) << " :";
+		for (auto&& y : x.second) {
+			cout << " " << get_name(y);
+		}
+		cout << endl;
+	}
+	cout << "Follow Set" << endl;
+	for (auto &&x : follow_set) {
+		cout << "\t" << get_name(x.first) << " :";
+		for (auto&& y : x.second) {
+			cout << " " << get_name(y);
+		}
+		cout << endl;
+	}
+	/*cout << "Token of Ts" << endl;
+	for (auto&& tok : token_map) {
+		cout << tok.first << " => " << token_name[tok.second] << endl;
+	}*/
+	cout << "LL1 TABLE" << endl;
+	for (auto && x : ll1_table) {
+		cout << "(" << get_name(x.first.first) << "," << token_name[x.first.second] << endl;
+
+		for (auto &&y : x.second) {
+			cout << "\t" << get_name(y.first) << " => ";
+			for (auto &&xi : productions[y.first][y.second])cout << get_name(xi) << " ";
+			cout << endl;
+		}
+	}
 }
