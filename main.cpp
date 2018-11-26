@@ -8,6 +8,8 @@
 #include "parse/exp.h"
 int main() {
 	freopen("debug.c", "r", stdin);
+	using std::cout;
+	using std::endl;
 	try {
 		char c; std::string s;
 		while ((c = getchar()) != EOF) {
@@ -15,8 +17,8 @@ int main() {
 		}
 		lex_data data(s);
 		//data.debug();
-		/*
-		rec r(data);
+		
+		/*rec r(data);
 		r.parse_E();
 		std::cout << "�ݹ鷨" << std::endl;
 		std::cout << "PARSER RESULT " << std::boolalpha << (r.good()) << std::endl;
@@ -24,24 +26,79 @@ int main() {
 		LL1 l(data);
 		l.parse();
 		std::cout << "PARSER RESULT " << std::boolalpha << (l.good()) << std::endl;
-*/
 
-		grammar p2;
-		p2.debug();
-		grammar p(R"(
+*/
+		//grammar p2;
+		//p2.debug();//	cout<<p2.parse_ll1(data);
+		sem_stack numbers;
+		int tmp_cnt = 0;
+		grammar grm(R"(
 			E	: T E1 ;
-			E1	: | w0 T E1  ;
-			w0	: '+' | '-' ;
+			E1	: '+' T {GEQ_ADD} E1 
+				| '-' T {GEQ_SUB} E1
+				|
+				;
 			T	: F T1 ;
-			T1	: w1 F T1 | ;
-			w1	: '*' | '/' ;
+			T1	: '*' F {GEQ_MUL} T1 
+				| '/' F {GEQ_DIV} T1
+				|
+				;
 			F	: I | '(' E ')' ;
-			I	: int_const | float_const | id ;
+			I	: int_const {PUSH_INT_CONST} |
+				 float_const {PUSH_FLOAT_CONST} |
+				 id  {PUSH_ID} ;
 		)");
+		//grm.debug();
+		grm.assign_action("{PUSH_ID}", [&](lex_data const& data, int now) {
+			numbers.push_id(data.get_id(now));
+		});
+		grm.assign_action("{PUSH_INT_CONST}", [&](lex_data const& data, int now) {
+			numbers.push_int(data.get_int(now));
+		});
+		grm.assign_action("{PUSH_FLOAT_CONST}", [&](lex_data const& data, int now) {
+			numbers.push_float(data.get_double(now));
+		});
+		auto gen_q=[&](char c) {
+			cout << "{" << c<< " , ";
+			for (int i = 0; i < 2; i++) {
+				switch (numbers.now()) {
+				case type_token::identifier:
+					cout << numbers.id_stack.top();
+					numbers.id_stack.pop();
+					break;
+				case type_token::int_literal:
+					cout << numbers.const_int.top();
+					numbers.const_int.pop();
+					break;
+				case type_token::double_literal:
+					cout << numbers.const_float.top();
+					numbers.const_float.pop();
+					break;
+				}
+				numbers.now_type.pop();
+				cout << " , ";
+			}
+			std::string now_id =std::string("_TMP_NO_")+std::to_string(tmp_cnt++);
+			cout << now_id << " }" << endl;
+			numbers.push_id(now_id);
+
+		};
+		grm.assign_action("{GEQ_MUL}", [&](lex_data const& data, int now) {
+			gen_q('*');
+		});
+		grm.assign_action("{GEQ_DIV}", [&](lex_data const& data, int now) {
+			gen_q('/');
+		});
+		grm.assign_action("{GEQ_ADD}", [&](lex_data const& data, int now) {
+			gen_q('+');
+		});
+		grm.assign_action("{GEQ_SUB}", [&](lex_data const& data, int now) {
+			gen_q('-');
+		});
+
+		parser parse(data);
 		//p.debug();
-		//parser parse(data);
-		//p.debug();
-		//std::cout << parse(p)<< " " << p.parse_ll1(data) << std::endl;
+		std::cout << grm.parse_ll1(data) << std::endl;
 	} catch (std::regex_error e) {
 		std::cout << e.what() << "\n"
 			<< e.code() << std::endl;

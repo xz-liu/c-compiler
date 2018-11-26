@@ -3,21 +3,37 @@
 #include "../basic/bin_tree.h"
 //
 struct grammar {
+	using semantic_action = std::function<void(lex_data const&, int)>;
+
+	struct ll1_stack_element {
+		int id;
+		//int now;
+		operator int()const { return id; }
+		ll1_stack_element() = default;
+		ll1_stack_element(int _id) :id(_id){}
+		ll1_stack_element(ll1_stack_element&& rhs) = default;
+		ll1_stack_element(ll1_stack_element const& rhs) = default;
+		ll1_stack_element& operator= (ll1_stack_element const& rhs) = default;
+	};
+
 private:
 	static std::string literals[];
 	std::map<std::string, int> mp;
 	const std::map < std::string, token > token_map;
 	std::vector<std::string> rev_mp;
+	std::map<std::string,semantic_action > action;
 	std::map<int, std::vector<std::vector<int>>> productions;
 	std::map<int, std::set<int>> first_set;
 	std::map<int, std::set<int>> follow_set;
 	std::map<std::pair<int, token>, std::set<std::pair<int, int>>> ll1_table;
+
 	template<class It>
 	std::set<int> first_set_of_prod(It begin,It end) {
 		std::set<int> ans;
 		bool fucking_good = false;
 		for (; begin != end;++begin) {
 			bool good = true;
+			if (is_semantic_action(*begin))continue;
 			if (first_set[*begin].empty()) {
 				continue;
 			} else for (auto && x : first_set[*begin]) {
@@ -47,7 +63,7 @@ private:
 		if (it != ll1_table.end())  return &it->second;
 		return nullptr;
 	}
-	bool parse_ll1(lex_data const& data, std::stack<int> &sta, int &now);
+	bool parse_ll1(lex_data const& data, std::stack<ll1_stack_element> &sta, int &now,int now_w);
 	
 	int cnt;
 	int get_tok(std::string const&s) {
@@ -71,11 +87,11 @@ public:
 	grammar(std::string const& s);
 	grammar(); 
 	bool parse_ll1(lex_data const& data) {
-		std::stack<int> sta;
+		std::stack< ll1_stack_element> sta;
 		sta.push(id_dummy);
 		sta.push(id_s);
 		int now = 0;
-		return parse_ll1(data, sta, now);
+		return parse_ll1(data, sta, now,id_dummy);
 	}
 	void debug();
 	int add_symbol(std::string const& s) {
@@ -89,6 +105,18 @@ public:
 		for (auto &&i : exp)vec.push_back(get_tok(i));
 		productions[S].push_back(vec);
 	}
+	/*void add_production(std::string const&s,std::string const& atcion ,std::vector<std::string> const&exp) {
+		int S = get_tok(s);
+		std::vector<int> vec;
+		for (auto &&i : exp)vec.push_back(get_tok(i));
+		productions[S].push_back(vec);
+		action_ref.emplace(atcion, std::make_pair(S, productions[S].size() - 1));
+	}*/
+	
+	void assign_action(std::string const& c, semantic_action &&act) {
+		action.emplace(c, act);
+	}
+
 	void add_production(std::string const& s, std::initializer_list<std::string> && exp) {
 		add_production(s, exp);
 	}
@@ -106,13 +134,21 @@ public:
 	}
 	bool is_terminator(int i) const {
 		if (i == id_eps || i == id_dummy)return true;
-		return is_terminator(get_name(i));
+		return is_terminator(get_name(i),false);
 	}
-	bool is_terminator(std::string const& s) const {
-		auto it = mp.find(s);
-		if (it != mp.end())if (it->second == id_eps || it->second == id_dummy)return true;
+	bool is_terminator(std::string const& s, bool outside_call=true) const {
+		if (outside_call) {
+			auto it = mp.find(s);
+			if (it != mp.end())if (it->second == id_eps || it->second == id_dummy)return true;
+		}
 		if (s[0] == '\'')return true;
 		return token_map.find(s) != token_map.end();
+	}
+	bool is_semantic_action(std::string const& s) const{
+		return s.front() == '{';
+	}
+	bool is_semantic_action(int i) const{
+		return is_semantic_action(get_name(i));
 	}
 	token terminator(std::string const&t) const {
 		//std::cout << t << std::endl;
@@ -120,6 +156,36 @@ public:
 		if (it == token_map.end())return token::dummy;
 		else return it->second;
 	}
+};
+
+struct sem_stack {
+	std::stack<std::string	> const_str;
+	std::stack<std::int64_t> const_int;
+	std::stack<double	> const_float;
+	std::stack<char		> const_char;
+	std::stack<std::string	> id_stack;
+	std::stack<type_token> now_type;
+	void push_id(std::string const& now) {
+		id_stack.push(now);
+		now_type.push(type_token::identifier);
+	}
+	void push_str(std::string const& now) {
+		const_str.push(now);
+		now_type.push(type_token::string_literal);
+	}
+	void push_char(char now) {
+		const_char.push(now);
+		now_type.push(type_token::char_literal);
+	}
+	void push_int(std::int64_t const& now) {
+		const_int.push(now);
+		now_type.push(type_token::int_literal);
+	}
+	void push_float(double now) {
+		const_float.push(now);
+		now_type.push(type_token::double_literal);
+	}
+	type_token now() { return now_type.top(); }
 };
 
 struct ast :bin_tree<std::string> {

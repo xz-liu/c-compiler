@@ -9,6 +9,7 @@ enum class token {
 	tokchar,	//	char
 	tokint,	//	int
 	tokunsigned,	//	unsigned
+	toksigned, // signed
 	tokshort,	//	short
 	toklong,	//	long
 	tokfloat,	//	float

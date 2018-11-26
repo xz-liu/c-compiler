@@ -8,6 +8,7 @@ regex_table::regex_table() :table{
 	make_pair(std::regex(R"QWERTY(const)QWERTY"),token::tokconst),
 	make_pair(std::regex(R"QWERTY(volatile)QWERTY"),token::tokvolatile),
 	make_pair(std::regex(R"QWERTY(register)QWERTY"),token::tokregister),
+	make_pair(std::regex(R"QWERTY(signed)QWERTY"),token::toksigned),
 	make_pair(std::regex(R"QWERTY(char)QWERTY"),token::tokchar),
 	make_pair(std::regex(R"QWERTY(int)QWERTY"),token::tokint),
 	make_pair(std::regex(R"QWERTY(unsigned)QWERTY"),token::tokunsigned),
@@ -172,6 +173,7 @@ token_name_type::token_name_type() {
 	_name.emplace(token::semicolon, "semicolon");
 	_name.emplace(token::colon, "colon");
 	_name.emplace(token::question, "question");
+	_name.emplace(token::toksigned, "toksigned");
 	_name.emplace(token::lbrace, "lbrace");
 	_name.emplace(token::rbrace, "rbrace");
 	_name.emplace(token::lbracket, "lbracket");
@@ -407,6 +409,7 @@ std::map<std::string, token> get_token_map() {
 	ADD_TOKEN('register', token::tokregister);
 	ADD_TOKEN('extern', token::tokextern);
 	ADD_TOKEN('static', token::tokstatic);
+	ADD_TOKEN('signed', token::toksigned);
 	ADD_TOKEN('++', token::inc);
 	ADD_TOKEN('--', token::dec);
 	ADD_TOKEN('+=', token::addass);
@@ -454,6 +457,8 @@ std::map<std::string, token> get_token_map() {
 	ADD_TOKEN('<', token::less);
 	ADD_TOKEN('=', token::assign);
 	ADD_TOKEN(',', token::comma);
+	ADD_TOKEN(':', token::colon);
+	ADD_TOKEN('...', token::tokellipsis);
 	ADD_TOKEN('dummy', token::dummy);
 	//	std::string grammar::literals[] = { "int_const", "char_const","float_const","id", "string","enumeration_const" };
 	ADD_TOKEN(int_const, token::int_literal);

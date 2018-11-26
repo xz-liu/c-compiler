@@ -69,6 +69,26 @@ struct lex_data {
 		lex_result = lex(s, vlit_str, vlit_int, vlit_dbl, vlit_chr, vlit_idt, vlit_file);
 	}
 
+	std::string const& get_id( int now) const{
+		return vlit_idt[lex_result[now].second];
+	}
+	std::string const& get_str(int now) const {
+		return vlit_str[lex_result[now].second];
+	}
+
+	int64_t get_int(int now) const {
+		return vlit_int[lex_result[now].second];
+	}
+
+	double get_double(int now) const {
+		return vlit_dbl[lex_result[now].second];
+	}
+
+	char get_char(int now) const {
+		return vlit_chr[lex_result[now].second];
+	}
+
+
 	template <class T> void output_vector(std::vector <T> const& v) {
 		for (auto &i : v) { std::cout << "{" << i << "} "; }
 		std::cout << std::endl;
@@ -103,6 +123,12 @@ struct lex_data {
 			break;
 		}
 		return false;
+	}
+	std::string get_token_name ( size_t pos) const {
+		return token_name[get_token(pos)];
+	}
+	type_token get_type_token(size_t pos) const{
+		return lex_result[pos].first;
 	}
 	token get_token(size_t pos)const {
 		if (pos >= lex_result.size()) return token::dummy;
