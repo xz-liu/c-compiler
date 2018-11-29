@@ -1,0 +1,10 @@
+program : decl_list
+decl_list : decl decl_list | decl_list
+decl : var_decl | fun_decl
+var_decl : type_spec id ';' | type_spec id array_suffix ';' |  type_spec id '=' exp ';' ;
+array_suffix : '[' int_const ']' | '[' int_const ']' array_suffix ;
+type_spec : type_attr type_id | type_id | type_attr type_attr type_id ;
+type_attr : 'auto' | 'static' | 'const' | 'vollatile' | 'register' | 'extern' ;
+type_id : 'int' | 'long' | 'short' | 'float' | 'double' 
+        | 'long' 'int' | 'long' 'long' 'int' | 'long' 'double' | 'char' | 'unsigned' | 'unsigned' 'int' |
+        'unsigned' 'long' | 'unsigned' 'long' 'long' | 'long' 'long' ;

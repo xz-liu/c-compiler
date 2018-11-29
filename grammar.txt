@@ -1,0 +1,3 @@
+program  : {program_init} define_list ;
+define_list : define define_list | ;
+define 

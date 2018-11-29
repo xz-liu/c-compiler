@@ -3,8 +3,14 @@
 #include "../basic/bin_tree.h"
 //
 struct grammar {
+	using product_reference = std::pair<int, int>;
+	using production = std::vector<int>;
+	bool ll1_table_product_cmp(product_reference const& a, product_reference const &b);
+public:
 	using semantic_action = std::function<void(lex_data const&, int)>;
-
+	using ll1_table_pred = std::pair<int, token>;
+	using ll1_table_item = std::set<std::pair<int, int>,
+		std::function<bool (grammar::product_reference const& , grammar::product_reference const &)>>;
 	struct ll1_stack_element {
 		int id;
 		//int now;
@@ -22,11 +28,11 @@ private:
 	const std::map < std::string, token > token_map;
 	std::vector<std::string> rev_mp;
 	std::map<std::string,semantic_action > action;
-	std::map<int, std::vector<std::vector<int>>> productions;
+	std::map<int, std::vector<production>> productions;
+	std::map<std::pair<int, int>, int> prod_index;
 	std::map<int, std::set<int>> first_set;
 	std::map<int, std::set<int>> follow_set;
-	std::map<std::pair<int, token>, std::set<std::pair<int, int>>> ll1_table;
-
+	std::map<ll1_table_pred, ll1_table_item>ll1_table;
 	template<class It>
 	std::set<int> first_set_of_prod(It begin,It end) {
 		std::set<int> ans;
@@ -51,6 +57,7 @@ private:
 	}
 	void cal_first();
 	void cal_follow();
+	int cal_prod_index(int S,production const& prod);
 	/*std::set<int> first_set(int S, int prod) {
 		for (auto &&Xi :productions[S][prod]) {
 			if (first[Xi].empty())continue;
@@ -58,7 +65,7 @@ private:
 		}
 	}*/
 	void fill_ll1_table();
-	std::set<std::pair<int, int>> const* find_ll1(int top, token now) {
+	ll1_table_item const* find_ll1(int top, token now) {
 		auto it = ll1_table.find(std::make_pair(top, now));
 		if (it != ll1_table.end())  return &it->second;
 		return nullptr;
@@ -104,6 +111,7 @@ public:
 		std::vector<int> vec;
 		for (auto &&i : exp)vec.push_back(get_tok(i));
 		productions[S].push_back(vec);
+		prod_index[std::make_pair(S,productions[S].size()-1)]= cal_prod_index(S, vec);
 	}
 	/*void add_production(std::string const&s,std::string const& atcion ,std::vector<std::string> const&exp) {
 		int S = get_tok(s);

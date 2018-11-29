@@ -37,6 +37,7 @@ bool parser::parse(grammar const& grm, int pro_s) {
 		int prev = now;
 		bool good = true, sub_good = true, has_sub = false;
 		if (exp.size() != 0) for (auto &&xi : exp) {
+			
 			if (grm.is_terminator(xi)) {
 				std::cout << "-------T " << grm.get_name(xi) << " "
 					<< token_name[grm.terminator(xi)] << " "
@@ -52,7 +53,7 @@ bool parser::parse(grammar const& grm, int pro_s) {
 					break;
 					//return false;
 				}
-			} else {
+			} else if(!grm.is_semantic_action(xi)){
 				has_sub = true;
 				sub_good = sub_good&& parse(grm, xi);
 			}

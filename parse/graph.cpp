@@ -1,280 +1,14 @@
 #include "graph.h"
 
 std::string bnf_c =
-R"(translation_unit    : external_decl
-            | external_decl translation_unit
-            ;
-external_decl       : function_definition
-            | decl
-            ;
-function_definition : decl_specs declarator decl_list compound_stat
-            |       declarator decl_list compound_stat
-            | decl_specs declarator     compound_stat
-            |       declarator  compound_stat
-            ;
-decl            : decl_specs init_declarator_list ';'
-            | decl_specs            ';'
-            ;
-decl_list       : decl
-            | decl decl_list
-            ;
-decl_specs      : storage_class_spec decl_specs
-            | storage_class_spec
-            | type_spec decl_specs
-            | type_spec
-            | type_qualifier decl_specs
-            | type_qualifier
-            ;
-storage_class_spec  :  | 'register' | 'static' | 'extern' | 'typedef'
-            ;
-type_spec       : 'void' | 'char' | 'short' | 'int' | 'long' | 'float'
-            | 'double' | 'signed' | 'unsigned'
-            | struct_or_union_spec
-            | enum_spec
-            | typedef_name
-            ;
-type_qualifier      : 'const' | 'volatile'
-            ;
-struct_or_union_spec    : struct_or_union id '{' struct_decl_list '}'
-            | struct_or_union   '{' struct_decl_list '}'
-            | struct_or_union id
-            ;
-struct_or_union     : 'struct' | 'union'
-            ;
-struct_decl_list    : struct_decl
-            |  struct_decl struct_decl_list
-            ;
-init_declarator_list    : init_declarator
-            |   init_declarator ',' init_declarator_list
-            ;
-init_declarator     : declarator
-            | declarator '=' initializer
-            ;
-struct_decl     : spec_qualifier_list struct_declarator_list ';'
-            ;
-spec_qualifier_list : type_spec spec_qualifier_list
-            | type_spec
-            | type_qualifier spec_qualifier_list
-            | type_qualifier
-            ;
-struct_declarator_list  : struct_declarator
-            |  struct_declarator ','  struct_declarator_list
-            ;
-struct_declarator   : declarator
-            | declarator ':' const_exp
-            |       ':' const_exp
-            ;
-enum_spec       : 'enum' id '{' enumerator_list '}'
-            | 'enum'    '{' enumerator_list '}'
-            | 'enum' id
-            ;
-enumerator_list     : enumerator
-            |   enumerator ',' enumerator_list
-            ;
-enumerator      : id
-            | id '=' const_exp
-            ;
-declarator      : pointer direct_declarator
-            |   direct_declarator
-            ;
-
-direct_declarator : id direct_declarator_helper 
-            | '(' declarator ')' direct_declarator_helper
-            ;
-direct_declarator_helper :  '[' const_exp ']' direct_declarator_helper
-            |  '['     ']' direct_declarator_helper
-            |  '(' param_type_list ')' direct_declarator_helper
-            |  '(' id_list ')' direct_declarator_helper
-            |  '('     ')' direct_declarator_helper
-            |  
-            ;
-            
-pointer         : '*' type_qualifier_list
-            | '*'
-            | '*' type_qualifier_list pointer
-            | '*'           pointer
-            ;
-type_qualifier_list : type_qualifier
-            |  type_qualifier type_qualifier_list
-            ;
-param_type_list     : param_list
-            | param_list ',' '...'
-            ;
-param_list      : param_decl
-            | param_decl ','  param_list 
-            ;
-param_decl      : decl_specs declarator
-            | decl_specs abstract_declarator
-            | decl_specs
-            ;
-id_list         : id 
-            | id ',' id_list 
-            ;
-initializer     : assignment_exp
-            | '{' initializer_list '}'
-            | '{' initializer_list ',' '}'
-            ;
-initializer_list    : initializer
-            | initializer  ',' initializer_list 
-            ;
-type_name       : spec_qualifier_list abstract_declarator
-            | spec_qualifier_list
-            ;
-abstract_declarator : pointer
-            | pointer direct_abstract_declarator
-            |   direct_abstract_declarator
-            ;
-direct_abstract_declarator :  '(' abstract_declarator ')' direct_abstract_declarator_helper
-            |       '[' const_exp ']' direct_abstract_declarator_helper
-            |       '[' ']' direct_abstract_declarator_helper
-            |       '(' param_type_list ')'    direct_abstract_declarator_helper
-            |       '('     ')'      direct_abstract_declarator_helper
-            ;
-
-direct_abstract_declarator_helper : '[' const_exp ']' direct_abstract_declarator_helper
-            |  '['     ']' direct_abstract_declarator_helper
-            |  '(' param_type_list ')' direct_abstract_declarator_helper
-            |  '(' id_list ')' direct_abstract_declarator_helper
-            |  '('     ')' direct_abstract_declarator_helper
-            |  
-            ;
-typedef_name        : id
-            ;
-stat            : labeled_stat
-            | exp_stat
-            | compound_stat
-            | selection_stat
-            | iteration_stat
-            | jump_stat
-            ;
-labeled_stat        : id ':' stat
-            | 'case' const_exp ':' stat
-            | 'default' ':' stat
-            ;
-exp_stat        : exp ';'
-            |   ';'
-            ;
-compound_stat       : '{' decl_list stat_list '}'
-            | '{'       stat_list '}'
-            | '{' decl_list     '}'
-            | '{'           '}'
-            ;
-stat_list       : stat
-            |  stat stat_list
-            ;
-selection_stat      : 'if' '(' exp ')' stat
-            | 'if' '(' exp ')' stat 'else' stat
-            | 'switch' '(' exp ')' stat
-            ;
-iteration_stat      : 'while' '(' exp ')' stat
-            | 'do' stat 'while' '(' exp ')' ';'
-            | 'for' '(' exp ';' exp ';' exp ')' stat
-            | 'for' '(' exp ';' exp ';' ')' stat
-            | 'for' '(' exp ';' ';' exp ')' stat
-            | 'for' '(' exp ';' ';' ')' stat
-            | 'for' '(' ';' exp ';' exp ')' stat
-            | 'for' '(' ';' exp ';' ')' stat
-            | 'for' '(' ';' ';' exp ')' stat
-            | 'for' '(' ';' ';' ')' stat
-            ;
-jump_stat       : 'goto' id ';'
-            | 'continue' ';'
-            | 'break' ';'
-            | 'return' exp ';'
-            | 'return'  ';'
-            ;
-exp         : assignment_exp
-            |  assignment_exp ',' exp 
-            ;
-assignment_exp      : conditional_exp
-            | unary_exp assignment_operator assignment_exp
-            ;
-assignment_operator : '=' | '*=' | '/=' | '%=' | '+=' | '-=' | '<<='
-            | '>>=' | '&=' | '^=' | '|='
-            ;
-conditional_exp     : logical_or_exp
-            | logical_or_exp '?' exp ':' conditional_exp
-            ;
-const_exp       : conditional_exp
-            ;
-logical_or_exp      : logical_and_exp
-            |  logical_and_exp '||' logical_or_exp 
-            ;
-logical_and_exp     : inclusive_or_exp
-            |  inclusive_or_exp '&&' logical_and_exp 
-            ;
-inclusive_or_exp    : exclusive_or_exp
-            |  exclusive_or_exp '|' inclusive_or_exp 
-            ;
-exclusive_or_exp    : and_exp
-            | and_exp  '^'  exclusive_or_exp
-            ;
-and_exp         : equality_exp
-            | equality_exp '&'  and_exp 
-            ;
-equality_exp        : relational_exp
-            |  relational_exp '=='  equality_exp 
-            |  relational_exp  '!=' equality_exp
-            ;
-relational_exp      : shift_expression
-            |  shift_expression '<' relational_exp
-            |  shift_expression '>' relational_exp 
-            |  shift_expression '<=' relational_exp 
-            |  shift_expression '>=' relational_exp 
-            ;
-shift_expression    : additive_exp
-            |  additive_exp '<<' shift_expression
-            |  additive_exp '>>' shift_expression
-            ;
-additive_exp        : mult_exp
-            | mult_exp '+'  additive_exp 
-            | mult_exp '-'  additive_exp 
-            ;
-mult_exp        : cast_exp
-            |  cast_exp '*' mult_exp
-            |  cast_exp '/' mult_exp 
-            |  cast_exp '%' mult_exp
-            ;
-cast_exp        : unary_exp
-            | '(' type_name ')' cast_exp
-            ;
-unary_exp       : postfix_exp
-            | '++' unary_exp
-            | '--' unary_exp
-            | unary_operator cast_exp
-            | 'sizeof' unary_exp
-            | 'sizeof' '(' type_name ')'
-            ;
-unary_operator      : '&' | '*' | '+' | '-' | '~' | '!'
-            ;
-postfix_exp  : primary_exp postfix_exp_helper
-            ;
-postfix_exp_helper :   '[' exp ']' postfix_exp_helper
-            |  '(' argument_exp_list ')' postfix_exp_helper
-            |  '('           ')' postfix_exp_helper
-            |  '.' id postfix_exp_helper
-            |  '->' id postfix_exp_helper
-            |  '++' postfix_exp_helper
-            |  '--' postfix_exp_helper
-			|
-            ;            
-primary_exp     : id
-            | const
-            | string
-            | '(' exp ')'
-            ;
-argument_exp_list   : assignment_exp
-            |  assignment_exp ',' argument_exp_list 
-            ;
-const           : int_const
-            | char_const
-            | float_const
-            | enumeration_const
-            ;)";
-
+R"()";
 
 std::string grammar::literals[] = { "int_const", "char_const","float_const","id", "string","enumeration_const" };
 
+bool grammar::ll1_table_product_cmp(product_reference const & a, product_reference const & b) {
+	return	prod_index[std::make_pair(a.first, a.second)] >
+			prod_index[std::make_pair(b.first,b.second)];
+}
 
 void grammar::cal_first() {
 	for (auto&& x : mp) {
@@ -343,9 +77,32 @@ void grammar::cal_follow() {
 	for (auto&& i : follow_set)i.second.erase(id_eps);
 }
 
+int grammar::cal_prod_index(int S,production const & prod) {
+	int ind = 0;
+	for(auto&& item:prod) {
+		if (is_semantic_action(item))ind++;
+		else if (item == id_eps)ind--;
+		else if (is_terminator(item))ind++;
+		else if (item == S)ind--;
+	}
+	return ind;
+}
+
 void grammar::fill_ll1_table() {
 	cal_first();
 	cal_follow();
+	auto pthis = this;
+	auto ll1_table_insert=[&](ll1_table_pred const& p, product_reference const& i) {
+		auto it = ll1_table.find(p);
+		if (it == ll1_table.end()) {
+			ll1_table.emplace(p,ll1_table_item ([&](product_reference const&a,product_reference const &b) {
+				return ll1_table_product_cmp(a, b);
+			}));
+			it = ll1_table.find(p);
+		}
+		it->second.insert(i);
+	};
+
 	for (auto &&all_prods : productions) {
 		auto &&S = all_prods.first;
 		if (is_semantic_action(S))continue;
@@ -355,15 +112,17 @@ void grammar::fill_ll1_table() {
 			auto this_first = first_set_of_prod(prods.begin(), prods.end());
 			for(auto &&t:this_first) {
 				if(t==id_eps) {
-					for(auto&& ft: follow_set[S])
-						ll1_table[
-							std::make_pair(S, token_map.find(get_name(ft))->second)
-						].insert(std::make_pair(S, prod_rk));
+					for (auto&& ft : follow_set[S])
+						ll1_table_insert(
+							std::make_pair(S, token_map.find(get_name(ft))->second), 
+							std::make_pair(S, prod_rk)
+						);
 				}
 				else {
-					ll1_table[
-						std::make_pair(S, token_map.find(get_name(t))->second)
-					].insert(std::make_pair(S, prod_rk));
+					ll1_table_insert(
+						std::make_pair(S, token_map.find(get_name(t))->second),
+						std::make_pair(S, prod_rk)
+					);
 				}
 			}
 			prod_rk++;
@@ -371,6 +130,8 @@ void grammar::fill_ll1_table() {
 
 	}
 }
+//
+//#define _MYDEBUG
 
 bool grammar::parse_ll1(lex_data const & data, std::stack<grammar::ll1_stack_element>& sta, int & now,int now_w) {
 	auto id_top = sta.top();
@@ -390,7 +151,6 @@ bool grammar::parse_ll1(lex_data const & data, std::stack<grammar::ll1_stack_ele
 		if (is_terminator(id_top)) {
 #ifdef _MYDEBUG
 			std::cout << "terminator "<< get_name(id_top)<< " " << data.get_token_name(now) ;
-
 #endif
 			if (data.cmp_token(now, terminator(id_top))) {
 				sta.pop();
@@ -412,6 +172,7 @@ bool grammar::parse_ll1(lex_data const & data, std::stack<grammar::ll1_stack_ele
 #endif
 			auto r = find_ll1(id_top, data.get_token(now));
 			if (r) {
+				bool good = false;
 				for (auto it = r->begin(); it != r->end(); it++) {
 					std::stack<ll1_stack_element> tmp = sta; 
 					tmp.pop();
@@ -425,15 +186,22 @@ bool grammar::parse_ll1(lex_data const & data, std::stack<grammar::ll1_stack_ele
 #endif
 
 					for (auto it = prod.rbegin(); it != prod.rend(); it++) tmp.push(*it);
+					
 					if (parse_ll1(data, tmp, n,now_w)) {
 						if (id_top != id_s || n == data.lex_result.size()) {
-							sta = tmp; now = n;
-#ifdef _MYDEBUG
+							sta = tmp; now = n; good = true;
+#ifdef _MYDEBUG				
 							std::cout << "-- select this" << std::endl;
 #endif
 							break;
 						}
 					}
+				}
+				if(!good) {
+#ifdef _MYDEBUG				
+					std::cout << "-- reject -- all productions tried" << std::endl;
+#endif
+					return false;
 				}
 			} else {
 #ifdef _MYDEBUG
@@ -449,34 +217,24 @@ bool grammar::parse_ll1(lex_data const & data, std::stack<grammar::ll1_stack_ele
 
 void grammar::init(std::string const & bnf) {
 	cnt = 0;
-	//static std::regex action_match("R({*})");
 	std::string s, S;
 	std::stringstream cin(bnf);
 	bool _1st = true;
 	while (cin >> s) {
 		std::string t; cin >> t; // :
-								 /*std::cout << "\tNEW S" << s << " " << t << std::endl;*/
 		if (_1st) {
 			_1st = false;
 			S = s;
 		}
 		while (t != ";") {
 			std::vector<std::string> vec;
-			//std::string act = "";
 			while (true) {
 				cin >> t;
-				/*if(t.front()=='{'&&t.back()=='}') {
-					act = t;
-				}*/
 				std::cout << t << std::endl;
 				if (t == "|" || t == ";")break;
 				vec.push_back(t);
-			};
-			/*std::cout << "addPROD " << s<<" ->";
-			for (auto x : vec)std::cout << " " << x;
-			std::cout<< std::endl;*/
-			/*if (act.size())add_production(s, act, vec);
-			else*/ add_production(s, vec);
+			}
+			add_production(s, vec);
 		}
 	}
 	add_symbol("'dummy'");
@@ -489,10 +247,12 @@ void grammar::init(std::string const & bnf) {
 
 
 
-grammar::grammar() :token_map(get_token_map()) {
+grammar::grammar() 
+:token_map(get_token_map()) {
 	init(bnf_c);
 }
-grammar::grammar(std::string const& bnf) : token_map(get_token_map()) {
+grammar::grammar(std::string const& bnf) 
+: token_map(get_token_map()) {
 	init(bnf);
 }
 
@@ -535,10 +295,6 @@ void grammar::debug() {
 		}
 		cout << endl;
 	}
-	/*cout << "Token of Ts" << endl;
-	for (auto&& tok : token_map) {
-		cout << tok.first << " => " << token_name[tok.second] << endl;
-	}*/
 	cout << "LL1 TABLE" << endl;
 	for (auto && x : ll1_table) {
 		cout << "(" << get_name(x.first.first) << "," << token_name[x.first.second] << endl;

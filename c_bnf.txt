@@ -1,0 +1,5402 @@
+external_decl
+|
+external_decl
+translation_unit
+;
+function_definition
+|
+decl
+;
+decl_specs
+declarator
+decl_list
+compound_stat
+|
+declarator
+decl_list
+compound_stat
+|
+decl_specs
+declarator
+compound_stat
+|
+declarator
+compound_stat
+;
+decl_specs
+init_declarator_list
+';'
+|
+decl_specs
+';'
+;
+decl
+|
+decl
+decl_list
+;
+storage_class_spec
+decl_specs
+|
+storage_class_spec
+|
+type_spec
+decl_specs
+|
+type_spec
+|
+type_qualifier
+decl_specs
+|
+type_qualifier
+;
+|
+'register'
+|
+'static'
+|
+'extern'
+|
+'typedef'
+;
+'void'
+|
+'char'
+|
+'short'
+|
+'int'
+|
+'long'
+|
+'float'
+|
+'double'
+|
+'signed'
+|
+'unsigned'
+|
+struct_or_union_spec
+|
+enum_spec
+|
+typedef_name
+;
+'const'
+|
+'volatile'
+;
+struct_or_union
+id
+'{'
+struct_decl_list
+'}'
+|
+struct_or_union
+'{'
+struct_decl_list
+'}'
+|
+struct_or_union
+id
+;
+'struct'
+|
+'union'
+;
+struct_decl
+|
+struct_decl
+struct_decl_list
+;
+init_declarator
+|
+init_declarator
+','
+init_declarator_list
+;
+declarator
+|
+declarator
+'='
+initializer
+;
+spec_qualifier_list
+struct_declarator_list
+';'
+;
+type_spec
+spec_qualifier_list
+|
+type_spec
+|
+type_qualifier
+spec_qualifier_list
+|
+type_qualifier
+;
+struct_declarator
+|
+struct_declarator
+','
+struct_declarator_list
+;
+declarator
+|
+declarator
+':'
+const_exp
+|
+':'
+const_exp
+;
+'enum'
+id
+'{'
+enumerator_list
+'}'
+|
+'enum'
+'{'
+enumerator_list
+'}'
+|
+'enum'
+id
+;
+enumerator
+|
+enumerator
+','
+enumerator_list
+;
+id
+|
+id
+'='
+const_exp
+;
+pointer
+direct_declarator
+|
+direct_declarator
+;
+id
+direct_declarator_helper
+|
+'('
+declarator
+')'
+direct_declarator_helper
+;
+'['
+const_exp
+']'
+direct_declarator_helper
+|
+'['
+']'
+direct_declarator_helper
+|
+'('
+param_type_list
+')'
+direct_declarator_helper
+|
+'('
+id_list
+')'
+direct_declarator_helper
+|
+'('
+')'
+direct_declarator_helper
+|
+;
+'*'
+type_qualifier_list
+|
+'*'
+|
+'*'
+type_qualifier_list
+pointer
+|
+'*'
+pointer
+;
+type_qualifier
+|
+type_qualifier
+type_qualifier_list
+;
+param_list
+|
+param_list
+','
+'...'
+;
+param_decl
+|
+param_decl
+','
+param_list
+;
+decl_specs
+declarator
+|
+decl_specs
+abstract_declarator
+|
+decl_specs
+;
+id
+|
+id
+','
+id_list
+;
+assignment_exp
+|
+'{'
+initializer_list
+'}'
+|
+'{'
+initializer_list
+','
+'}'
+;
+initializer
+|
+initializer
+','
+initializer_list
+;
+spec_qualifier_list
+abstract_declarator
+|
+spec_qualifier_list
+;
+pointer
+|
+pointer
+direct_abstract_declarator
+|
+direct_abstract_declarator
+;
+'('
+abstract_declarator
+')'
+direct_abstract_declarator_helper
+|
+'['
+const_exp
+']'
+direct_abstract_declarator_helper
+|
+'['
+']'
+direct_abstract_declarator_helper
+|
+'('
+param_type_list
+')'
+direct_abstract_declarator_helper
+|
+'('
+')'
+direct_abstract_declarator_helper
+;
+'['
+const_exp
+']'
+direct_abstract_declarator_helper
+|
+'['
+']'
+direct_abstract_declarator_helper
+|
+'('
+param_type_list
+')'
+direct_abstract_declarator_helper
+|
+'('
+id_list
+')'
+direct_abstract_declarator_helper
+|
+'('
+')'
+direct_abstract_declarator_helper
+|
+;
+id
+;
+labeled_stat
+|
+exp_stat
+|
+compound_stat
+|
+selection_stat
+|
+iteration_stat
+|
+jump_stat
+;
+id
+':'
+stat
+|
+'case'
+const_exp
+':'
+stat
+|
+'default'
+':'
+stat
+;
+exp
+';'
+|
+';'
+;
+'{'
+decl_list
+stat_list
+'}'
+|
+'{'
+stat_list
+'}'
+|
+'{'
+decl_list
+'}'
+|
+'{'
+'}'
+;
+stat
+|
+stat
+stat_list
+;
+'if'
+'('
+exp
+')'
+stat
+|
+'if'
+'('
+exp
+')'
+stat
+'else'
+stat
+|
+'switch'
+'('
+exp
+')'
+stat
+;
+'while'
+'('
+exp
+')'
+stat
+|
+'do'
+stat
+'while'
+'('
+exp
+')'
+';'
+|
+'for'
+'('
+exp
+';'
+exp
+';'
+exp
+')'
+stat
+|
+'for'
+'('
+exp
+';'
+exp
+';'
+')'
+stat
+|
+'for'
+'('
+exp
+';'
+';'
+exp
+')'
+stat
+|
+'for'
+'('
+exp
+';'
+';'
+')'
+stat
+|
+'for'
+'('
+';'
+exp
+';'
+exp
+')'
+stat
+|
+'for'
+'('
+';'
+exp
+';'
+')'
+stat
+|
+'for'
+'('
+';'
+';'
+exp
+')'
+stat
+|
+'for'
+'('
+';'
+';'
+')'
+stat
+;
+'goto'
+id
+';'
+|
+'continue'
+';'
+|
+'break'
+';'
+|
+'return'
+exp
+';'
+|
+'return'
+';'
+;
+assignment_exp
+|
+assignment_exp
+','
+exp
+;
+conditional_exp
+|
+unary_exp
+assignment_operator
+assignment_exp
+;
+'='
+|
+'*='
+|
+'/='
+|
+'%='
+|
+'+='
+|
+'-='
+|
+'<<='
+|
+'>>='
+|
+'&='
+|
+'^='
+|
+'|='
+;
+logical_or_exp
+|
+logical_or_exp
+'?'
+exp
+':'
+conditional_exp
+;
+conditional_exp
+;
+logical_and_exp
+|
+logical_and_exp
+'||'
+logical_or_exp
+;
+inclusive_or_exp
+|
+inclusive_or_exp
+'&&'
+logical_and_exp
+;
+exclusive_or_exp
+|
+exclusive_or_exp
+'|'
+inclusive_or_exp
+;
+and_exp
+|
+and_exp
+'^'
+exclusive_or_exp
+;
+equality_exp
+|
+equality_exp
+'&'
+and_exp
+;
+relational_exp
+|
+relational_exp
+'=='
+equality_exp
+|
+relational_exp
+'!='
+equality_exp
+;
+shift_expression
+|
+shift_expression
+'<'
+relational_exp
+|
+shift_expression
+'>'
+relational_exp
+|
+shift_expression
+'<='
+relational_exp
+|
+shift_expression
+'>='
+relational_exp
+;
+additive_exp
+|
+additive_exp
+'<<'
+shift_expression
+|
+additive_exp
+'>>'
+shift_expression
+;
+mult_exp
+|
+mult_exp
+'+'
+additive_exp
+|
+mult_exp
+'-'
+additive_exp
+;
+cast_exp
+|
+cast_exp
+'*'
+mult_exp
+|
+cast_exp
+'/'
+mult_exp
+|
+cast_exp
+'%'
+mult_exp
+;
+unary_exp
+|
+'('
+type_name
+')'
+cast_exp
+;
+postfix_exp
+|
+'++'
+unary_exp
+|
+'--'
+unary_exp
+|
+unary_operator
+cast_exp
+|
+'sizeof'
+unary_exp
+|
+'sizeof'
+'('
+type_name
+')'
+;
+'&'
+|
+'*'
+|
+'+'
+|
+'-'
+|
+'~'
+|
+'!'
+;
+primary_exp
+postfix_exp_helper
+;
+'['
+exp
+']'
+postfix_exp_helper
+|
+'('
+argument_exp_list
+')'
+postfix_exp_helper
+|
+'('
+')'
+postfix_exp_helper
+|
+'.'
+id
+postfix_exp_helper
+|
+'->'
+id
+postfix_exp_helper
+|
+'++'
+postfix_exp_helper
+|
+'--'
+postfix_exp_helper
+|
+;
+id
+|
+const
+|
+string
+|
+'('
+exp
+')'
+;
+assignment_exp
+|
+assignment_exp
+','
+argument_exp_list
+;
+int_const
+|
+char_const
+|
+float_const
+|
+enumeration_const
+;
+Symbols
+{'!',139}{'!=',118}{'%',132}{'%=',96}{'&&',109}{'&',115}{'&=',101}{'(',54}{')',55}{'*',60}{'*=',94}{'+',128}{'++',134}{'+=',97}{',',40}{'-',129}{'--',135}{'-=',98}{'->',144}{'.',143}{'...',63}{'/',131}{'/=',95}{':',46}{';',9}{'<',120}{'<<',125}{'<<=',99}{'<=',122}{'=',41}{'==',117}{'>',121}{'>=',123}{'>>',126}{'>>=',100}{'?',105}{'[',56}{']',57}{'^',113}{'^=',102}{'break',89}{'case',77}{'char',18}{'const',29}{'continue',88}{'default',78}{'do',85}{'double',23}{'dummy',151}{'else',82}{'enum',48}{'extern',15}{'float',22}{'for',86}{'goto',87}{'if',81}{'int',20}{'long',21}{'register',13}{'return',90}{'short',19}{'signed',24}{'sizeof',137}{'static',14}{'struct',36}{'switch',83}{'typedef',16}{'union',37}{'unsigned',25}{'void',17}{'volatile',30}{'while',84}{'{',33}{'|',111}{'|=',103}{'||',107}{'}',35}{'~',138}{_Eps,152}{abstract_declarator,65}{additive_exp,124}{and_exp,112}{argument_exp_list,142}{assignment_exp,66}{assignment_operator,93}{cast_exp,130}{char_const,148}{compound_stat,7}{conditional_exp,91}{const,145}{const_exp,47}{decl,3}{decl_list,6}{decl_specs,4}{declarator,5}{direct_abstract_declarator,69}{direct_abstract_declarator_helper,70}{direct_declarator,52}{direct_declarator_helper,53}{enum_spec,27}{enumeration_const,150}{enumerator,50}{enumerator_list,49}{equality_exp,114}{exclusive_or_exp,110}{exp,79}{exp_stat,73}{external_decl,1}{float_const,149}{function_definition,2}{id,32}{id_list,59}{inclusive_or_exp,108}{init_declarator,39}{init_declarator_list,8}{initializer,42}{initializer_list,67}{int_const,147}{iteration_stat,75}{jump_stat,76}{labeled_stat,72}{logical_and_exp,106}{logical_or_exp,104}{mult_exp,127}{param_decl,64}{param_list,62}{param_type_list,58}{pointer,51}{postfix_exp,133}{postfix_exp_helper,141}{primary_exp,140}{relational_exp,116}{selection_stat,74}{shift_expression,119}{spec_qualifier_list,43}{stat,71}{stat_list,80}{storage_class_spec,10}{string,146}{struct_decl,38}{struct_decl_list,34}{struct_declarator,45}{struct_declarator_list,44}{struct_or_union,31}{struct_or_union_spec,26}{translation_unit,0}{type_name,68}{type_qualifier,12}{type_qualifier_list,61}{type_spec,11}{typedef_name,28}{unary_exp,92}{unary_operator,136}
+Productions
+ [translation_unit]  :
+--      {external_decl}
+--      {external_decl} {translation_unit}
+ [external_decl]  :
+--      {function_definition}
+--      {decl}
+ [function_definition]  :
+--      {decl_specs} {declarator} {decl_list} {compound_stat}
+--      {declarator} {decl_list} {compound_stat}
+--      {decl_specs} {declarator} {compound_stat}
+--      {declarator} {compound_stat}
+ [decl]  :
+--      {decl_specs} {init_declarator_list} {';'}
+--      {decl_specs} {';'}
+ [decl_specs]  :
+--      {storage_class_spec} {decl_specs}
+--      {storage_class_spec}
+--      {type_spec} {decl_specs}
+--      {type_spec}
+--      {type_qualifier} {decl_specs}
+--      {type_qualifier}
+ [declarator]  :
+--      {pointer} {direct_declarator}
+--      {direct_declarator}
+ [decl_list]  :
+--      {decl}
+--      {decl} {decl_list}
+ [compound_stat]  :
+--      {'{'} {decl_list} {stat_list} {'}'}
+--      {'{'} {stat_list} {'}'}
+--      {'{'} {decl_list} {'}'}
+--      {'{'} {'}'}
+ [init_declarator_list]  :
+--      {init_declarator}
+--      {init_declarator} {','} {init_declarator_list}
+ [storage_class_spec]  :
+--      EMPTY PRODUCTION
+--      {'register'}
+--      {'static'}
+--      {'extern'}
+--      {'typedef'}
+ [type_spec]  :
+--      {'void'}
+--      {'char'}
+--      {'short'}
+--      {'int'}
+--      {'long'}
+--      {'float'}
+--      {'double'}
+--      {'signed'}
+--      {'unsigned'}
+--      {struct_or_union_spec}
+--      {enum_spec}
+--      {typedef_name}
+ [type_qualifier]  :
+--      {'const'}
+--      {'volatile'}
+ [struct_or_union_spec]  :
+--      {struct_or_union} {id} {'{'} {struct_decl_list} {'}'}
+--      {struct_or_union} {'{'} {struct_decl_list} {'}'}
+--      {struct_or_union} {id}
+ [enum_spec]  :
+--      {'enum'} {id} {'{'} {enumerator_list} {'}'}
+--      {'enum'} {'{'} {enumerator_list} {'}'}
+--      {'enum'} {id}
+ [typedef_name]  :
+--      {id}
+ [struct_or_union]  :
+--      {'struct'}
+--      {'union'}
+ [struct_decl_list]  :
+--      {struct_decl}
+--      {struct_decl} {struct_decl_list}
+ [struct_decl]  :
+--      {spec_qualifier_list} {struct_declarator_list} {';'}
+ [init_declarator]  :
+--      {declarator}
+--      {declarator} {'='} {initializer}
+ [initializer]  :
+--      {assignment_exp}
+--      {'{'} {initializer_list} {'}'}
+--      {'{'} {initializer_list} {','} {'}'}
+ [spec_qualifier_list]  :
+--      {type_spec} {spec_qualifier_list}
+--      {type_spec}
+--      {type_qualifier} {spec_qualifier_list}
+--      {type_qualifier}
+ [struct_declarator_list]  :
+--      {struct_declarator}
+--      {struct_declarator} {','} {struct_declarator_list}
+ [struct_declarator]  :
+--      {declarator}
+--      {declarator} {':'} {const_exp}
+--      {':'} {const_exp}
+ [const_exp]  :
+--      {conditional_exp}
+ [enumerator_list]  :
+--      {enumerator}
+--      {enumerator} {','} {enumerator_list}
+ [enumerator]  :
+--      {id}
+--      {id} {'='} {const_exp}
+ [pointer]  :
+--      {'*'} {type_qualifier_list}
+--      {'*'}
+--      {'*'} {type_qualifier_list} {pointer}
+--      {'*'} {pointer}
+ [direct_declarator]  :
+--      {id} {direct_declarator_helper}
+--      {'('} {declarator} {')'} {direct_declarator_helper}
+ [direct_declarator_helper]  :
+--      {'['} {const_exp} {']'} {direct_declarator_helper}
+--      {'['} {']'} {direct_declarator_helper}
+--      {'('} {param_type_list} {')'} {direct_declarator_helper}
+--      {'('} {id_list} {')'} {direct_declarator_helper}
+--      {'('} {')'} {direct_declarator_helper}
+--      EMPTY PRODUCTION
+ [param_type_list]  :
+--      {param_list}
+--      {param_list} {','} {'...'}
+ [id_list]  :
+--      {id}
+--      {id} {','} {id_list}
+ [type_qualifier_list]  :
+--      {type_qualifier}
+--      {type_qualifier} {type_qualifier_list}
+ [param_list]  :
+--      {param_decl}
+--      {param_decl} {','} {param_list}
+ [param_decl]  :
+--      {decl_specs} {declarator}
+--      {decl_specs} {abstract_declarator}
+--      {decl_specs}
+ [abstract_declarator]  :
+--      {pointer}
+--      {pointer} {direct_abstract_declarator}
+--      {direct_abstract_declarator}
+ [assignment_exp]  :
+--      {conditional_exp}
+--      {unary_exp} {assignment_operator} {assignment_exp}
+ [initializer_list]  :
+--      {initializer}
+--      {initializer} {','} {initializer_list}
+ [type_name]  :
+--      {spec_qualifier_list} {abstract_declarator}
+--      {spec_qualifier_list}
+ [direct_abstract_declarator]  :
+--      {'('} {abstract_declarator} {')'} {direct_abstract_declarator_helper}
+--      {'['} {const_exp} {']'} {direct_abstract_declarator_helper}
+--      {'['} {']'} {direct_abstract_declarator_helper}
+--      {'('} {param_type_list} {')'} {direct_abstract_declarator_helper}
+--      {'('} {')'} {direct_abstract_declarator_helper}
+ [direct_abstract_declarator_helper]  :
+--      {'['} {const_exp} {']'} {direct_abstract_declarator_helper}
+--      {'['} {']'} {direct_abstract_declarator_helper}
+--      {'('} {param_type_list} {')'} {direct_abstract_declarator_helper}
+--      {'('} {id_list} {')'} {direct_abstract_declarator_helper}
+--      {'('} {')'} {direct_abstract_declarator_helper}
+--      EMPTY PRODUCTION
+ [stat]  :
+--      {labeled_stat}
+--      {exp_stat}
+--      {compound_stat}
+--      {selection_stat}
+--      {iteration_stat}
+--      {jump_stat}
+ [labeled_stat]  :
+--      {id} {':'} {stat}
+--      {'case'} {const_exp} {':'} {stat}
+--      {'default'} {':'} {stat}
+ [exp_stat]  :
+--      {exp} {';'}
+--      {';'}
+ [selection_stat]  :
+--      {'if'} {'('} {exp} {')'} {stat}
+--      {'if'} {'('} {exp} {')'} {stat} {'else'} {stat}
+--      {'switch'} {'('} {exp} {')'} {stat}
+ [iteration_stat]  :
+--      {'while'} {'('} {exp} {')'} {stat}
+--      {'do'} {stat} {'while'} {'('} {exp} {')'} {';'}
+--      {'for'} {'('} {exp} {';'} {exp} {';'} {exp} {')'} {stat}
+--      {'for'} {'('} {exp} {';'} {exp} {';'} {')'} {stat}
+--      {'for'} {'('} {exp} {';'} {';'} {exp} {')'} {stat}
+--      {'for'} {'('} {exp} {';'} {';'} {')'} {stat}
+--      {'for'} {'('} {';'} {exp} {';'} {exp} {')'} {stat}
+--      {'for'} {'('} {';'} {exp} {';'} {')'} {stat}
+--      {'for'} {'('} {';'} {';'} {exp} {')'} {stat}
+--      {'for'} {'('} {';'} {';'} {')'} {stat}
+ [jump_stat]  :
+--      {'goto'} {id} {';'}
+--      {'continue'} {';'}
+--      {'break'} {';'}
+--      {'return'} {exp} {';'}
+--      {'return'} {';'}
+ [exp]  :
+--      {assignment_exp}
+--      {assignment_exp} {','} {exp}
+ [stat_list]  :
+--      {stat}
+--      {stat} {stat_list}
+ [conditional_exp]  :
+--      {logical_or_exp}
+--      {logical_or_exp} {'?'} {exp} {':'} {conditional_exp}
+ [unary_exp]  :
+--      {postfix_exp}
+--      {'++'} {unary_exp}
+--      {'--'} {unary_exp}
+--      {unary_operator} {cast_exp}
+--      {'sizeof'} {unary_exp}
+--      {'sizeof'} {'('} {type_name} {')'}
+ [assignment_operator]  :
+--      {'='}
+--      {'*='}
+--      {'/='}
+--      {'%='}
+--      {'+='}
+--      {'-='}
+--      {'<<='}
+--      {'>>='}
+--      {'&='}
+--      {'^='}
+--      {'|='}
+ [logical_or_exp]  :
+--      {logical_and_exp}
+--      {logical_and_exp} {'||'} {logical_or_exp}
+ [logical_and_exp]  :
+--      {inclusive_or_exp}
+--      {inclusive_or_exp} {'&&'} {logical_and_exp}
+ [inclusive_or_exp]  :
+--      {exclusive_or_exp}
+--      {exclusive_or_exp} {'|'} {inclusive_or_exp}
+ [exclusive_or_exp]  :
+--      {and_exp}
+--      {and_exp} {'^'} {exclusive_or_exp}
+ [and_exp]  :
+--      {equality_exp}
+--      {equality_exp} {'&'} {and_exp}
+ [equality_exp]  :
+--      {relational_exp}
+--      {relational_exp} {'=='} {equality_exp}
+--      {relational_exp} {'!='} {equality_exp}
+ [relational_exp]  :
+--      {shift_expression}
+--      {shift_expression} {'<'} {relational_exp}
+--      {shift_expression} {'>'} {relational_exp}
+--      {shift_expression} {'<='} {relational_exp}
+--      {shift_expression} {'>='} {relational_exp}
+ [shift_expression]  :
+--      {additive_exp}
+--      {additive_exp} {'<<'} {shift_expression}
+--      {additive_exp} {'>>'} {shift_expression}
+ [additive_exp]  :
+--      {mult_exp}
+--      {mult_exp} {'+'} {additive_exp}
+--      {mult_exp} {'-'} {additive_exp}
+ [mult_exp]  :
+--      {cast_exp}
+--      {cast_exp} {'*'} {mult_exp}
+--      {cast_exp} {'/'} {mult_exp}
+--      {cast_exp} {'%'} {mult_exp}
+ [cast_exp]  :
+--      {unary_exp}
+--      {'('} {type_name} {')'} {cast_exp}
+ [postfix_exp]  :
+--      {primary_exp} {postfix_exp_helper}
+ [unary_operator]  :
+--      {'&'}
+--      {'*'}
+--      {'+'}
+--      {'-'}
+--      {'~'}
+--      {'!'}
+ [primary_exp]  :
+--      {id}
+--      {const}
+--      {string}
+--      {'('} {exp} {')'}
+ [postfix_exp_helper]  :
+--      {'['} {exp} {']'} {postfix_exp_helper}
+--      {'('} {argument_exp_list} {')'} {postfix_exp_helper}
+--      {'('} {')'} {postfix_exp_helper}
+--      {'.'} {id} {postfix_exp_helper}
+--      {'->'} {id} {postfix_exp_helper}
+--      {'++'} {postfix_exp_helper}
+--      {'--'} {postfix_exp_helper}
+--      EMPTY PRODUCTION
+ [argument_exp_list]  :
+--      {assignment_exp}
+--      {assignment_exp} {','} {argument_exp_list}
+ [const]  :
+--      {int_const}
+--      {char_const}
+--      {float_const}
+--      {enumeration_const}
+ ['dummy']  :
+ [_Eps]  :
+First Set
+        translation_unit : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' '=' 'enum' '(' '*' _Eps
+        external_decl : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' '=' 'enum' '(' '*' _Eps
+        function_definition : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' '=' 'enum' '(' '*' _Eps
+        decl : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' '=' 'enum' '(' '*' _Eps
+        decl_specs : 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' 'enum' _Eps
+        declarator : id '(' '*' _Eps
+        decl_list : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' '=' 'enum' '(' '*' _Eps
+        compound_stat : '{'
+        init_declarator_list : id ',' '=' '(' '*' _Eps
+        ';' : ';'
+        storage_class_spec : 'register' 'static' 'extern' 'typedef' _Eps
+        type_spec : 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' id '{' 'struct' 'union' 'enum' _Eps
+        type_qualifier : 'const' 'volatile'
+        'register' : 'register'
+        'static' : 'static'
+        'extern' : 'extern'
+        'typedef' : 'typedef'
+        'void' : 'void'
+        'char' : 'char'
+        'short' : 'short'
+        'int' : 'int'
+        'long' : 'long'
+        'float' : 'float'
+        'double' : 'double'
+        'signed' : 'signed'
+        'unsigned' : 'unsigned'
+        struct_or_union_spec : id '{' 'struct' 'union'
+        enum_spec : 'enum'
+        typedef_name : id
+        'const' : 'const'
+        'volatile' : 'volatile'
+        struct_or_union : 'struct' 'union'
+        id : id
+        '{' : '{'
+        struct_decl_list : ';' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' ':' 'enum' '(' '*' _Eps
+        '}' : '}'
+        'struct' : 'struct'
+        'union' : 'union'
+        struct_decl : ';' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' ':' 'enum' '(' '*' _Eps
+        init_declarator : id '=' '(' '*' _Eps
+        ',' : ','
+        '=' : '='
+        initializer : id '{' '=' '(' '[' '*' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        spec_qualifier_list : 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' 'enum' _Eps
+        struct_declarator_list : id ',' ':' '(' '*' _Eps
+        struct_declarator : id ':' '(' '*' _Eps
+        ':' : ':'
+        const_exp : id '(' '[' '*' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        'enum' : 'enum'
+        enumerator_list : id ',' _Eps
+        enumerator : id
+        pointer : '*'
+        direct_declarator : id '('
+        direct_declarator_helper : '(' '[' _Eps
+        '(' : '('
+        ')' : ')'
+        '[' : '['
+        ']' : ']'
+        param_type_list : 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' 'enum' '(' '[' '*' _Eps
+        id_list : id
+        '*' : '*'
+        type_qualifier_list : 'const' 'volatile'
+        param_list : 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' 'enum' '(' '[' '*' _Eps
+        '...' : '...'
+        param_decl : 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' 'enum' '(' '[' '*' _Eps
+        abstract_declarator : '(' '[' '*' _Eps
+        assignment_exp : id '=' '(' '[' '*' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        initializer_list : id '{' ',' '=' '(' '[' '*' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        type_name : 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' 'enum' '(' '[' '*' _Eps
+        direct_abstract_declarator : '(' '['
+        direct_abstract_declarator_helper : '(' '[' _Eps
+        stat : ';' id '{' ',' '=' '(' '[' '*' 'case' 'default' 'if' 'switch' 'while' 'do' 'for' 'goto' 'continue' 'break' 'return' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        labeled_stat : id 'case' 'default'
+        exp_stat : ';' id ',' '=' '(' '[' '*' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        selection_stat : 'if' 'switch'
+        iteration_stat : 'while' 'do' 'for'
+        jump_stat : 'goto' 'continue' 'break' 'return'
+        'case' : 'case'
+        'default' : 'default'
+        exp : id ',' '=' '(' '[' '*' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        stat_list : ';' id '{' ',' '=' '(' '[' '*' 'case' 'default' 'if' 'switch' 'while' 'do' 'for' 'goto' 'continue' 'break' 'return' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        'if' : 'if'
+        'else' : 'else'
+        'switch' : 'switch'
+        'while' : 'while'
+        'do' : 'do'
+        'for' : 'for'
+        'goto' : 'goto'
+        'continue' : 'continue'
+        'break' : 'break'
+        'return' : 'return'
+        conditional_exp : id '(' '[' '*' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        unary_exp : id '(' '[' '*' '&' '+' '-' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        assignment_operator : '=' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|='
+        '*=' : '*='
+        '/=' : '/='
+        '%=' : '%='
+        '+=' : '+='
+        '-=' : '-='
+        '<<=' : '<<='
+        '>>=' : '>>='
+        '&=' : '&='
+        '^=' : '^='
+        '|=' : '|='
+        logical_or_exp : id '(' '[' '*' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        '?' : '?'
+        logical_and_exp : id '(' '[' '*' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        '||' : '||'
+        inclusive_or_exp : id '(' '[' '*' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        '&&' : '&&'
+        exclusive_or_exp : id '(' '[' '*' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        '|' : '|'
+        and_exp : id '(' '[' '*' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        '^' : '^'
+        equality_exp : id '(' '[' '*' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        '&' : '&'
+        relational_exp : id '(' '[' '*' '&' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        '==' : '=='
+        '!=' : '!='
+        shift_expression : id '(' '[' '*' '&' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        '<' : '<'
+        '>' : '>'
+        '<=' : '<='
+        '>=' : '>='
+        additive_exp : id '(' '[' '*' '&' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        '<<' : '<<'
+        '>>' : '>>'
+        mult_exp : id '(' '[' '*' '&' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        '+' : '+'
+        '-' : '-'
+        cast_exp : id '(' '[' '*' '&' '+' '-' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        '/' : '/'
+        '%' : '%'
+        postfix_exp : id '(' '[' '++' '--' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        '++' : '++'
+        '--' : '--'
+        unary_operator : '*' '&' '+' '-' '~' '!'
+        'sizeof' : 'sizeof'
+        '~' : '~'
+        '!' : '!'
+        primary_exp : id '(' string int_const char_const float_const enumeration_const _Eps
+        postfix_exp_helper : '(' '[' '++' '--' '.' '->' _Eps
+        argument_exp_list : id ',' '=' '(' '[' '*' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const _Eps
+        '.' : '.'
+        '->' : '->'
+        const : int_const char_const float_const enumeration_const
+        string : string
+        int_const : int_const
+        char_const : char_const
+        float_const : float_const
+        enumeration_const : enumeration_const
+        'dummy' : 'dummy'
+        _Eps :
+Follow Set
+        translation_unit : 'dummy'
+        external_decl : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' '=' 'enum' '(' '*' 'dummy'
+        function_definition : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' '=' 'enum' '(' '*' 'dummy'
+        decl : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' '}' 'struct' 'union' ',' '=' 'enum' '(' '[' '*' 'case' 'default' 'if' 'switch' 'while' 'do' 'for' 'goto' 'continue' 'break' 'return' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const 'dummy'
+        decl_specs : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' '=' 'enum' '(' ')' '[' '*'
+        declarator : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' '=' ':' 'enum' '(' ')' '*'
+        decl_list : ';' id '{' '}' ',' '=' '(' '[' '*' 'case' 'default' 'if' 'switch' 'while' 'do' 'for' 'goto' 'continue' 'break' 'return' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const
+        compound_stat : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' '}' 'struct' 'union' ',' '=' 'enum' '(' '[' '*' 'case' 'default' 'if' 'else' 'switch' 'while' 'do' 'for' 'goto' 'continue' 'break' 'return' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const 'dummy'
+        init_declarator_list : ';'
+        storage_class_spec : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' '=' 'enum' '(' ')' '[' '*'
+        type_spec : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' '=' ':' 'enum' '(' ')' '[' '*'
+        type_qualifier : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' '=' ':' 'enum' '(' ')' '[' '*'
+        struct_or_union_spec : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' '=' ':' 'enum' '(' ')' '[' '*'
+        enum_spec : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' '=' ':' 'enum' '(' ')' '[' '*'
+        typedef_name : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' '=' ':' 'enum' '(' ')' '[' '*'
+        struct_or_union : id '{'
+        struct_decl_list : '}'
+        struct_decl : ';' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' '}' 'struct' 'union' ',' ':' 'enum' '(' '*'
+        init_declarator : ';' ','
+        initializer : ';' '}' ','
+        spec_qualifier_list : ';' id ',' ':' '(' ')' '[' '*'
+        struct_declarator_list : ';'
+        struct_declarator : ';' ','
+        const_exp : ';' '}' ',' ':' ']'
+        enumerator_list : '}'
+        enumerator : '}' ','
+        pointer : id ',' '(' ')' '['
+        direct_declarator : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' '=' ':' 'enum' '(' ')' '*'
+        direct_declarator_helper : ';' 'register' 'static' 'extern' 'typedef' 'void' 'char' 'short' 'int' 'long' 'float' 'double' 'signed' 'unsigned' 'const' 'volatile' id '{' 'struct' 'union' ',' '=' ':' 'enum' '(' ')' '*'
+        param_type_list : ')'
+        id_list : ')'
+        type_qualifier_list : id ',' '(' ')' '[' '*'
+        param_list : ',' ')'
+        param_decl : ',' ')'
+        abstract_declarator : ',' ')'
+        assignment_exp : ';' '}' ',' ':' ')' ']'
+        initializer_list : '}' ','
+        type_name : ')'
+        direct_abstract_declarator : ',' ')'
+        direct_abstract_declarator_helper : ',' ')'
+        stat : ';' id '{' '}' ',' '=' '(' '[' '*' 'case' 'default' 'if' 'else' 'switch' 'while' 'do' 'for' 'goto' 'continue' 'break' 'return' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const
+        labeled_stat : ';' id '{' '}' ',' '=' '(' '[' '*' 'case' 'default' 'if' 'else' 'switch' 'while' 'do' 'for' 'goto' 'continue' 'break' 'return' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const
+        exp_stat : ';' id '{' '}' ',' '=' '(' '[' '*' 'case' 'default' 'if' 'else' 'switch' 'while' 'do' 'for' 'goto' 'continue' 'break' 'return' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const
+        selection_stat : ';' id '{' '}' ',' '=' '(' '[' '*' 'case' 'default' 'if' 'else' 'switch' 'while' 'do' 'for' 'goto' 'continue' 'break' 'return' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const
+        iteration_stat : ';' id '{' '}' ',' '=' '(' '[' '*' 'case' 'default' 'if' 'else' 'switch' 'while' 'do' 'for' 'goto' 'continue' 'break' 'return' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const
+        jump_stat : ';' id '{' '}' ',' '=' '(' '[' '*' 'case' 'default' 'if' 'else' 'switch' 'while' 'do' 'for' 'goto' 'continue' 'break' 'return' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const
+        exp : ';' ':' ')' ']'
+        stat_list : '}'
+        conditional_exp : ';' '}' ',' ':' ')' ']'
+        unary_exp : ';' '}' ',' '=' ':' ')' ']' '*' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%'
+        assignment_operator : ';' id '}' ',' '=' ':' '(' ')' '[' ']' '*' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const
+        logical_or_exp : ';' '}' ',' ':' ')' ']' '?'
+        logical_and_exp : ';' '}' ',' ':' ')' ']' '?' '||'
+        inclusive_or_exp : ';' '}' ',' ':' ')' ']' '?' '||' '&&'
+        exclusive_or_exp : ';' '}' ',' ':' ')' ']' '?' '||' '&&' '|'
+        and_exp : ';' '}' ',' ':' ')' ']' '?' '||' '&&' '|' '^'
+        equality_exp : ';' '}' ',' ':' ')' ']' '?' '||' '&&' '|' '^' '&'
+        relational_exp : ';' '}' ',' ':' ')' ']' '?' '||' '&&' '|' '^' '&' '==' '!='
+        shift_expression : ';' '}' ',' ':' ')' ']' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>='
+        additive_exp : ';' '}' ',' ':' ')' ']' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>'
+        mult_exp : ';' '}' ',' ':' ')' ']' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-'
+        cast_exp : ';' '}' ',' '=' ':' ')' ']' '*' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%'
+        postfix_exp : ';' '}' ',' '=' ':' ')' ']' '*' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%'
+        unary_operator : ';' id '}' ',' '=' ':' '(' ')' '[' ']' '*' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' 'sizeof' '~' '!' '.' '->' string int_const char_const float_const enumeration_const
+        primary_exp : ';' '}' ',' '=' ':' '(' ')' '[' ']' '*' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' '.' '->'
+        postfix_exp_helper : ';' '}' ',' '=' ':' ')' ']' '*' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%'
+        argument_exp_list : ')'
+        const : ';' '}' ',' '=' ':' '(' ')' '[' ']' '*' '*=' '/=' '%=' '+=' '-=' '<<=' '>>=' '&=' '^=' '|=' '?' '||' '&&' '|' '^' '&' '==' '!=' '<' '>' '<=' '>=' '<<' '>>' '+' '-' '/' '%' '++' '--' '.' '->'
+LL1 TABLE
+(translation_unit,toktypedef
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,tokvoid
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,tokconst
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,tokvolatile
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,tokchar
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,tokint
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,tokunsigned
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,toksigned
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,tokshort
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,toklong
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,tokfloat
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,tokdouble
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,tokstruct
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,tokenum
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,tokunion
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,tokregister
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,tokextern
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,tokstatic
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,identifier
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,semicolon
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,lbrace
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,lparenthesis
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,mul
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,assign
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,comma
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(translation_unit,#
+        translation_unit => external_decl
+        translation_unit => external_decl translation_unit
+(external_decl,toktypedef
+        external_decl => function_definition
+(external_decl,tokvoid
+        external_decl => function_definition
+(external_decl,tokconst
+        external_decl => function_definition
+(external_decl,tokvolatile
+        external_decl => function_definition
+(external_decl,tokchar
+        external_decl => function_definition
+(external_decl,tokint
+        external_decl => function_definition
+(external_decl,tokunsigned
+        external_decl => function_definition
+(external_decl,toksigned
+        external_decl => function_definition
+(external_decl,tokshort
+        external_decl => function_definition
+(external_decl,toklong
+        external_decl => function_definition
+(external_decl,tokfloat
+        external_decl => function_definition
+(external_decl,tokdouble
+        external_decl => function_definition
+(external_decl,tokstruct
+        external_decl => function_definition
+(external_decl,tokenum
+        external_decl => function_definition
+(external_decl,tokunion
+        external_decl => function_definition
+(external_decl,tokregister
+        external_decl => function_definition
+(external_decl,tokextern
+        external_decl => function_definition
+(external_decl,tokstatic
+        external_decl => function_definition
+(external_decl,identifier
+        external_decl => function_definition
+(external_decl,semicolon
+        external_decl => function_definition
+(external_decl,lbrace
+        external_decl => function_definition
+(external_decl,lparenthesis
+        external_decl => function_definition
+(external_decl,mul
+        external_decl => function_definition
+(external_decl,assign
+        external_decl => function_definition
+(external_decl,comma
+        external_decl => function_definition
+(external_decl,#
+        external_decl => function_definition
+(function_definition,toktypedef
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,tokvoid
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,tokconst
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,tokvolatile
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,tokchar
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,tokint
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,tokunsigned
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,toksigned
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,tokshort
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,toklong
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,tokfloat
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,tokdouble
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,tokstruct
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,tokenum
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,tokunion
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,tokregister
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,tokextern
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,tokstatic
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,identifier
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,semicolon
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,lbrace
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,lparenthesis
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,mul
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,assign
+        function_definition => decl_specs declarator decl_list compound_stat
+(function_definition,comma
+        function_definition => decl_specs declarator decl_list compound_stat
+(decl,toktypedef
+        decl => decl_specs init_declarator_list ';'
+(decl,tokvoid
+        decl => decl_specs init_declarator_list ';'
+(decl,tokconst
+        decl => decl_specs init_declarator_list ';'
+(decl,tokvolatile
+        decl => decl_specs init_declarator_list ';'
+(decl,tokchar
+        decl => decl_specs init_declarator_list ';'
+(decl,tokint
+        decl => decl_specs init_declarator_list ';'
+(decl,tokunsigned
+        decl => decl_specs init_declarator_list ';'
+(decl,toksigned
+        decl => decl_specs init_declarator_list ';'
+(decl,tokshort
+        decl => decl_specs init_declarator_list ';'
+(decl,toklong
+        decl => decl_specs init_declarator_list ';'
+(decl,tokfloat
+        decl => decl_specs init_declarator_list ';'
+(decl,tokdouble
+        decl => decl_specs init_declarator_list ';'
+(decl,tokstruct
+        decl => decl_specs init_declarator_list ';'
+(decl,tokenum
+        decl => decl_specs init_declarator_list ';'
+(decl,tokunion
+        decl => decl_specs init_declarator_list ';'
+(decl,tokregister
+        decl => decl_specs init_declarator_list ';'
+(decl,tokextern
+        decl => decl_specs init_declarator_list ';'
+(decl,tokstatic
+        decl => decl_specs init_declarator_list ';'
+(decl,identifier
+        decl => decl_specs init_declarator_list ';'
+(decl,semicolon
+        decl => decl_specs init_declarator_list ';'
+(decl,lbrace
+        decl => decl_specs init_declarator_list ';'
+(decl,lparenthesis
+        decl => decl_specs init_declarator_list ';'
+(decl,mul
+        decl => decl_specs init_declarator_list ';'
+(decl,assign
+        decl => decl_specs init_declarator_list ';'
+(decl,comma
+        decl => decl_specs init_declarator_list ';'
+(decl_specs,toktypedef
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,tokvoid
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,tokconst
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,tokvolatile
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,tokchar
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,tokint
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,tokunsigned
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,toksigned
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,tokshort
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,toklong
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,tokfloat
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,tokdouble
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,tokstruct
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,tokenum
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,tokunion
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,tokregister
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,tokextern
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,tokstatic
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,identifier
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,semicolon
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,lbrace
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,lbracket
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,lparenthesis
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,rparenthesis
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,mul
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,assign
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(decl_specs,comma
+        decl_specs => storage_class_spec
+        decl_specs => storage_class_spec decl_specs
+(declarator,identifier
+        declarator => direct_declarator
+(declarator,lparenthesis
+        declarator => direct_declarator
+(declarator,mul
+        declarator => pointer direct_declarator
+(decl_list,toktypedef
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokvoid
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokconst
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokvolatile
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokchar
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokint
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokunsigned
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,toksigned
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokshort
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,toklong
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokfloat
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokdouble
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,toksizeof
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokstruct
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokenum
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokunion
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokif
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokdo
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokfor
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokwhile
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokreturn
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokgoto
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokswitch
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokcase
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokdefault
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokbreak
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokcontinue
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokregister
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokextern
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,tokstatic
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,double_literal
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,int_literal
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,char_literal
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,string_literal
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,identifier
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,inc
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,dec
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,addass
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,subass
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,mulass
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,divass
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,modass
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,shlass
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,shrass
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,orass
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,andass
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,xorass
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,equal
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,lor
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,land
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,nequal
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,lequal
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,gequal
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,shl
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,shr
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,point
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,arrow
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,semicolon
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,question
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,lbrace
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,rbrace
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,lbracket
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,lparenthesis
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,add
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,sub
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,mul
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,div
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,mod
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,not
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,bnot
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,band
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,bor
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,bxor
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,greater
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,less
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,assign
+        decl_list => decl
+        decl_list => decl decl_list
+(decl_list,comma
+        decl_list => decl
+        decl_list => decl decl_list
+(compound_stat,lbrace
+        compound_stat => '{' decl_list stat_list '}'
+(init_declarator_list,identifier
+        init_declarator_list => init_declarator
+(init_declarator_list,semicolon
+        init_declarator_list => init_declarator
+(init_declarator_list,lparenthesis
+        init_declarator_list => init_declarator
+(init_declarator_list,mul
+        init_declarator_list => init_declarator
+(init_declarator_list,assign
+        init_declarator_list => init_declarator
+(init_declarator_list,comma
+        init_declarator_list => init_declarator ',' init_declarator_list
+(storage_class_spec,toktypedef
+        storage_class_spec => 'typedef'
+        storage_class_spec =>
+(storage_class_spec,tokvoid
+        storage_class_spec =>
+(storage_class_spec,tokconst
+        storage_class_spec =>
+(storage_class_spec,tokvolatile
+        storage_class_spec =>
+(storage_class_spec,tokchar
+        storage_class_spec =>
+(storage_class_spec,tokint
+        storage_class_spec =>
+(storage_class_spec,tokunsigned
+        storage_class_spec =>
+(storage_class_spec,toksigned
+        storage_class_spec =>
+(storage_class_spec,tokshort
+        storage_class_spec =>
+(storage_class_spec,toklong
+        storage_class_spec =>
+(storage_class_spec,tokfloat
+        storage_class_spec =>
+(storage_class_spec,tokdouble
+        storage_class_spec =>
+(storage_class_spec,tokstruct
+        storage_class_spec =>
+(storage_class_spec,tokenum
+        storage_class_spec =>
+(storage_class_spec,tokunion
+        storage_class_spec =>
+(storage_class_spec,tokregister
+        storage_class_spec => 'register'
+        storage_class_spec =>
+(storage_class_spec,tokextern
+        storage_class_spec => 'extern'
+        storage_class_spec =>
+(storage_class_spec,tokstatic
+        storage_class_spec => 'static'
+        storage_class_spec =>
+(storage_class_spec,identifier
+        storage_class_spec =>
+(storage_class_spec,semicolon
+        storage_class_spec =>
+(storage_class_spec,lbrace
+        storage_class_spec =>
+(storage_class_spec,lbracket
+        storage_class_spec =>
+(storage_class_spec,lparenthesis
+        storage_class_spec =>
+(storage_class_spec,rparenthesis
+        storage_class_spec =>
+(storage_class_spec,mul
+        storage_class_spec =>
+(storage_class_spec,assign
+        storage_class_spec =>
+(storage_class_spec,comma
+        storage_class_spec =>
+(type_spec,tokvoid
+        type_spec => 'void'
+(type_spec,tokchar
+        type_spec => 'char'
+(type_spec,tokint
+        type_spec => 'int'
+(type_spec,tokunsigned
+        type_spec => 'unsigned'
+(type_spec,toksigned
+        type_spec => 'signed'
+(type_spec,tokshort
+        type_spec => 'short'
+(type_spec,toklong
+        type_spec => 'long'
+(type_spec,tokfloat
+        type_spec => 'float'
+(type_spec,tokdouble
+        type_spec => 'double'
+(type_spec,tokstruct
+        type_spec => struct_or_union_spec
+(type_spec,tokenum
+        type_spec => enum_spec
+(type_spec,tokunion
+        type_spec => struct_or_union_spec
+(type_spec,identifier
+        type_spec => struct_or_union_spec
+(type_spec,lbrace
+        type_spec => struct_or_union_spec
+(type_qualifier,tokconst
+        type_qualifier => 'const'
+(type_qualifier,tokvolatile
+        type_qualifier => 'volatile'
+(struct_or_union_spec,tokstruct
+        struct_or_union_spec => struct_or_union id '{' struct_decl_list '}'
+        struct_or_union_spec => struct_or_union '{' struct_decl_list '}'
+        struct_or_union_spec => struct_or_union id
+(struct_or_union_spec,tokunion
+        struct_or_union_spec => struct_or_union id '{' struct_decl_list '}'
+        struct_or_union_spec => struct_or_union '{' struct_decl_list '}'
+        struct_or_union_spec => struct_or_union id
+(enum_spec,tokenum
+        enum_spec => 'enum' id '{' enumerator_list '}'
+        enum_spec => 'enum' '{' enumerator_list '}'
+        enum_spec => 'enum' id
+(typedef_name,identifier
+        typedef_name => id
+(struct_or_union,tokstruct
+        struct_or_union => 'struct'
+(struct_or_union,tokunion
+        struct_or_union => 'union'
+(struct_decl_list,tokvoid
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,tokconst
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,tokvolatile
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,tokchar
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,tokint
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,tokunsigned
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,toksigned
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,tokshort
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,toklong
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,tokfloat
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,tokdouble
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,tokstruct
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,tokenum
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,tokunion
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,identifier
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,semicolon
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,colon
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,lbrace
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,rbrace
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,lparenthesis
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,mul
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl_list,comma
+        struct_decl_list => struct_decl
+        struct_decl_list => struct_decl struct_decl_list
+(struct_decl,tokvoid
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,tokconst
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,tokvolatile
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,tokchar
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,tokint
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,tokunsigned
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,toksigned
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,tokshort
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,toklong
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,tokfloat
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,tokdouble
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,tokstruct
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,tokenum
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,tokunion
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,identifier
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,semicolon
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,colon
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,lbrace
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,lparenthesis
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,mul
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(struct_decl,comma
+        struct_decl => spec_qualifier_list struct_declarator_list ';'
+(init_declarator,identifier
+        init_declarator => declarator '=' initializer
+        init_declarator => declarator
+(init_declarator,semicolon
+        init_declarator => declarator
+(init_declarator,lparenthesis
+        init_declarator => declarator '=' initializer
+        init_declarator => declarator
+(init_declarator,mul
+        init_declarator => declarator '=' initializer
+        init_declarator => declarator
+(init_declarator,assign
+        init_declarator => declarator '=' initializer
+(init_declarator,comma
+        init_declarator => declarator
+(initializer,toksizeof
+        initializer => assignment_exp
+(initializer,double_literal
+        initializer => assignment_exp
+(initializer,int_literal
+        initializer => assignment_exp
+(initializer,char_literal
+        initializer => assignment_exp
+(initializer,string_literal
+        initializer => assignment_exp
+(initializer,identifier
+        initializer => assignment_exp
+(initializer,inc
+        initializer => assignment_exp
+(initializer,dec
+        initializer => assignment_exp
+(initializer,addass
+        initializer => assignment_exp
+(initializer,subass
+        initializer => assignment_exp
+(initializer,mulass
+        initializer => assignment_exp
+(initializer,divass
+        initializer => assignment_exp
+(initializer,modass
+        initializer => assignment_exp
+(initializer,shlass
+        initializer => assignment_exp
+(initializer,shrass
+        initializer => assignment_exp
+(initializer,orass
+        initializer => assignment_exp
+(initializer,andass
+        initializer => assignment_exp
+(initializer,xorass
+        initializer => assignment_exp
+(initializer,equal
+        initializer => assignment_exp
+(initializer,lor
+        initializer => assignment_exp
+(initializer,land
+        initializer => assignment_exp
+(initializer,nequal
+        initializer => assignment_exp
+(initializer,lequal
+        initializer => assignment_exp
+(initializer,gequal
+        initializer => assignment_exp
+(initializer,shl
+        initializer => assignment_exp
+(initializer,shr
+        initializer => assignment_exp
+(initializer,point
+        initializer => assignment_exp
+(initializer,arrow
+        initializer => assignment_exp
+(initializer,semicolon
+        initializer => assignment_exp
+(initializer,question
+        initializer => assignment_exp
+(initializer,lbrace
+        initializer => '{' initializer_list ',' '}'
+        initializer => '{' initializer_list '}'
+(initializer,rbrace
+        initializer => assignment_exp
+(initializer,lbracket
+        initializer => assignment_exp
+(initializer,lparenthesis
+        initializer => assignment_exp
+(initializer,add
+        initializer => assignment_exp
+(initializer,sub
+        initializer => assignment_exp
+(initializer,mul
+        initializer => assignment_exp
+(initializer,div
+        initializer => assignment_exp
+(initializer,mod
+        initializer => assignment_exp
+(initializer,not
+        initializer => assignment_exp
+(initializer,bnot
+        initializer => assignment_exp
+(initializer,band
+        initializer => assignment_exp
+(initializer,bor
+        initializer => assignment_exp
+(initializer,bxor
+        initializer => assignment_exp
+(initializer,greater
+        initializer => assignment_exp
+(initializer,less
+        initializer => assignment_exp
+(initializer,assign
+        initializer => assignment_exp
+(initializer,comma
+        initializer => assignment_exp
+(spec_qualifier_list,tokvoid
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,tokconst
+        spec_qualifier_list => type_qualifier
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,tokvolatile
+        spec_qualifier_list => type_qualifier
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,tokchar
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,tokint
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,tokunsigned
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,toksigned
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,tokshort
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,toklong
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,tokfloat
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,tokdouble
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,tokstruct
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,tokenum
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,tokunion
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,identifier
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,semicolon
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,colon
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,lbrace
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,lbracket
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,lparenthesis
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,rparenthesis
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,mul
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(spec_qualifier_list,comma
+        spec_qualifier_list => type_spec
+        spec_qualifier_list => type_spec spec_qualifier_list
+(struct_declarator_list,identifier
+        struct_declarator_list => struct_declarator
+(struct_declarator_list,semicolon
+        struct_declarator_list => struct_declarator
+(struct_declarator_list,colon
+        struct_declarator_list => struct_declarator
+(struct_declarator_list,lparenthesis
+        struct_declarator_list => struct_declarator
+(struct_declarator_list,mul
+        struct_declarator_list => struct_declarator
+(struct_declarator_list,comma
+        struct_declarator_list => struct_declarator ',' struct_declarator_list
+(struct_declarator,identifier
+        struct_declarator => declarator ':' const_exp
+        struct_declarator => declarator
+(struct_declarator,semicolon
+        struct_declarator => declarator
+(struct_declarator,colon
+        struct_declarator => declarator ':' const_exp
+(struct_declarator,lparenthesis
+        struct_declarator => declarator ':' const_exp
+        struct_declarator => declarator
+(struct_declarator,mul
+        struct_declarator => declarator ':' const_exp
+        struct_declarator => declarator
+(struct_declarator,comma
+        struct_declarator => declarator
+(const_exp,toksizeof
+        const_exp => conditional_exp
+(const_exp,double_literal
+        const_exp => conditional_exp
+(const_exp,int_literal
+        const_exp => conditional_exp
+(const_exp,char_literal
+        const_exp => conditional_exp
+(const_exp,string_literal
+        const_exp => conditional_exp
+(const_exp,identifier
+        const_exp => conditional_exp
+(const_exp,inc
+        const_exp => conditional_exp
+(const_exp,dec
+        const_exp => conditional_exp
+(const_exp,equal
+        const_exp => conditional_exp
+(const_exp,lor
+        const_exp => conditional_exp
+(const_exp,land
+        const_exp => conditional_exp
+(const_exp,nequal
+        const_exp => conditional_exp
+(const_exp,lequal
+        const_exp => conditional_exp
+(const_exp,gequal
+        const_exp => conditional_exp
+(const_exp,shl
+        const_exp => conditional_exp
+(const_exp,shr
+        const_exp => conditional_exp
+(const_exp,point
+        const_exp => conditional_exp
+(const_exp,arrow
+        const_exp => conditional_exp
+(const_exp,semicolon
+        const_exp => conditional_exp
+(const_exp,colon
+        const_exp => conditional_exp
+(const_exp,question
+        const_exp => conditional_exp
+(const_exp,rbrace
+        const_exp => conditional_exp
+(const_exp,lbracket
+        const_exp => conditional_exp
+(const_exp,rbracket
+        const_exp => conditional_exp
+(const_exp,lparenthesis
+        const_exp => conditional_exp
+(const_exp,add
+        const_exp => conditional_exp
+(const_exp,sub
+        const_exp => conditional_exp
+(const_exp,mul
+        const_exp => conditional_exp
+(const_exp,div
+        const_exp => conditional_exp
+(const_exp,mod
+        const_exp => conditional_exp
+(const_exp,not
+        const_exp => conditional_exp
+(const_exp,bnot
+        const_exp => conditional_exp
+(const_exp,band
+        const_exp => conditional_exp
+(const_exp,bor
+        const_exp => conditional_exp
+(const_exp,bxor
+        const_exp => conditional_exp
+(const_exp,greater
+        const_exp => conditional_exp
+(const_exp,less
+        const_exp => conditional_exp
+(const_exp,comma
+        const_exp => conditional_exp
+(enumerator_list,identifier
+        enumerator_list => enumerator
+(enumerator,identifier
+        enumerator => id '=' const_exp
+        enumerator => id
+(pointer,mul
+        pointer => '*' type_qualifier_list
+        pointer => '*' type_qualifier_list pointer
+(direct_declarator,identifier
+        direct_declarator => id direct_declarator_helper
+(direct_declarator,lparenthesis
+        direct_declarator => '(' declarator ')' direct_declarator_helper
+(direct_declarator_helper,toktypedef
+        direct_declarator_helper =>
+(direct_declarator_helper,tokvoid
+        direct_declarator_helper =>
+(direct_declarator_helper,tokconst
+        direct_declarator_helper =>
+(direct_declarator_helper,tokvolatile
+        direct_declarator_helper =>
+(direct_declarator_helper,tokchar
+        direct_declarator_helper =>
+(direct_declarator_helper,tokint
+        direct_declarator_helper =>
+(direct_declarator_helper,tokunsigned
+        direct_declarator_helper =>
+(direct_declarator_helper,toksigned
+        direct_declarator_helper =>
+(direct_declarator_helper,tokshort
+        direct_declarator_helper =>
+(direct_declarator_helper,toklong
+        direct_declarator_helper =>
+(direct_declarator_helper,tokfloat
+        direct_declarator_helper =>
+(direct_declarator_helper,tokdouble
+        direct_declarator_helper =>
+(direct_declarator_helper,tokstruct
+        direct_declarator_helper =>
+(direct_declarator_helper,tokenum
+        direct_declarator_helper =>
+(direct_declarator_helper,tokunion
+        direct_declarator_helper =>
+(direct_declarator_helper,tokregister
+        direct_declarator_helper =>
+(direct_declarator_helper,tokextern
+        direct_declarator_helper =>
+(direct_declarator_helper,tokstatic
+        direct_declarator_helper =>
+(direct_declarator_helper,identifier
+        direct_declarator_helper =>
+(direct_declarator_helper,semicolon
+        direct_declarator_helper =>
+(direct_declarator_helper,colon
+        direct_declarator_helper =>
+(direct_declarator_helper,lbrace
+        direct_declarator_helper =>
+(direct_declarator_helper,lbracket
+        direct_declarator_helper => '[' const_exp ']' direct_declarator_helper
+(direct_declarator_helper,lparenthesis
+        direct_declarator_helper => '(' param_type_list ')' direct_declarator_helper
+        direct_declarator_helper =>
+(direct_declarator_helper,rparenthesis
+        direct_declarator_helper =>
+(direct_declarator_helper,mul
+        direct_declarator_helper =>
+(direct_declarator_helper,assign
+        direct_declarator_helper =>
+(direct_declarator_helper,comma
+        direct_declarator_helper =>
+(param_type_list,toktypedef
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,tokvoid
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,tokconst
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,tokvolatile
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,tokchar
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,tokint
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,tokunsigned
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,toksigned
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,tokshort
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,toklong
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,tokfloat
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,tokdouble
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,tokstruct
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,tokenum
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,tokunion
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,tokregister
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,tokextern
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,tokstatic
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,identifier
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,lbrace
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,lbracket
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,lparenthesis
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,rparenthesis
+        param_type_list => param_list
+(param_type_list,mul
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(param_type_list,comma
+        param_type_list => param_list ',' '...'
+        param_type_list => param_list
+(id_list,identifier
+        id_list => id
+(type_qualifier_list,tokconst
+        type_qualifier_list => type_qualifier
+        type_qualifier_list => type_qualifier type_qualifier_list
+(type_qualifier_list,tokvolatile
+        type_qualifier_list => type_qualifier
+        type_qualifier_list => type_qualifier type_qualifier_list
+(param_list,toktypedef
+        param_list => param_decl
+(param_list,tokvoid
+        param_list => param_decl
+(param_list,tokconst
+        param_list => param_decl
+(param_list,tokvolatile
+        param_list => param_decl
+(param_list,tokchar
+        param_list => param_decl
+(param_list,tokint
+        param_list => param_decl
+(param_list,tokunsigned
+        param_list => param_decl
+(param_list,toksigned
+        param_list => param_decl
+(param_list,tokshort
+        param_list => param_decl
+(param_list,toklong
+        param_list => param_decl
+(param_list,tokfloat
+        param_list => param_decl
+(param_list,tokdouble
+        param_list => param_decl
+(param_list,tokstruct
+        param_list => param_decl
+(param_list,tokenum
+        param_list => param_decl
+(param_list,tokunion
+        param_list => param_decl
+(param_list,tokregister
+        param_list => param_decl
+(param_list,tokextern
+        param_list => param_decl
+(param_list,tokstatic
+        param_list => param_decl
+(param_list,identifier
+        param_list => param_decl
+(param_list,lbrace
+        param_list => param_decl
+(param_list,lbracket
+        param_list => param_decl
+(param_list,lparenthesis
+        param_list => param_decl
+(param_list,rparenthesis
+        param_list => param_decl
+(param_list,mul
+        param_list => param_decl
+(param_list,comma
+        param_list => param_decl
+(param_decl,toktypedef
+        param_decl => decl_specs declarator
+(param_decl,tokvoid
+        param_decl => decl_specs declarator
+(param_decl,tokconst
+        param_decl => decl_specs declarator
+(param_decl,tokvolatile
+        param_decl => decl_specs declarator
+(param_decl,tokchar
+        param_decl => decl_specs declarator
+(param_decl,tokint
+        param_decl => decl_specs declarator
+(param_decl,tokunsigned
+        param_decl => decl_specs declarator
+(param_decl,toksigned
+        param_decl => decl_specs declarator
+(param_decl,tokshort
+        param_decl => decl_specs declarator
+(param_decl,toklong
+        param_decl => decl_specs declarator
+(param_decl,tokfloat
+        param_decl => decl_specs declarator
+(param_decl,tokdouble
+        param_decl => decl_specs declarator
+(param_decl,tokstruct
+        param_decl => decl_specs declarator
+(param_decl,tokenum
+        param_decl => decl_specs declarator
+(param_decl,tokunion
+        param_decl => decl_specs declarator
+(param_decl,tokregister
+        param_decl => decl_specs declarator
+(param_decl,tokextern
+        param_decl => decl_specs declarator
+(param_decl,tokstatic
+        param_decl => decl_specs declarator
+(param_decl,identifier
+        param_decl => decl_specs declarator
+(param_decl,lbrace
+        param_decl => decl_specs declarator
+(param_decl,lbracket
+        param_decl => decl_specs abstract_declarator
+(param_decl,lparenthesis
+        param_decl => decl_specs declarator
+(param_decl,rparenthesis
+        param_decl => decl_specs declarator
+(param_decl,mul
+        param_decl => decl_specs declarator
+(param_decl,comma
+        param_decl => decl_specs declarator
+(abstract_declarator,lbracket
+        abstract_declarator => direct_abstract_declarator
+(abstract_declarator,lparenthesis
+        abstract_declarator => direct_abstract_declarator
+(abstract_declarator,mul
+        abstract_declarator => pointer
+(assignment_exp,toksizeof
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,double_literal
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,int_literal
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,char_literal
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,string_literal
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,identifier
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,inc
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,dec
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,addass
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,subass
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,mulass
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,divass
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,modass
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,shlass
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,shrass
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,orass
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,andass
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,xorass
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,equal
+        assignment_exp => conditional_exp
+(assignment_exp,lor
+        assignment_exp => conditional_exp
+(assignment_exp,land
+        assignment_exp => conditional_exp
+(assignment_exp,nequal
+        assignment_exp => conditional_exp
+(assignment_exp,lequal
+        assignment_exp => conditional_exp
+(assignment_exp,gequal
+        assignment_exp => conditional_exp
+(assignment_exp,shl
+        assignment_exp => conditional_exp
+(assignment_exp,shr
+        assignment_exp => conditional_exp
+(assignment_exp,point
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,arrow
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,semicolon
+        assignment_exp => conditional_exp
+(assignment_exp,colon
+        assignment_exp => conditional_exp
+(assignment_exp,question
+        assignment_exp => conditional_exp
+(assignment_exp,rbrace
+        assignment_exp => conditional_exp
+(assignment_exp,lbracket
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,rbracket
+        assignment_exp => conditional_exp
+(assignment_exp,lparenthesis
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,rparenthesis
+        assignment_exp => conditional_exp
+(assignment_exp,add
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,sub
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,mul
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,div
+        assignment_exp => conditional_exp
+(assignment_exp,mod
+        assignment_exp => conditional_exp
+(assignment_exp,not
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,bnot
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,band
+        assignment_exp => conditional_exp
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,bor
+        assignment_exp => conditional_exp
+(assignment_exp,bxor
+        assignment_exp => conditional_exp
+(assignment_exp,greater
+        assignment_exp => conditional_exp
+(assignment_exp,less
+        assignment_exp => conditional_exp
+(assignment_exp,assign
+        assignment_exp => unary_exp assignment_operator assignment_exp
+(assignment_exp,comma
+        assignment_exp => conditional_exp
+(initializer_list,toksizeof
+        initializer_list => initializer
+(initializer_list,double_literal
+        initializer_list => initializer
+(initializer_list,int_literal
+        initializer_list => initializer
+(initializer_list,char_literal
+        initializer_list => initializer
+(initializer_list,string_literal
+        initializer_list => initializer
+(initializer_list,identifier
+        initializer_list => initializer
+(initializer_list,inc
+        initializer_list => initializer
+(initializer_list,dec
+        initializer_list => initializer
+(initializer_list,addass
+        initializer_list => initializer
+(initializer_list,subass
+        initializer_list => initializer
+(initializer_list,mulass
+        initializer_list => initializer
+(initializer_list,divass
+        initializer_list => initializer
+(initializer_list,modass
+        initializer_list => initializer
+(initializer_list,shlass
+        initializer_list => initializer
+(initializer_list,shrass
+        initializer_list => initializer
+(initializer_list,orass
+        initializer_list => initializer
+(initializer_list,andass
+        initializer_list => initializer
+(initializer_list,xorass
+        initializer_list => initializer
+(initializer_list,equal
+        initializer_list => initializer
+(initializer_list,lor
+        initializer_list => initializer
+(initializer_list,land
+        initializer_list => initializer
+(initializer_list,nequal
+        initializer_list => initializer
+(initializer_list,lequal
+        initializer_list => initializer
+(initializer_list,gequal
+        initializer_list => initializer
+(initializer_list,shl
+        initializer_list => initializer
+(initializer_list,shr
+        initializer_list => initializer
+(initializer_list,point
+        initializer_list => initializer
+(initializer_list,arrow
+        initializer_list => initializer
+(initializer_list,question
+        initializer_list => initializer
+(initializer_list,lbrace
+        initializer_list => initializer
+(initializer_list,rbrace
+        initializer_list => initializer
+(initializer_list,lbracket
+        initializer_list => initializer
+(initializer_list,lparenthesis
+        initializer_list => initializer
+(initializer_list,add
+        initializer_list => initializer
+(initializer_list,sub
+        initializer_list => initializer
+(initializer_list,mul
+        initializer_list => initializer
+(initializer_list,div
+        initializer_list => initializer
+(initializer_list,mod
+        initializer_list => initializer
+(initializer_list,not
+        initializer_list => initializer
+(initializer_list,bnot
+        initializer_list => initializer
+(initializer_list,band
+        initializer_list => initializer
+(initializer_list,bor
+        initializer_list => initializer
+(initializer_list,bxor
+        initializer_list => initializer
+(initializer_list,greater
+        initializer_list => initializer
+(initializer_list,less
+        initializer_list => initializer
+(initializer_list,assign
+        initializer_list => initializer
+(initializer_list,comma
+        initializer_list => initializer
+(type_name,tokvoid
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,tokconst
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,tokvolatile
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,tokchar
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,tokint
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,tokunsigned
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,toksigned
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,tokshort
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,toklong
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,tokfloat
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,tokdouble
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,tokstruct
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,tokenum
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,tokunion
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,identifier
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,lbrace
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,lbracket
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,lparenthesis
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,rparenthesis
+        type_name => spec_qualifier_list abstract_declarator
+(type_name,mul
+        type_name => spec_qualifier_list abstract_declarator
+(direct_abstract_declarator,lbracket
+        direct_abstract_declarator => '[' const_exp ']' direct_abstract_declarator_helper
+(direct_abstract_declarator,lparenthesis
+        direct_abstract_declarator => '(' abstract_declarator ')' direct_abstract_declarator_helper
+(direct_abstract_declarator_helper,lbracket
+        direct_abstract_declarator_helper => '[' const_exp ']' direct_abstract_declarator_helper
+(direct_abstract_declarator_helper,lparenthesis
+        direct_abstract_declarator_helper => '(' param_type_list ')' direct_abstract_declarator_helper
+(direct_abstract_declarator_helper,rparenthesis
+        direct_abstract_declarator_helper =>
+(direct_abstract_declarator_helper,comma
+        direct_abstract_declarator_helper =>
+(stat,toksizeof
+        stat => exp_stat
+(stat,tokif
+        stat => exp_stat
+(stat,tokelse
+        stat => exp_stat
+(stat,tokdo
+        stat => exp_stat
+(stat,tokfor
+        stat => exp_stat
+(stat,tokwhile
+        stat => exp_stat
+(stat,tokreturn
+        stat => exp_stat
+(stat,tokgoto
+        stat => exp_stat
+(stat,tokswitch
+        stat => exp_stat
+(stat,tokcase
+        stat => labeled_stat
+(stat,tokdefault
+        stat => labeled_stat
+(stat,tokbreak
+        stat => exp_stat
+(stat,tokcontinue
+        stat => exp_stat
+(stat,double_literal
+        stat => exp_stat
+(stat,int_literal
+        stat => exp_stat
+(stat,char_literal
+        stat => exp_stat
+(stat,string_literal
+        stat => exp_stat
+(stat,identifier
+        stat => labeled_stat
+(stat,inc
+        stat => exp_stat
+(stat,dec
+        stat => exp_stat
+(stat,addass
+        stat => exp_stat
+(stat,subass
+        stat => exp_stat
+(stat,mulass
+        stat => exp_stat
+(stat,divass
+        stat => exp_stat
+(stat,modass
+        stat => exp_stat
+(stat,shlass
+        stat => exp_stat
+(stat,shrass
+        stat => exp_stat
+(stat,orass
+        stat => exp_stat
+(stat,andass
+        stat => exp_stat
+(stat,xorass
+        stat => exp_stat
+(stat,equal
+        stat => exp_stat
+(stat,lor
+        stat => exp_stat
+(stat,land
+        stat => exp_stat
+(stat,nequal
+        stat => exp_stat
+(stat,lequal
+        stat => exp_stat
+(stat,gequal
+        stat => exp_stat
+(stat,shl
+        stat => exp_stat
+(stat,shr
+        stat => exp_stat
+(stat,point
+        stat => exp_stat
+(stat,arrow
+        stat => exp_stat
+(stat,semicolon
+        stat => exp_stat
+(stat,question
+        stat => exp_stat
+(stat,lbrace
+        stat => exp_stat
+(stat,rbrace
+        stat => exp_stat
+(stat,lbracket
+        stat => exp_stat
+(stat,lparenthesis
+        stat => exp_stat
+(stat,add
+        stat => exp_stat
+(stat,sub
+        stat => exp_stat
+(stat,mul
+        stat => exp_stat
+(stat,div
+        stat => exp_stat
+(stat,mod
+        stat => exp_stat
+(stat,not
+        stat => exp_stat
+(stat,bnot
+        stat => exp_stat
+(stat,band
+        stat => exp_stat
+(stat,bor
+        stat => exp_stat
+(stat,bxor
+        stat => exp_stat
+(stat,greater
+        stat => exp_stat
+(stat,less
+        stat => exp_stat
+(stat,assign
+        stat => exp_stat
+(stat,comma
+        stat => exp_stat
+(labeled_stat,tokcase
+        labeled_stat => 'case' const_exp ':' stat
+(labeled_stat,tokdefault
+        labeled_stat => 'default' ':' stat
+(labeled_stat,identifier
+        labeled_stat => id ':' stat
+(exp_stat,toksizeof
+        exp_stat => exp ';'
+(exp_stat,double_literal
+        exp_stat => exp ';'
+(exp_stat,int_literal
+        exp_stat => exp ';'
+(exp_stat,char_literal
+        exp_stat => exp ';'
+(exp_stat,string_literal
+        exp_stat => exp ';'
+(exp_stat,identifier
+        exp_stat => exp ';'
+(exp_stat,inc
+        exp_stat => exp ';'
+(exp_stat,dec
+        exp_stat => exp ';'
+(exp_stat,addass
+        exp_stat => exp ';'
+(exp_stat,subass
+        exp_stat => exp ';'
+(exp_stat,mulass
+        exp_stat => exp ';'
+(exp_stat,divass
+        exp_stat => exp ';'
+(exp_stat,modass
+        exp_stat => exp ';'
+(exp_stat,shlass
+        exp_stat => exp ';'
+(exp_stat,shrass
+        exp_stat => exp ';'
+(exp_stat,orass
+        exp_stat => exp ';'
+(exp_stat,andass
+        exp_stat => exp ';'
+(exp_stat,xorass
+        exp_stat => exp ';'
+(exp_stat,equal
+        exp_stat => exp ';'
+(exp_stat,lor
+        exp_stat => exp ';'
+(exp_stat,land
+        exp_stat => exp ';'
+(exp_stat,nequal
+        exp_stat => exp ';'
+(exp_stat,lequal
+        exp_stat => exp ';'
+(exp_stat,gequal
+        exp_stat => exp ';'
+(exp_stat,shl
+        exp_stat => exp ';'
+(exp_stat,shr
+        exp_stat => exp ';'
+(exp_stat,point
+        exp_stat => exp ';'
+(exp_stat,arrow
+        exp_stat => exp ';'
+(exp_stat,semicolon
+        exp_stat => exp ';'
+(exp_stat,question
+        exp_stat => exp ';'
+(exp_stat,lbracket
+        exp_stat => exp ';'
+(exp_stat,lparenthesis
+        exp_stat => exp ';'
+(exp_stat,add
+        exp_stat => exp ';'
+(exp_stat,sub
+        exp_stat => exp ';'
+(exp_stat,mul
+        exp_stat => exp ';'
+(exp_stat,div
+        exp_stat => exp ';'
+(exp_stat,mod
+        exp_stat => exp ';'
+(exp_stat,not
+        exp_stat => exp ';'
+(exp_stat,bnot
+        exp_stat => exp ';'
+(exp_stat,band
+        exp_stat => exp ';'
+(exp_stat,bor
+        exp_stat => exp ';'
+(exp_stat,bxor
+        exp_stat => exp ';'
+(exp_stat,greater
+        exp_stat => exp ';'
+(exp_stat,less
+        exp_stat => exp ';'
+(exp_stat,assign
+        exp_stat => exp ';'
+(exp_stat,comma
+        exp_stat => exp ';'
+(selection_stat,tokif
+        selection_stat => 'if' '(' exp ')' stat 'else' stat
+        selection_stat => 'if' '(' exp ')' stat
+(selection_stat,tokswitch
+        selection_stat => 'switch' '(' exp ')' stat
+(iteration_stat,tokdo
+        iteration_stat => 'do' stat 'while' '(' exp ')' ';'
+(iteration_stat,tokfor
+        iteration_stat => 'for' '(' exp ';' exp ';' exp ')' stat
+(iteration_stat,tokwhile
+        iteration_stat => 'while' '(' exp ')' stat
+(jump_stat,tokreturn
+        jump_stat => 'return' exp ';'
+(jump_stat,tokgoto
+        jump_stat => 'goto' id ';'
+(jump_stat,tokbreak
+        jump_stat => 'break' ';'
+(jump_stat,tokcontinue
+        jump_stat => 'continue' ';'
+(exp,toksizeof
+        exp => assignment_exp
+(exp,double_literal
+        exp => assignment_exp
+(exp,int_literal
+        exp => assignment_exp
+(exp,char_literal
+        exp => assignment_exp
+(exp,string_literal
+        exp => assignment_exp
+(exp,identifier
+        exp => assignment_exp
+(exp,inc
+        exp => assignment_exp
+(exp,dec
+        exp => assignment_exp
+(exp,addass
+        exp => assignment_exp
+(exp,subass
+        exp => assignment_exp
+(exp,mulass
+        exp => assignment_exp
+(exp,divass
+        exp => assignment_exp
+(exp,modass
+        exp => assignment_exp
+(exp,shlass
+        exp => assignment_exp
+(exp,shrass
+        exp => assignment_exp
+(exp,orass
+        exp => assignment_exp
+(exp,andass
+        exp => assignment_exp
+(exp,xorass
+        exp => assignment_exp
+(exp,equal
+        exp => assignment_exp
+(exp,lor
+        exp => assignment_exp
+(exp,land
+        exp => assignment_exp
+(exp,nequal
+        exp => assignment_exp
+(exp,lequal
+        exp => assignment_exp
+(exp,gequal
+        exp => assignment_exp
+(exp,shl
+        exp => assignment_exp
+(exp,shr
+        exp => assignment_exp
+(exp,point
+        exp => assignment_exp
+(exp,arrow
+        exp => assignment_exp
+(exp,semicolon
+        exp => assignment_exp
+(exp,colon
+        exp => assignment_exp
+(exp,question
+        exp => assignment_exp
+(exp,lbracket
+        exp => assignment_exp
+(exp,rbracket
+        exp => assignment_exp
+(exp,lparenthesis
+        exp => assignment_exp
+(exp,rparenthesis
+        exp => assignment_exp
+(exp,add
+        exp => assignment_exp
+(exp,sub
+        exp => assignment_exp
+(exp,mul
+        exp => assignment_exp
+(exp,div
+        exp => assignment_exp
+(exp,mod
+        exp => assignment_exp
+(exp,not
+        exp => assignment_exp
+(exp,bnot
+        exp => assignment_exp
+(exp,band
+        exp => assignment_exp
+(exp,bor
+        exp => assignment_exp
+(exp,bxor
+        exp => assignment_exp
+(exp,greater
+        exp => assignment_exp
+(exp,less
+        exp => assignment_exp
+(exp,assign
+        exp => assignment_exp
+(exp,comma
+        exp => assignment_exp ',' exp
+(stat_list,toksizeof
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,tokif
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,tokdo
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,tokfor
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,tokwhile
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,tokreturn
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,tokgoto
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,tokswitch
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,tokcase
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,tokdefault
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,tokbreak
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,tokcontinue
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,double_literal
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,int_literal
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,char_literal
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,string_literal
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,identifier
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,inc
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,dec
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,addass
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,subass
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,mulass
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,divass
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,modass
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,shlass
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,shrass
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,orass
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,andass
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,xorass
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,equal
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,lor
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,land
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,nequal
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,lequal
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,gequal
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,shl
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,shr
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,point
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,arrow
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,semicolon
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,question
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,lbrace
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,rbrace
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,lbracket
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,lparenthesis
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,add
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,sub
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,mul
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,div
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,mod
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,not
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,bnot
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,band
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,bor
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,bxor
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,greater
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,less
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,assign
+        stat_list => stat
+        stat_list => stat stat_list
+(stat_list,comma
+        stat_list => stat
+        stat_list => stat stat_list
+(conditional_exp,toksizeof
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,double_literal
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,int_literal
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,char_literal
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,string_literal
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,identifier
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,inc
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,dec
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,equal
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,lor
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,land
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,nequal
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,lequal
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,gequal
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,shl
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,shr
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,point
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,arrow
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,semicolon
+        conditional_exp => logical_or_exp
+(conditional_exp,colon
+        conditional_exp => logical_or_exp
+(conditional_exp,question
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+(conditional_exp,rbrace
+        conditional_exp => logical_or_exp
+(conditional_exp,lbracket
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,rbracket
+        conditional_exp => logical_or_exp
+(conditional_exp,lparenthesis
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,rparenthesis
+        conditional_exp => logical_or_exp
+(conditional_exp,add
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,sub
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,mul
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,div
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,mod
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,not
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,bnot
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,band
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,bor
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,bxor
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,greater
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,less
+        conditional_exp => logical_or_exp '?' exp ':' conditional_exp
+        conditional_exp => logical_or_exp
+(conditional_exp,comma
+        conditional_exp => logical_or_exp
+(unary_exp,toksizeof
+        unary_exp => 'sizeof' '(' type_name ')'
+        unary_exp => 'sizeof' unary_exp
+(unary_exp,double_literal
+        unary_exp => postfix_exp
+(unary_exp,int_literal
+        unary_exp => postfix_exp
+(unary_exp,char_literal
+        unary_exp => postfix_exp
+(unary_exp,string_literal
+        unary_exp => postfix_exp
+(unary_exp,identifier
+        unary_exp => postfix_exp
+(unary_exp,inc
+        unary_exp => postfix_exp
+(unary_exp,dec
+        unary_exp => postfix_exp
+(unary_exp,addass
+        unary_exp => postfix_exp
+(unary_exp,subass
+        unary_exp => postfix_exp
+(unary_exp,mulass
+        unary_exp => postfix_exp
+(unary_exp,divass
+        unary_exp => postfix_exp
+(unary_exp,modass
+        unary_exp => postfix_exp
+(unary_exp,shlass
+        unary_exp => postfix_exp
+(unary_exp,shrass
+        unary_exp => postfix_exp
+(unary_exp,orass
+        unary_exp => postfix_exp
+(unary_exp,andass
+        unary_exp => postfix_exp
+(unary_exp,xorass
+        unary_exp => postfix_exp
+(unary_exp,equal
+        unary_exp => postfix_exp
+(unary_exp,lor
+        unary_exp => postfix_exp
+(unary_exp,land
+        unary_exp => postfix_exp
+(unary_exp,nequal
+        unary_exp => postfix_exp
+(unary_exp,lequal
+        unary_exp => postfix_exp
+(unary_exp,gequal
+        unary_exp => postfix_exp
+(unary_exp,shl
+        unary_exp => postfix_exp
+(unary_exp,shr
+        unary_exp => postfix_exp
+(unary_exp,point
+        unary_exp => postfix_exp
+(unary_exp,arrow
+        unary_exp => postfix_exp
+(unary_exp,semicolon
+        unary_exp => postfix_exp
+(unary_exp,colon
+        unary_exp => postfix_exp
+(unary_exp,question
+        unary_exp => postfix_exp
+(unary_exp,rbrace
+        unary_exp => postfix_exp
+(unary_exp,lbracket
+        unary_exp => postfix_exp
+(unary_exp,rbracket
+        unary_exp => postfix_exp
+(unary_exp,lparenthesis
+        unary_exp => postfix_exp
+(unary_exp,rparenthesis
+        unary_exp => postfix_exp
+(unary_exp,add
+        unary_exp => postfix_exp
+(unary_exp,sub
+        unary_exp => postfix_exp
+(unary_exp,mul
+        unary_exp => postfix_exp
+(unary_exp,div
+        unary_exp => postfix_exp
+(unary_exp,mod
+        unary_exp => postfix_exp
+(unary_exp,not
+        unary_exp => unary_operator cast_exp
+(unary_exp,bnot
+        unary_exp => unary_operator cast_exp
+(unary_exp,band
+        unary_exp => postfix_exp
+(unary_exp,bor
+        unary_exp => postfix_exp
+(unary_exp,bxor
+        unary_exp => postfix_exp
+(unary_exp,greater
+        unary_exp => postfix_exp
+(unary_exp,less
+        unary_exp => postfix_exp
+(unary_exp,assign
+        unary_exp => postfix_exp
+(unary_exp,comma
+        unary_exp => postfix_exp
+(assignment_operator,addass
+        assignment_operator => '+='
+(assignment_operator,subass
+        assignment_operator => '-='
+(assignment_operator,mulass
+        assignment_operator => '*='
+(assignment_operator,divass
+        assignment_operator => '/='
+(assignment_operator,modass
+        assignment_operator => '%='
+(assignment_operator,shlass
+        assignment_operator => '<<='
+(assignment_operator,shrass
+        assignment_operator => '>>='
+(assignment_operator,orass
+        assignment_operator => '|='
+(assignment_operator,andass
+        assignment_operator => '&='
+(assignment_operator,xorass
+        assignment_operator => '^='
+(assignment_operator,assign
+        assignment_operator => '='
+(logical_or_exp,toksizeof
+        logical_or_exp => logical_and_exp
+(logical_or_exp,double_literal
+        logical_or_exp => logical_and_exp
+(logical_or_exp,int_literal
+        logical_or_exp => logical_and_exp
+(logical_or_exp,char_literal
+        logical_or_exp => logical_and_exp
+(logical_or_exp,string_literal
+        logical_or_exp => logical_and_exp
+(logical_or_exp,identifier
+        logical_or_exp => logical_and_exp
+(logical_or_exp,inc
+        logical_or_exp => logical_and_exp
+(logical_or_exp,dec
+        logical_or_exp => logical_and_exp
+(logical_or_exp,equal
+        logical_or_exp => logical_and_exp
+(logical_or_exp,lor
+        logical_or_exp => logical_and_exp '||' logical_or_exp
+(logical_or_exp,land
+        logical_or_exp => logical_and_exp
+(logical_or_exp,nequal
+        logical_or_exp => logical_and_exp
+(logical_or_exp,lequal
+        logical_or_exp => logical_and_exp
+(logical_or_exp,gequal
+        logical_or_exp => logical_and_exp
+(logical_or_exp,shl
+        logical_or_exp => logical_and_exp
+(logical_or_exp,shr
+        logical_or_exp => logical_and_exp
+(logical_or_exp,point
+        logical_or_exp => logical_and_exp
+(logical_or_exp,arrow
+        logical_or_exp => logical_and_exp
+(logical_or_exp,semicolon
+        logical_or_exp => logical_and_exp
+(logical_or_exp,colon
+        logical_or_exp => logical_and_exp
+(logical_or_exp,question
+        logical_or_exp => logical_and_exp
+(logical_or_exp,rbrace
+        logical_or_exp => logical_and_exp
+(logical_or_exp,lbracket
+        logical_or_exp => logical_and_exp
+(logical_or_exp,rbracket
+        logical_or_exp => logical_and_exp
+(logical_or_exp,lparenthesis
+        logical_or_exp => logical_and_exp
+(logical_or_exp,rparenthesis
+        logical_or_exp => logical_and_exp
+(logical_or_exp,add
+        logical_or_exp => logical_and_exp
+(logical_or_exp,sub
+        logical_or_exp => logical_and_exp
+(logical_or_exp,mul
+        logical_or_exp => logical_and_exp
+(logical_or_exp,div
+        logical_or_exp => logical_and_exp
+(logical_or_exp,mod
+        logical_or_exp => logical_and_exp
+(logical_or_exp,not
+        logical_or_exp => logical_and_exp
+(logical_or_exp,bnot
+        logical_or_exp => logical_and_exp
+(logical_or_exp,band
+        logical_or_exp => logical_and_exp
+(logical_or_exp,bor
+        logical_or_exp => logical_and_exp
+(logical_or_exp,bxor
+        logical_or_exp => logical_and_exp
+(logical_or_exp,greater
+        logical_or_exp => logical_and_exp
+(logical_or_exp,less
+        logical_or_exp => logical_and_exp
+(logical_or_exp,comma
+        logical_or_exp => logical_and_exp
+(logical_and_exp,toksizeof
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,double_literal
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,int_literal
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,char_literal
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,string_literal
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,identifier
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,inc
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,dec
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,equal
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,lor
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,land
+        logical_and_exp => inclusive_or_exp '&&' logical_and_exp
+(logical_and_exp,nequal
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,lequal
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,gequal
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,shl
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,shr
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,point
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,arrow
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,semicolon
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,colon
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,question
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,rbrace
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,lbracket
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,rbracket
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,lparenthesis
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,rparenthesis
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,add
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,sub
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,mul
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,div
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,mod
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,not
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,bnot
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,band
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,bor
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,bxor
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,greater
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,less
+        logical_and_exp => inclusive_or_exp
+(logical_and_exp,comma
+        logical_and_exp => inclusive_or_exp
+(inclusive_or_exp,toksizeof
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,double_literal
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,int_literal
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,char_literal
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,string_literal
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,identifier
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,inc
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,dec
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,equal
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,lor
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,land
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,nequal
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,lequal
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,gequal
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,shl
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,shr
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,point
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,arrow
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,semicolon
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,colon
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,question
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,rbrace
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,lbracket
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,rbracket
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,lparenthesis
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,rparenthesis
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,add
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,sub
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,mul
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,div
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,mod
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,not
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,bnot
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,band
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,bor
+        inclusive_or_exp => exclusive_or_exp '|' inclusive_or_exp
+(inclusive_or_exp,bxor
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,greater
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,less
+        inclusive_or_exp => exclusive_or_exp
+(inclusive_or_exp,comma
+        inclusive_or_exp => exclusive_or_exp
+(exclusive_or_exp,toksizeof
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,double_literal
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,int_literal
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,char_literal
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,string_literal
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,identifier
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,inc
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,dec
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,equal
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,lor
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,land
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,nequal
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,lequal
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,gequal
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,shl
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,shr
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,point
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,arrow
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,semicolon
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,colon
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,question
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,rbrace
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,lbracket
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,rbracket
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,lparenthesis
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,rparenthesis
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,add
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,sub
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,mul
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,div
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,mod
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,not
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,bnot
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,band
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,bor
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,bxor
+        exclusive_or_exp => and_exp '^' exclusive_or_exp
+(exclusive_or_exp,greater
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,less
+        exclusive_or_exp => and_exp
+(exclusive_or_exp,comma
+        exclusive_or_exp => and_exp
+(and_exp,toksizeof
+        and_exp => equality_exp
+(and_exp,double_literal
+        and_exp => equality_exp
+(and_exp,int_literal
+        and_exp => equality_exp
+(and_exp,char_literal
+        and_exp => equality_exp
+(and_exp,string_literal
+        and_exp => equality_exp
+(and_exp,identifier
+        and_exp => equality_exp
+(and_exp,inc
+        and_exp => equality_exp
+(and_exp,dec
+        and_exp => equality_exp
+(and_exp,equal
+        and_exp => equality_exp
+(and_exp,lor
+        and_exp => equality_exp
+(and_exp,land
+        and_exp => equality_exp
+(and_exp,nequal
+        and_exp => equality_exp
+(and_exp,lequal
+        and_exp => equality_exp
+(and_exp,gequal
+        and_exp => equality_exp
+(and_exp,shl
+        and_exp => equality_exp
+(and_exp,shr
+        and_exp => equality_exp
+(and_exp,point
+        and_exp => equality_exp
+(and_exp,arrow
+        and_exp => equality_exp
+(and_exp,semicolon
+        and_exp => equality_exp
+(and_exp,colon
+        and_exp => equality_exp
+(and_exp,question
+        and_exp => equality_exp
+(and_exp,rbrace
+        and_exp => equality_exp
+(and_exp,lbracket
+        and_exp => equality_exp
+(and_exp,rbracket
+        and_exp => equality_exp
+(and_exp,lparenthesis
+        and_exp => equality_exp
+(and_exp,rparenthesis
+        and_exp => equality_exp
+(and_exp,add
+        and_exp => equality_exp
+(and_exp,sub
+        and_exp => equality_exp
+(and_exp,mul
+        and_exp => equality_exp
+(and_exp,div
+        and_exp => equality_exp
+(and_exp,mod
+        and_exp => equality_exp
+(and_exp,not
+        and_exp => equality_exp
+(and_exp,bnot
+        and_exp => equality_exp
+(and_exp,band
+        and_exp => equality_exp
+(and_exp,bor
+        and_exp => equality_exp
+(and_exp,bxor
+        and_exp => equality_exp
+(and_exp,greater
+        and_exp => equality_exp
+(and_exp,less
+        and_exp => equality_exp
+(and_exp,comma
+        and_exp => equality_exp
+(equality_exp,toksizeof
+        equality_exp => relational_exp
+(equality_exp,double_literal
+        equality_exp => relational_exp
+(equality_exp,int_literal
+        equality_exp => relational_exp
+(equality_exp,char_literal
+        equality_exp => relational_exp
+(equality_exp,string_literal
+        equality_exp => relational_exp
+(equality_exp,identifier
+        equality_exp => relational_exp
+(equality_exp,inc
+        equality_exp => relational_exp
+(equality_exp,dec
+        equality_exp => relational_exp
+(equality_exp,equal
+        equality_exp => relational_exp '==' equality_exp
+(equality_exp,lor
+        equality_exp => relational_exp
+(equality_exp,land
+        equality_exp => relational_exp
+(equality_exp,nequal
+        equality_exp => relational_exp '!=' equality_exp
+(equality_exp,lequal
+        equality_exp => relational_exp
+(equality_exp,gequal
+        equality_exp => relational_exp
+(equality_exp,shl
+        equality_exp => relational_exp
+(equality_exp,shr
+        equality_exp => relational_exp
+(equality_exp,point
+        equality_exp => relational_exp
+(equality_exp,arrow
+        equality_exp => relational_exp
+(equality_exp,semicolon
+        equality_exp => relational_exp
+(equality_exp,colon
+        equality_exp => relational_exp
+(equality_exp,question
+        equality_exp => relational_exp
+(equality_exp,rbrace
+        equality_exp => relational_exp
+(equality_exp,lbracket
+        equality_exp => relational_exp
+(equality_exp,rbracket
+        equality_exp => relational_exp
+(equality_exp,lparenthesis
+        equality_exp => relational_exp
+(equality_exp,rparenthesis
+        equality_exp => relational_exp
+(equality_exp,add
+        equality_exp => relational_exp
+(equality_exp,sub
+        equality_exp => relational_exp
+(equality_exp,mul
+        equality_exp => relational_exp
+(equality_exp,div
+        equality_exp => relational_exp
+(equality_exp,mod
+        equality_exp => relational_exp
+(equality_exp,not
+        equality_exp => relational_exp
+(equality_exp,bnot
+        equality_exp => relational_exp
+(equality_exp,band
+        equality_exp => relational_exp
+(equality_exp,bor
+        equality_exp => relational_exp
+(equality_exp,bxor
+        equality_exp => relational_exp
+(equality_exp,greater
+        equality_exp => relational_exp
+(equality_exp,less
+        equality_exp => relational_exp
+(equality_exp,comma
+        equality_exp => relational_exp
+(relational_exp,toksizeof
+        relational_exp => shift_expression
+(relational_exp,double_literal
+        relational_exp => shift_expression
+(relational_exp,int_literal
+        relational_exp => shift_expression
+(relational_exp,char_literal
+        relational_exp => shift_expression
+(relational_exp,string_literal
+        relational_exp => shift_expression
+(relational_exp,identifier
+        relational_exp => shift_expression
+(relational_exp,inc
+        relational_exp => shift_expression
+(relational_exp,dec
+        relational_exp => shift_expression
+(relational_exp,equal
+        relational_exp => shift_expression
+(relational_exp,lor
+        relational_exp => shift_expression
+(relational_exp,land
+        relational_exp => shift_expression
+(relational_exp,nequal
+        relational_exp => shift_expression
+(relational_exp,lequal
+        relational_exp => shift_expression '<=' relational_exp
+(relational_exp,gequal
+        relational_exp => shift_expression '>=' relational_exp
+(relational_exp,shl
+        relational_exp => shift_expression
+(relational_exp,shr
+        relational_exp => shift_expression
+(relational_exp,point
+        relational_exp => shift_expression
+(relational_exp,arrow
+        relational_exp => shift_expression
+(relational_exp,semicolon
+        relational_exp => shift_expression
+(relational_exp,colon
+        relational_exp => shift_expression
+(relational_exp,question
+        relational_exp => shift_expression
+(relational_exp,rbrace
+        relational_exp => shift_expression
+(relational_exp,lbracket
+        relational_exp => shift_expression
+(relational_exp,rbracket
+        relational_exp => shift_expression
+(relational_exp,lparenthesis
+        relational_exp => shift_expression
+(relational_exp,rparenthesis
+        relational_exp => shift_expression
+(relational_exp,add
+        relational_exp => shift_expression
+(relational_exp,sub
+        relational_exp => shift_expression
+(relational_exp,mul
+        relational_exp => shift_expression
+(relational_exp,div
+        relational_exp => shift_expression
+(relational_exp,mod
+        relational_exp => shift_expression
+(relational_exp,not
+        relational_exp => shift_expression
+(relational_exp,bnot
+        relational_exp => shift_expression
+(relational_exp,band
+        relational_exp => shift_expression
+(relational_exp,bor
+        relational_exp => shift_expression
+(relational_exp,bxor
+        relational_exp => shift_expression
+(relational_exp,greater
+        relational_exp => shift_expression '>' relational_exp
+(relational_exp,less
+        relational_exp => shift_expression '<' relational_exp
+(relational_exp,comma
+        relational_exp => shift_expression
+(shift_expression,toksizeof
+        shift_expression => additive_exp
+(shift_expression,double_literal
+        shift_expression => additive_exp
+(shift_expression,int_literal
+        shift_expression => additive_exp
+(shift_expression,char_literal
+        shift_expression => additive_exp
+(shift_expression,string_literal
+        shift_expression => additive_exp
+(shift_expression,identifier
+        shift_expression => additive_exp
+(shift_expression,inc
+        shift_expression => additive_exp
+(shift_expression,dec
+        shift_expression => additive_exp
+(shift_expression,equal
+        shift_expression => additive_exp
+(shift_expression,lor
+        shift_expression => additive_exp
+(shift_expression,land
+        shift_expression => additive_exp
+(shift_expression,nequal
+        shift_expression => additive_exp
+(shift_expression,lequal
+        shift_expression => additive_exp
+(shift_expression,gequal
+        shift_expression => additive_exp
+(shift_expression,shl
+        shift_expression => additive_exp '<<' shift_expression
+(shift_expression,shr
+        shift_expression => additive_exp '>>' shift_expression
+(shift_expression,point
+        shift_expression => additive_exp
+(shift_expression,arrow
+        shift_expression => additive_exp
+(shift_expression,semicolon
+        shift_expression => additive_exp
+(shift_expression,colon
+        shift_expression => additive_exp
+(shift_expression,question
+        shift_expression => additive_exp
+(shift_expression,rbrace
+        shift_expression => additive_exp
+(shift_expression,lbracket
+        shift_expression => additive_exp
+(shift_expression,rbracket
+        shift_expression => additive_exp
+(shift_expression,lparenthesis
+        shift_expression => additive_exp
+(shift_expression,rparenthesis
+        shift_expression => additive_exp
+(shift_expression,add
+        shift_expression => additive_exp
+(shift_expression,sub
+        shift_expression => additive_exp
+(shift_expression,mul
+        shift_expression => additive_exp
+(shift_expression,div
+        shift_expression => additive_exp
+(shift_expression,mod
+        shift_expression => additive_exp
+(shift_expression,not
+        shift_expression => additive_exp
+(shift_expression,bnot
+        shift_expression => additive_exp
+(shift_expression,band
+        shift_expression => additive_exp
+(shift_expression,bor
+        shift_expression => additive_exp
+(shift_expression,bxor
+        shift_expression => additive_exp
+(shift_expression,greater
+        shift_expression => additive_exp
+(shift_expression,less
+        shift_expression => additive_exp
+(shift_expression,comma
+        shift_expression => additive_exp
+(additive_exp,toksizeof
+        additive_exp => mult_exp
+(additive_exp,double_literal
+        additive_exp => mult_exp
+(additive_exp,int_literal
+        additive_exp => mult_exp
+(additive_exp,char_literal
+        additive_exp => mult_exp
+(additive_exp,string_literal
+        additive_exp => mult_exp
+(additive_exp,identifier
+        additive_exp => mult_exp
+(additive_exp,inc
+        additive_exp => mult_exp
+(additive_exp,dec
+        additive_exp => mult_exp
+(additive_exp,equal
+        additive_exp => mult_exp
+(additive_exp,lor
+        additive_exp => mult_exp
+(additive_exp,land
+        additive_exp => mult_exp
+(additive_exp,nequal
+        additive_exp => mult_exp
+(additive_exp,lequal
+        additive_exp => mult_exp
+(additive_exp,gequal
+        additive_exp => mult_exp
+(additive_exp,shl
+        additive_exp => mult_exp
+(additive_exp,shr
+        additive_exp => mult_exp
+(additive_exp,point
+        additive_exp => mult_exp
+(additive_exp,arrow
+        additive_exp => mult_exp
+(additive_exp,semicolon
+        additive_exp => mult_exp
+(additive_exp,colon
+        additive_exp => mult_exp
+(additive_exp,question
+        additive_exp => mult_exp
+(additive_exp,rbrace
+        additive_exp => mult_exp
+(additive_exp,lbracket
+        additive_exp => mult_exp
+(additive_exp,rbracket
+        additive_exp => mult_exp
+(additive_exp,lparenthesis
+        additive_exp => mult_exp
+(additive_exp,rparenthesis
+        additive_exp => mult_exp
+(additive_exp,add
+        additive_exp => mult_exp
+(additive_exp,sub
+        additive_exp => mult_exp
+(additive_exp,mul
+        additive_exp => mult_exp
+(additive_exp,div
+        additive_exp => mult_exp
+(additive_exp,mod
+        additive_exp => mult_exp
+(additive_exp,not
+        additive_exp => mult_exp
+(additive_exp,bnot
+        additive_exp => mult_exp
+(additive_exp,band
+        additive_exp => mult_exp
+(additive_exp,bor
+        additive_exp => mult_exp
+(additive_exp,bxor
+        additive_exp => mult_exp
+(additive_exp,greater
+        additive_exp => mult_exp
+(additive_exp,less
+        additive_exp => mult_exp
+(additive_exp,comma
+        additive_exp => mult_exp
+(mult_exp,toksizeof
+        mult_exp => cast_exp
+(mult_exp,double_literal
+        mult_exp => cast_exp
+(mult_exp,int_literal
+        mult_exp => cast_exp
+(mult_exp,char_literal
+        mult_exp => cast_exp
+(mult_exp,string_literal
+        mult_exp => cast_exp
+(mult_exp,identifier
+        mult_exp => cast_exp
+(mult_exp,inc
+        mult_exp => cast_exp
+(mult_exp,dec
+        mult_exp => cast_exp
+(mult_exp,equal
+        mult_exp => cast_exp
+(mult_exp,lor
+        mult_exp => cast_exp
+(mult_exp,land
+        mult_exp => cast_exp
+(mult_exp,nequal
+        mult_exp => cast_exp
+(mult_exp,lequal
+        mult_exp => cast_exp
+(mult_exp,gequal
+        mult_exp => cast_exp
+(mult_exp,shl
+        mult_exp => cast_exp
+(mult_exp,shr
+        mult_exp => cast_exp
+(mult_exp,point
+        mult_exp => cast_exp
+(mult_exp,arrow
+        mult_exp => cast_exp
+(mult_exp,semicolon
+        mult_exp => cast_exp
+(mult_exp,colon
+        mult_exp => cast_exp
+(mult_exp,question
+        mult_exp => cast_exp
+(mult_exp,rbrace
+        mult_exp => cast_exp
+(mult_exp,lbracket
+        mult_exp => cast_exp
+(mult_exp,rbracket
+        mult_exp => cast_exp
+(mult_exp,lparenthesis
+        mult_exp => cast_exp
+(mult_exp,rparenthesis
+        mult_exp => cast_exp
+(mult_exp,add
+        mult_exp => cast_exp
+(mult_exp,sub
+        mult_exp => cast_exp
+(mult_exp,mul
+        mult_exp => cast_exp
+(mult_exp,div
+        mult_exp => cast_exp '/' mult_exp
+(mult_exp,mod
+        mult_exp => cast_exp '%' mult_exp
+(mult_exp,not
+        mult_exp => cast_exp
+(mult_exp,bnot
+        mult_exp => cast_exp
+(mult_exp,band
+        mult_exp => cast_exp
+(mult_exp,bor
+        mult_exp => cast_exp
+(mult_exp,bxor
+        mult_exp => cast_exp
+(mult_exp,greater
+        mult_exp => cast_exp
+(mult_exp,less
+        mult_exp => cast_exp
+(mult_exp,comma
+        mult_exp => cast_exp
+(cast_exp,toksizeof
+        cast_exp => unary_exp
+(cast_exp,double_literal
+        cast_exp => unary_exp
+(cast_exp,int_literal
+        cast_exp => unary_exp
+(cast_exp,char_literal
+        cast_exp => unary_exp
+(cast_exp,string_literal
+        cast_exp => unary_exp
+(cast_exp,identifier
+        cast_exp => unary_exp
+(cast_exp,inc
+        cast_exp => unary_exp
+(cast_exp,dec
+        cast_exp => unary_exp
+(cast_exp,addass
+        cast_exp => unary_exp
+(cast_exp,subass
+        cast_exp => unary_exp
+(cast_exp,mulass
+        cast_exp => unary_exp
+(cast_exp,divass
+        cast_exp => unary_exp
+(cast_exp,modass
+        cast_exp => unary_exp
+(cast_exp,shlass
+        cast_exp => unary_exp
+(cast_exp,shrass
+        cast_exp => unary_exp
+(cast_exp,orass
+        cast_exp => unary_exp
+(cast_exp,andass
+        cast_exp => unary_exp
+(cast_exp,xorass
+        cast_exp => unary_exp
+(cast_exp,equal
+        cast_exp => unary_exp
+(cast_exp,lor
+        cast_exp => unary_exp
+(cast_exp,land
+        cast_exp => unary_exp
+(cast_exp,nequal
+        cast_exp => unary_exp
+(cast_exp,lequal
+        cast_exp => unary_exp
+(cast_exp,gequal
+        cast_exp => unary_exp
+(cast_exp,shl
+        cast_exp => unary_exp
+(cast_exp,shr
+        cast_exp => unary_exp
+(cast_exp,point
+        cast_exp => unary_exp
+(cast_exp,arrow
+        cast_exp => unary_exp
+(cast_exp,semicolon
+        cast_exp => unary_exp
+(cast_exp,colon
+        cast_exp => unary_exp
+(cast_exp,question
+        cast_exp => unary_exp
+(cast_exp,rbrace
+        cast_exp => unary_exp
+(cast_exp,lbracket
+        cast_exp => unary_exp
+(cast_exp,rbracket
+        cast_exp => unary_exp
+(cast_exp,lparenthesis
+        cast_exp => '(' type_name ')' cast_exp
+        cast_exp => unary_exp
+(cast_exp,rparenthesis
+        cast_exp => unary_exp
+(cast_exp,add
+        cast_exp => unary_exp
+(cast_exp,sub
+        cast_exp => unary_exp
+(cast_exp,mul
+        cast_exp => unary_exp
+(cast_exp,div
+        cast_exp => unary_exp
+(cast_exp,mod
+        cast_exp => unary_exp
+(cast_exp,not
+        cast_exp => unary_exp
+(cast_exp,bnot
+        cast_exp => unary_exp
+(cast_exp,band
+        cast_exp => unary_exp
+(cast_exp,bor
+        cast_exp => unary_exp
+(cast_exp,bxor
+        cast_exp => unary_exp
+(cast_exp,greater
+        cast_exp => unary_exp
+(cast_exp,less
+        cast_exp => unary_exp
+(cast_exp,assign
+        cast_exp => unary_exp
+(cast_exp,comma
+        cast_exp => unary_exp
+(postfix_exp,double_literal
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,int_literal
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,char_literal
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,string_literal
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,identifier
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,inc
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,dec
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,addass
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,subass
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,mulass
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,divass
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,modass
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,shlass
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,shrass
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,orass
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,andass
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,xorass
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,equal
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,lor
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,land
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,nequal
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,lequal
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,gequal
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,shl
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,shr
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,point
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,arrow
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,semicolon
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,colon
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,question
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,rbrace
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,lbracket
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,rbracket
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,lparenthesis
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,rparenthesis
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,add
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,sub
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,mul
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,div
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,mod
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,band
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,bor
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,bxor
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,greater
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,less
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,assign
+        postfix_exp => primary_exp postfix_exp_helper
+(postfix_exp,comma
+        postfix_exp => primary_exp postfix_exp_helper
+(unary_operator,add
+        unary_operator => '+'
+(unary_operator,sub
+        unary_operator => '-'
+(unary_operator,mul
+        unary_operator => '*'
+(unary_operator,not
+        unary_operator => '!'
+(unary_operator,bnot
+        unary_operator => '~'
+(unary_operator,band
+        unary_operator => '&'
+(primary_exp,double_literal
+        primary_exp => const
+(primary_exp,int_literal
+        primary_exp => const
+(primary_exp,char_literal
+        primary_exp => const
+(primary_exp,string_literal
+        primary_exp => string
+(primary_exp,identifier
+        primary_exp => id
+        primary_exp => const
+(primary_exp,lparenthesis
+        primary_exp => '(' exp ')'
+(postfix_exp_helper,inc
+        postfix_exp_helper => '++' postfix_exp_helper
+(postfix_exp_helper,dec
+        postfix_exp_helper => '--' postfix_exp_helper
+(postfix_exp_helper,addass
+        postfix_exp_helper =>
+(postfix_exp_helper,subass
+        postfix_exp_helper =>
+(postfix_exp_helper,mulass
+        postfix_exp_helper =>
+(postfix_exp_helper,divass
+        postfix_exp_helper =>
+(postfix_exp_helper,modass
+        postfix_exp_helper =>
+(postfix_exp_helper,shlass
+        postfix_exp_helper =>
+(postfix_exp_helper,shrass
+        postfix_exp_helper =>
+(postfix_exp_helper,orass
+        postfix_exp_helper =>
+(postfix_exp_helper,andass
+        postfix_exp_helper =>
+(postfix_exp_helper,xorass
+        postfix_exp_helper =>
+(postfix_exp_helper,equal
+        postfix_exp_helper =>
+(postfix_exp_helper,lor
+        postfix_exp_helper =>
+(postfix_exp_helper,land
+        postfix_exp_helper =>
+(postfix_exp_helper,nequal
+        postfix_exp_helper =>
+(postfix_exp_helper,lequal
+        postfix_exp_helper =>
+(postfix_exp_helper,gequal
+        postfix_exp_helper =>
+(postfix_exp_helper,shl
+        postfix_exp_helper =>
+(postfix_exp_helper,shr
+        postfix_exp_helper =>
+(postfix_exp_helper,point
+        postfix_exp_helper => '.' id postfix_exp_helper
+(postfix_exp_helper,arrow
+        postfix_exp_helper => '->' id postfix_exp_helper
+(postfix_exp_helper,semicolon
+        postfix_exp_helper =>
+(postfix_exp_helper,colon
+        postfix_exp_helper =>
+(postfix_exp_helper,question
+        postfix_exp_helper =>
+(postfix_exp_helper,rbrace
+        postfix_exp_helper =>
+(postfix_exp_helper,lbracket
+        postfix_exp_helper => '[' exp ']' postfix_exp_helper
+(postfix_exp_helper,rbracket
+        postfix_exp_helper =>
+(postfix_exp_helper,lparenthesis
+        postfix_exp_helper => '(' argument_exp_list ')' postfix_exp_helper
+(postfix_exp_helper,rparenthesis
+        postfix_exp_helper =>
+(postfix_exp_helper,add
+        postfix_exp_helper =>
+(postfix_exp_helper,sub
+        postfix_exp_helper =>
+(postfix_exp_helper,mul
+        postfix_exp_helper =>
+(postfix_exp_helper,div
+        postfix_exp_helper =>
+(postfix_exp_helper,mod
+        postfix_exp_helper =>
+(postfix_exp_helper,band
+        postfix_exp_helper =>
+(postfix_exp_helper,bor
+        postfix_exp_helper =>
+(postfix_exp_helper,bxor
+        postfix_exp_helper =>
+(postfix_exp_helper,greater
+        postfix_exp_helper =>
+(postfix_exp_helper,less
+        postfix_exp_helper =>
+(postfix_exp_helper,assign
+        postfix_exp_helper =>
+(postfix_exp_helper,comma
+        postfix_exp_helper =>
+(argument_exp_list,toksizeof
+        argument_exp_list => assignment_exp
+(argument_exp_list,double_literal
+        argument_exp_list => assignment_exp
+(argument_exp_list,int_literal
+        argument_exp_list => assignment_exp
+(argument_exp_list,char_literal
+        argument_exp_list => assignment_exp
+(argument_exp_list,string_literal
+        argument_exp_list => assignment_exp
+(argument_exp_list,identifier
+        argument_exp_list => assignment_exp
+(argument_exp_list,inc
+        argument_exp_list => assignment_exp
+(argument_exp_list,dec
+        argument_exp_list => assignment_exp
+(argument_exp_list,addass
+        argument_exp_list => assignment_exp
+(argument_exp_list,subass
+        argument_exp_list => assignment_exp
+(argument_exp_list,mulass
+        argument_exp_list => assignment_exp
+(argument_exp_list,divass
+        argument_exp_list => assignment_exp
+(argument_exp_list,modass
+        argument_exp_list => assignment_exp
+(argument_exp_list,shlass
+        argument_exp_list => assignment_exp
+(argument_exp_list,shrass
+        argument_exp_list => assignment_exp
+(argument_exp_list,orass
+        argument_exp_list => assignment_exp
+(argument_exp_list,andass
+        argument_exp_list => assignment_exp
+(argument_exp_list,xorass
+        argument_exp_list => assignment_exp
+(argument_exp_list,equal
+        argument_exp_list => assignment_exp
+(argument_exp_list,lor
+        argument_exp_list => assignment_exp
+(argument_exp_list,land
+        argument_exp_list => assignment_exp
+(argument_exp_list,nequal
+        argument_exp_list => assignment_exp
+(argument_exp_list,lequal
+        argument_exp_list => assignment_exp
+(argument_exp_list,gequal
+        argument_exp_list => assignment_exp
+(argument_exp_list,shl
+        argument_exp_list => assignment_exp
+(argument_exp_list,shr
+        argument_exp_list => assignment_exp
+(argument_exp_list,point
+        argument_exp_list => assignment_exp
+(argument_exp_list,arrow
+        argument_exp_list => assignment_exp
+(argument_exp_list,question
+        argument_exp_list => assignment_exp
+(argument_exp_list,lbracket
+        argument_exp_list => assignment_exp
+(argument_exp_list,lparenthesis
+        argument_exp_list => assignment_exp
+(argument_exp_list,rparenthesis
+        argument_exp_list => assignment_exp
+(argument_exp_list,add
+        argument_exp_list => assignment_exp
+(argument_exp_list,sub
+        argument_exp_list => assignment_exp
+(argument_exp_list,mul
+        argument_exp_list => assignment_exp
+(argument_exp_list,div
+        argument_exp_list => assignment_exp
+(argument_exp_list,mod
+        argument_exp_list => assignment_exp
+(argument_exp_list,not
+        argument_exp_list => assignment_exp
+(argument_exp_list,bnot
+        argument_exp_list => assignment_exp
+(argument_exp_list,band
+        argument_exp_list => assignment_exp
+(argument_exp_list,bor
+        argument_exp_list => assignment_exp
+(argument_exp_list,bxor
+        argument_exp_list => assignment_exp
+(argument_exp_list,greater
+        argument_exp_list => assignment_exp
+(argument_exp_list,less
+        argument_exp_list => assignment_exp
+(argument_exp_list,assign
+        argument_exp_list => assignment_exp
+(argument_exp_list,comma
+        argument_exp_list => assignment_exp ',' argument_exp_list
+(const,double_literal
+        const => float_const
+(const,int_literal
+        const => int_const
+(const,char_literal
+        const => char_const
+(const,identifier
+        const => enumeration_const
+Terminators
+'!'
+'!='
+'%'
+'%='
+'&&'
+'&'
+'&='
+'('
+')'
+'*'
+'*='
+'+'
+'++'
+'+='
+','
+'-'
+'--'
+'-='
+'->'
+'.'
+'...'
+'/'
+'/='
+':'
+';'
+'<'
+'<<'
+'<<='
+'<='
+'='
+'=='
+'>'
+'>='
+'>>'
+'>>='
+'?'
+'['
+']'
+'^'
+'^='
+'break'
+'case'
+'char'
+'const'
+'continue'
+'default'
+'do'
+'double'
+'dummy'
+'else'
+'enum'
+'extern'
+'float'
+'for'
+'goto'
+'if'
+'int'
+'long'
+'register'
+'return'
+'short'
+'signed'
+'sizeof'
+'static'
+'struct'
+'switch'
+'typedef'
+'union'
+'unsigned'
+'void'
+'volatile'
+'while'
+'{'
+'|'
+'|='
+'||'
+'}'
+'~'
+_Eps FUCK!!!!!!!
+
+char_const
+enumeration_const
+float_const
+id
+int_const
+string
+CURRENT _STACK TOP___ translation_unit !! translation_unit tokint
+!! try prod translation_unit=>{external_decl}
+CURRENT _STACK TOP___ external_decl !! external_decl tokint
+!! try prod external_decl=>{function_definition}
+CURRENT _STACK TOP___ function_definition !! function_definition tokint
+!! try prod function_definition=>{decl_specs}{declarator}{decl_list}{compound_stat}
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions tried
+!! try prod decl_specs=>{storage_class_spec}{decl_specs}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ decl_specs !! decl_specs tokint
+!! try prod decl_specs=>{storage_class_spec}
+CURRENT _STACK TOP___ storage_class_spec !! storage_class_spec tokint
+!! try prod storage_class_spec=>
+CURRENT _STACK TOP___ declarator !! declarator tokint
+ reject - no possible way
+-- reject -- all productions
