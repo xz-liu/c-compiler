@@ -90,7 +90,7 @@ return_stmt : 'return' return_follow ;
 return_follow : ';' {return} 
         | exp_chr_str {return@} ';'  ;
 array_val : id '[' exp ']' {@[@]} ;
-func_val : id call_func ;
+func_val : id {push_id} call_func {call_func} ;
 exp	:  term_assign exp_assign ;
 exp_assign :  '=' term_assign {@=@} exp_assign 
         |   '+=' term_assign {@+=@} exp_assign 
@@ -151,8 +151,8 @@ term_prefix : term_suffix
         | '+' term_prefix {+@}
         | '-' term_prefix {-@} ;
 term_suffix : factors 
-        | factors {@++} '++' 
-        | factors {@--} '--'  ;
+        | factors '++' {@++} 
+        | factors '--' {@--} ;
 factors : int_const {push_int}
         | float_const {push_float}
         | char_const {push_char}
@@ -177,9 +177,10 @@ quad type :
         codeblock, func , end , 0 
         arrayval , id , pos , to 
         push , val , 0 ,0
-        call , id , 0 , 0
+        call , id , 0 , to
         ret, 0 , 0 , to
         op , lhs, rhs, to 
-        
-        
+        op , val, 0, 0  
+        assign , lhs, rhs, type
+
 */
