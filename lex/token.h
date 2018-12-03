@@ -102,7 +102,7 @@ enum class token {
 	assign,	//	=
 	comma,	//	,
 	whitespace,	//	[\r\n\t\s]+
-	dummy =1000000
+	dummy =1000000,
 };
 
 enum class type_token {

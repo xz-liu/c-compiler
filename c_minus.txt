@@ -1,10 +1,185 @@
-program : decl_list
-decl_list : decl decl_list | decl_list
-decl : var_decl | fun_decl
-var_decl : type_spec id ';' | type_spec id array_suffix ';' |  type_spec id '=' exp ';' ;
-array_suffix : '[' int_const ']' | '[' int_const ']' array_suffix ;
-type_spec : type_attr type_id | type_id | type_attr type_attr type_id ;
-type_attr : 'auto' | 'static' | 'const' | 'vollatile' | 'register' | 'extern' ;
-type_id : 'int' | 'long' | 'short' | 'float' | 'double' 
-        | 'long' 'int' | 'long' 'long' 'int' | 'long' 'double' | 'char' | 'unsigned' | 'unsigned' 'int' |
-        'unsigned' 'long' | 'unsigned' 'long' 'long' | 'long' 'long' ;
+
+char const*  bnf_c= R"(
+
+program : decl_list ;
+decl_list : decl decl_list
+        | ;
+decl : type_spec id '(' params ')'  code_block  
+        | local_var_def 
+        | struct_decl 
+        | ';' ;
+struct_decl : 'struct' id '{' local_def_list  '}' ';' ;
+exp_chr_str : exp 
+        | char_const 
+        | string ;
+var_init : '=' exp_chr_str ';' ;
+var_decl : ';' 
+        | '[' int_const ']' ;
+type_spec : int_type 
+        | float_type 
+        | char_type 
+        | 'void' 
+        | struct_type  ;
+int_type : int16_type 
+        | uint16_type 
+        | int32_type 
+        | uint32_type
+        | int64_type
+        | uint64_type ;
+int16_type : 'short' ;
+uint16_type : 'unsigned' 'short' ;
+int32_type : 'int' 
+        | 'long' 
+        | 'long' 'int' ;
+uint32_type : 'unsigned' 'int' 
+        |  'unsigned' 
+        | 'unsigned' 'long' ;
+int64_type :  'long' 'long' 'int' 
+        | 'long' 'long' ;
+uint64_type :  'unsigned' 'long' 'long' 
+        |  'unsigned' 'long' 'long' 'int' ;
+
+float_type : 'float' 
+        | 'double' ;
+char_type : 'char' 
+        | 'unsigned' 'char' ;
+struct_type : 'char' 
+        | 'void' 
+        | 'struct' id ;
+params : param_list 
+        | ;
+param_list : param  param_follow ;
+param_follow : ',' param param_follow 
+        | ;
+param :  type_spec  id   '[' ']' 
+        | type_spec id  ;
+code_block :  '{' local_def_list code_list  '}' ;
+local_def_list : local_var_def local_def_list 
+        | ;
+local_var_def : type_spec local_var_def_list ;
+local_var_def_list :  id {def} local_var_def_follow 
+        | id '=' exp_chr_str {def@=@}  local_var_def_follow 
+        | id '[' int_const ']' {def@[@]} local_var_def_follow ;
+local_var_def_follow : ',' id {def} local_var_def_follow 
+        | ','  id '=' exp_chr_str {def@=@} local_var_def_follow 
+        | ',' id '[' int_const ']' {def@[@]} local_var_def_follow 
+        | ';' ;
+code_list : code code_list 
+        | ;
+code : normal_stmt 
+        | branch_stmt 
+        | iteration_stmt 
+        | return_stmt 
+        | code_block ;
+normal_stmt : ';' 
+        | exp_chr_str ';' 
+        | func_val {push_func_val} ;
+call_func : '(' call_params ')' ;
+call_params : call_param_list 
+        | ;
+call_param_list : exp_chr_str {call_func_push} call_param_follow ;
+call_param_follow : ',' exp_chr_str {call_func_push} call_param_follow 
+        | ;
+branch_stmt : if_stmt ;
+if_stmt :  'if' '(' exp_chr_str {if_check} ')' {if_begin} code {if_end} 
+        |  'if' '(' exp_chr_str {if_check} ')' {if_begin} code {if_end} 'else' {else_begin} code {else_end} 
+        |  'if' '(' exp_chr_str {if_check} ')' {if_begin} code {if_end} 'else' {else_begin} if_stmt {else_end} ;
+iteration_stmt : 'while' '(' exp_chr_str {while_check} ')' code {while_end} 
+        | 'for' '(' exp_chr_str {for_init} ';'  exp_chr_str {for_check} ';' exp_chr_str {for_suf} ')' code {for_end} ;
+return_stmt : 'return' return_follow ;
+return_follow : ';' {return} 
+        | exp_chr_str {return@} ';'  ;
+array_val : id '[' exp ']' {@[@]} ;
+func_val : id call_func ;
+exp	:  term_assign exp_assign ;
+exp_assign :  '=' term_assign {@=@} exp_assign 
+        |   '+=' term_assign {@+=@} exp_assign 
+        |   '-=' term_assign {@-=@} exp_assign 
+        |   '*=' term_assign {@*=@} exp_assign 
+        |   '/=' term_assign {@/=@} exp_assign 
+        |   '%=' term_assign {@%=@} exp_assign 
+        |   '<<=' term_assign {@<<=@} exp_assign 
+        |   '>>=' term_assign {@>>=@} exp_assign 
+        |   '&=' term_assign {@&=@} exp_assign 
+        |   '^=' term_assign {@^=@} exp_assign 
+        |   '|=' term_assign {@|=@} exp_assign 
+        |  ;
+term_assign : term_log_or exp_log_or ;
+exp_log_or :  '||' term_log_or {@||@} exp_log_or 
+        |  ;
+term_log_or : term_log_and exp_log_and ;
+exp_log_and :  '&&' term_log_and {@&&@} exp_log_and 
+        |  ;
+term_log_and : term_bit_or exp_bit_or ;
+exp_bit_or : '|' term_bit_or {@|@} exp_bit_or 
+        |  ;
+term_bit_or : term_bit_xor exp_bit_xor ;
+exp_bit_xor : '^' term_bit_xor {@^@} exp_bit_xor 
+        |  ;
+term_bit_xor : term_bit_and exp_bit_and ;
+exp_bit_and : '&' term_bit_and {@&@} exp_bit_and 
+        |  ;
+term_bit_and : term_eq exp_eq ;
+exp_eq : '==' term_eq {@==@} exp_eq 
+        | '!=' term_eq {@!=@} exp_eq 
+        |  ;
+term_eq : term_cmp exp_cmp ;
+exp_cmp : '>=' term_cmp {@>=@} exp_cmp 
+        | '<=' term_cmp {@<=@} exp_cmp 
+        | '>' term_cmp {@>@} exp_cmp 
+        | '<' term_cmp {@<@} exp_cmp 
+        |  ;
+term_cmp : term_shift exp_shift ;
+exp_shift : '<<' term_shift {@<<@} exp_shift 
+        | '>>' term_shift {@>>@} exp_shift
+        | ;
+term_shift : term_add exp_add ;
+exp_add : '+' term_add {@+@} exp_add 
+        | '-' term_add {@-@} exp_add 
+        | ;
+term_add : term_mul exp_mul ;
+exp_mul : '*' term_mul {@*@} exp_mul 
+        | '/' term_mul {@/@} exp_mul 
+        | '%' term_mul {@%@} exp_mul 
+        | ;
+term_mul : term_prefix ;
+term_prefix : term_suffix 
+        | '++' term_prefix {++@}
+        | '--' term_prefix {--@}
+        | '!' term_prefix {!@}
+        | '~' term_prefix {~@}
+        | '+' term_prefix {+@}
+        | '-' term_prefix {-@} ;
+term_suffix : factors 
+        | factors {@++} '++' 
+        | factors {@--} '--'  ;
+factors : int_const {push_int}
+        | float_const {push_float}
+        | char_const {push_char}
+        | id {push_id}
+        | array_val {push_array_val}
+        | func_val {push_func_val}
+        | id '.' id {push_struct_val}  ;
+
+)";
+
+/*
+quad type : 
+        label , pos , 0, 0
+        jmp , pos, 0 , 0
+        branch , pos, pred , 0  
+        newvar , id , type , for_init
+        func , id , type , 0
+        funcparam , pos, type , array
+        struct , id , 0 , 0
+        structmem, id , type , array
+        codeblock, func , begin, 0
+        codeblock, func , end , 0 
+        arrayval , id , pos , to 
+        push , val , 0 ,0
+        call , id , 0 , 0
+        ret, 0 , 0 , to
+        op , lhs, rhs, to 
+        
+        
+*/

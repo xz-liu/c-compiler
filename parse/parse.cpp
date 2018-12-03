@@ -1,27 +1,12 @@
 #include "parse.h"
 #include "graph.h"
-#include "lr.h"
 
-//
-//void lr_closure(grammar & g, std::set<lr_item> I) {
-//	bool add_op = true;
-//	do {
-//		for (auto && item : I) {
-//			int B = g[item.exp_s][item.exp].size();
-//			if (B > item.pos) {
-//				B = g[item.exp_s][item.exp][item.pos];
-//				for (auto &&P : g[B]) {
-//
-//				}
-//			} else { continue; }
-//
-//		}
-//	} while (add_op);
-//}
-//
+parser::parser(lex_data const & d, grammar & g) :data(d) ,grm(g) {
 
+#define _GRAMMAR_ASSIGN_ACT(str,code) \
+	grm.assign_action(str, [&](int now)) code
 
-
+}
 
 bool parser::parse(grammar const& grm, int pro_s) {
 	auto &exps = grm[pro_s];

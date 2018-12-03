@@ -32,7 +32,10 @@ void rec::parse_E2() {
 
 void rec::parse_F() {
 	std::cout << "F ";
-	if (now >= data.lex_result.size())return;
+	if (now >= data.lex_result.size()) {
+		result = false;
+		return;
+	};
 	if (data.cmp_token(now, token::int_literal) ||
 		data.cmp_token(now, token::double_literal) ||
 		data.cmp_token(now, token::identifier)) {

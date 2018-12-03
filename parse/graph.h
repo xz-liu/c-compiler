@@ -7,7 +7,7 @@ struct grammar {
 	using production = std::vector<int>;
 	bool ll1_table_product_cmp(product_reference const& a, product_reference const &b);
 public:
-	using semantic_action = std::function<void(lex_data const&, int)>;
+	using semantic_action = std::function<void(int)>;
 	using ll1_table_pred = std::pair<int, token>;
 	using ll1_table_item = std::set<std::pair<int, int>,
 		std::function<bool (grammar::product_reference const& , grammar::product_reference const &)>>;
@@ -36,6 +36,9 @@ private:
 	template<class It>
 	std::set<int> first_set_of_prod(It begin,It end) {
 		std::set<int> ans;
+		if(begin==end) {
+			return { id_eps };
+		}
 		bool fucking_good = false;
 		for (; begin != end;++begin) {
 			bool good = true;
@@ -113,13 +116,6 @@ public:
 		productions[S].push_back(vec);
 		prod_index[std::make_pair(S,productions[S].size()-1)]= cal_prod_index(S, vec);
 	}
-	/*void add_production(std::string const&s,std::string const& atcion ,std::vector<std::string> const&exp) {
-		int S = get_tok(s);
-		std::vector<int> vec;
-		for (auto &&i : exp)vec.push_back(get_tok(i));
-		productions[S].push_back(vec);
-		action_ref.emplace(atcion, std::make_pair(S, productions[S].size() - 1));
-	}*/
 	
 	void assign_action(std::string const& c, semantic_action &&act) {
 		action.emplace(c, act);
@@ -164,36 +160,6 @@ public:
 		if (it == token_map.end())return token::dummy;
 		else return it->second;
 	}
-};
-
-struct sem_stack {
-	std::stack<std::string	> const_str;
-	std::stack<std::int64_t> const_int;
-	std::stack<double	> const_float;
-	std::stack<char		> const_char;
-	std::stack<std::string	> id_stack;
-	std::stack<type_token> now_type;
-	void push_id(std::string const& now) {
-		id_stack.push(now);
-		now_type.push(type_token::identifier);
-	}
-	void push_str(std::string const& now) {
-		const_str.push(now);
-		now_type.push(type_token::string_literal);
-	}
-	void push_char(char now) {
-		const_char.push(now);
-		now_type.push(type_token::char_literal);
-	}
-	void push_int(std::int64_t const& now) {
-		const_int.push(now);
-		now_type.push(type_token::int_literal);
-	}
-	void push_float(double now) {
-		const_float.push(now);
-		now_type.push(type_token::double_literal);
-	}
-	type_token now() { return now_type.top(); }
 };
 
 struct ast :bin_tree<std::string> {

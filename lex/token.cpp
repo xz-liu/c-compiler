@@ -467,5 +467,7 @@ std::map<std::string, token> get_token_map() {
 	ADD_TOKEN(id, token::identifier);
 	ADD_TOKEN(string, token::string_literal);
 	ADD_TOKEN(enumeration_const, token::identifier);
+
 	return tok_Mp;
 }
+
