@@ -5,14 +5,13 @@ program : decl_list ;
 decl_list : decl decl_list
         | ;
 decl : type_spec id '(' params ')'  code_block  
-        | local_var_def 
+        | var_def 
         | struct_decl 
         | ';' ;
-struct_decl : 'struct' id '{' local_def_list  '}' ';' ;
-exp_chr_str : exp 
-        | char_const 
-        | string ;
-var_init : '=' exp_chr_str ';' ;
+struct_decl : 'struct' id '{' def_list  '}' ';' ;
+exp_or_str : exp  
+        | string {push_str} ;
+var_init : '=' exp_or_str ';' ;
 var_decl : ';' 
         | '[' int_const ']' ;
 type_spec : int_type 
@@ -43,9 +42,7 @@ float_type : 'float'
         | 'double' ;
 char_type : 'char' 
         | 'unsigned' 'char' ;
-struct_type : 'char' 
-        | 'void' 
-        | 'struct' id ;
+struct_type : 'struct' id ;
 params : param_list 
         | ;
 param_list : param  param_follow ;
@@ -53,16 +50,16 @@ param_follow : ',' param param_follow
         | ;
 param :  type_spec  id   '[' ']' 
         | type_spec id  ;
-code_block :  '{' local_def_list code_list  '}' ;
-local_def_list : local_var_def local_def_list 
+code_block :  '{' def_list code_list  '}' ;
+def_list : var_def def_list 
         | ;
-local_var_def : type_spec local_var_def_list ;
-local_var_def_list :  id {def} local_var_def_follow 
-        | id '=' exp_chr_str {def@=@}  local_var_def_follow 
-        | id '[' int_const ']' {def@[@]} local_var_def_follow ;
-local_var_def_follow : ',' id {def} local_var_def_follow 
-        | ','  id '=' exp_chr_str {def@=@} local_var_def_follow 
-        | ',' id '[' int_const ']' {def@[@]} local_var_def_follow 
+var_def : type_spec var_def_list ;
+var_def_list :  id {def} var_def_follow 
+        | id '=' exp_or_str {def@=@}  var_def_follow 
+        | id '[' int_const ']' {def@[@]} var_def_follow ;
+var_def_follow : ',' id {def} var_def_follow 
+        | ','  id '=' exp_or_str {def@=@} var_def_follow 
+        | ',' id '[' int_const ']' {def@[@]} var_def_follow 
         | ';' ;
 code_list : code code_list 
         | ;
@@ -72,25 +69,35 @@ code : normal_stmt
         | return_stmt 
         | code_block ;
 normal_stmt : ';' 
-        | exp_chr_str ';' 
-        | func_val {push_func_val} ;
+        | exp_or_str ';' {pop_top}
+        | 'break' ';' {break}
+        | 'continue' ';' {continue} ;
 call_func : '(' call_params ')' ;
 call_params : call_param_list 
         | ;
-call_param_list : exp_chr_str {call_func_push} call_param_follow ;
-call_param_follow : ',' exp_chr_str {call_func_push} call_param_follow 
+call_param_list : exp_or_str {call_func_push} call_param_follow ;
+call_param_follow : ',' exp_or_str {call_func_push} call_param_follow 
         | ;
-branch_stmt : if_stmt ;
-if_stmt :  'if' '(' exp_chr_str {if_check} ')' {if_begin} code {if_end} 
-        |  'if' '(' exp_chr_str {if_check} ')' {if_begin} code {if_end} 'else' {else_begin} code {else_end} 
-        |  'if' '(' exp_chr_str {if_check} ')' {if_begin} code {if_end} 'else' {else_begin} if_stmt {else_end} ;
-iteration_stmt : 'while' '(' exp_chr_str {while_check} ')' code {while_end} 
-        | 'for' '(' exp_chr_str {for_init} ';'  exp_chr_str {for_check} ';' exp_chr_str {for_suf} ')' code {for_end} ;
+branch_stmt : if_stmt
+        | switch_stmt ;
+switch_stmt : 'switch' {switch_begin} '(' exp ')' '{' case_list default '}' {switch_end} ;
+i_c : int_const {push_int}
+        | char_const {push_char} ;
+case_list : case case_list 
+        | ;
+case : 'case' i_c {case_begin} ':' code {case_end} ;
+default : 'default' ':' code ;
+if_stmt :  'if' {if_begin} '(' exp_or_str {if_check} ')' code {if_end} else_stmt {else_end} ;
+else_stmt : 'else' else_follow code
+        | ;
+iteration_stmt : 'while' {while_begin} '(' exp_or_str {while_check} ')' code {while_end} 
+        | 'for' '(' for_exp {for_init} ';'  for_exp {for_check} ';' for_exp {for_suf} ')' code {for_end} ;
+for_exp : exp_or_str ; 
 return_stmt : 'return' return_follow ;
 return_follow : ';' {return} 
-        | exp_chr_str {return@} ';'  ;
-array_val : id '[' exp ']' {@[@]} ;
-func_val : id {push_id} call_func {call_func} ;
+        | exp_or_str {return@} ';'  ;
+array_val : '[' exp ']' ;
+func_val :  call_func  ;
 exp	:  term_assign exp_assign ;
 exp_assign :  '=' term_assign {@=@} exp_assign 
         |   '+=' term_assign {@+=@} exp_assign 
@@ -156,31 +163,32 @@ term_suffix : factors
 factors : int_const {push_int}
         | float_const {push_float}
         | char_const {push_char}
-        | id {push_id}
-        | array_val {push_array_val}
-        | func_val {push_func_val}
-        | id '.' id {push_struct_val}  ;
+        | id {push_id} id_suffix
+        | '(' exp ')' ;
+
+id_suffix : array_val {@[@]} | func_val {call_func} | '.' id {@.@} | ;
 
 )";
 
 /*
 quad type : 
-        label , pos , 0, 0
-        jmp , pos, 0 , 0
-        branch , pos, pred , 0  
-        newvar , id , type , for_init
-        func , id , type , 0
-        funcparam , pos, type , array
-        struct , id , 0 , 0
-        structmem, id , type , array
-        codeblock, func , begin, 0
-        codeblock, func , end , 0 
-        arrayval , id , pos , to 
-        push , val , 0 ,0
-        call , id , 0 , to
-        ret, 0 , 0 , to
-        op , lhs, rhs, to 
-        op , val, 0, 0  
-        assign , lhs, rhs, type
+label , pos , 0 , 0             定义一个叫做pos的label
+jmp , pos, 0 , 0                无条件跳转到名叫pos的label
+btrue , pos, pred , 0            若pred为真 跳转到pos
+bfalse , pos, pred , 0            若pred为假 跳转到pos
+newvar , id , type , array      新建一个type类型的名字叫id的变量 若array为0是变量，array不为0是长度为array的数组
+func , id , type , 0            名字为id 返回值为type的函数
+funcparam , pos, type , array   就近func的第pos个参数，类型是type，array不为零为数组
+struct , id , 0 , 0             名字为id的struct
+structmem, id , type , array    新建一个type类型的名字叫id的struct成员变量 若array为0是变量，array不为0是长度为array的数组
+codeblock, begin , 0 ,  0       标记一个代码块的开始
+codeblock, end , 0 , 0          ~~~~~~~~~~~~~~结束        
+push , val , 0 ,0               将val push进堆栈
+call , id , 0 , to              调用id函数，返回值存在to中
+ret, 0 , 0                      函数返回
+retval, 0, 0 ,to                函数返回，返回值存在to中
+op , lhs, rhs, to               双目运算符，运算结果存入to中
+op , val, 0, to                 单目运算符，运算结果存入to中
+assign , lhs, rhs, type         lhs ?? rhs  ?? 可以是+= -= *= /= %= <<= >>= ^= &= |= 
 
 */

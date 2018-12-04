@@ -1,3 +1,68 @@
-program  : {program_init} define_list ;
-define_list : define define_list | ;
-define 
+
+FOR_STATMENT
+    init code
+    jmp for_begin
+    loop_begin
+    check_data
+        true -> for_begin
+        false -> loop_end
+    for_suf
+    suf data
+    jmp loop_begin
+    for_begin
+    code
+    jmp for_suf
+    loop_end
+
+WHILE_STATMENT
+    loop_begin
+    check_data
+        false -> loop_end
+    code
+    jmp loop_begin
+    loop_end
+if_stmt :  'if' {if_begin} '(' exp_or_str {if_check} ')' code {if_end} else_stmt {else_end} ;
+else_stmt : 'else' else_follow code
+        | ;
+
+IF_STATMENT
+    check_data
+        false->if_end
+    if_begin
+    code
+    jmp else_end
+    if_end 
+    else_code
+    else_end 
+
+switch_stmt : 'switch' {switch_begin} '(' exp ')' '{' case_list default '}' {switch_end} ;
+i_c : int_const {push_int}
+        | char_const {push_char} ;
+case_list : case case_list 
+        | ;
+case : 'case' i_c {case_begin} ':' code {case_end} ;
+default : 'default' ':' code ;
+
+SWITCH 
+    exp (stack_top)
+
+    push c
+    pop i pop c 
+    bneq i,c, case_end
+    push i
+    label case_end 
+
+    push c
+    pop i pop c 
+    bneq i,c, case_end
+    push i
+    label case_end 
+
+    break 
+    jmp switch_end 
+
+    label switch_end 
+    pop i
+
+label 
+jmp 
