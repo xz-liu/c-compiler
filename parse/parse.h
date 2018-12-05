@@ -1,7 +1,42 @@
 #pragma once
 #include "graph.h"
 
+struct var_scope {
+	std::vector<int> id_set;
+	using handle_scope = std::shared_ptr<var_scope>;
+	std::vector<handle_scope> inner;
+	std::shared_ptr<var_scope> father;
+	var_scope(handle_scope hs): father(hs){}
+};
 
+struct types {
+	using type = std::pair<int, int>;
+	static const int
+		none = -1,
+		void_type = 0,
+		int16 = 1,
+		int32 = 2,
+		int64 = 3,
+		uint16 = 4,
+		uint32 = 5,
+		uint64 = 6,
+		char8 = 7,
+		uchar8 = 8,
+		float32 = 9,
+		float64 = 10,
+		type_struct = 11;
+	enum id_type {
+		func,
+		struct_type,
+		variable,
+		param,
+	};
+	using id_full_type = std::pair<id_type, type>;
+	int struct_cnt;
+	static int struct_id(int now) {
+		return type_struct + now;
+	}
+};
 struct labels {
 	enum label_type {
 		loop_begin,
@@ -54,11 +89,18 @@ struct labels {
 	}
 };
 struct vars {
-	vars & operator=(vars const&) = default;
-	vars(vars const&) = default;
-	vars() = default;
 	std::stack<int> now_pos;
 	std::stack<type_token> now_type;
+	vars & operator=(vars const&rhs) {
+		now_pos = rhs.now_pos;
+		now_type = rhs.now_type;
+		return *this;
+	}
+	vars(vars const& rhs) {
+		now_pos = rhs.now_pos;
+		now_type = rhs.now_type;
+	}
+	vars() = default;
 	void push_id(int now) {
 		now_pos.push(now);
 		now_type.push(type_token::identifier);
@@ -75,6 +117,10 @@ struct vars {
 		now_pos.push(now);
 		now_type.push(type_token::int_literal);
 	}
+	void push_type ( int now) {
+		now_pos.push(now);
+		now_type.push(type_token::type);
+	}
 	void push_float(int now) {
 		now_pos.push(now);
 		now_type.push(type_token::double_literal);
@@ -83,11 +129,11 @@ struct vars {
 	int pop() {
 		int n = now_pos.top();
 		now_pos.pop();
+		now_type.pop();
 		return n;
 	}
-	int top() {
-		return now_pos.top();
-	}
+	int top() { return now_pos.top();}
+	size_t size( ) { return now_pos.size(); }
 	
 };
 enum class quad_op {
@@ -98,9 +144,11 @@ enum class quad_op {
 	newvar ,
 	func ,
 	funcparam ,
+	funcend, 
 	structdef,
-	strmem,
+	structend,
 	cblock,
+	cend,
 	push ,
 	call,
 	ret,
@@ -111,9 +159,10 @@ enum class quad_op {
 	bxor,bor,band,lor,land, 
 	inc ,dec, bnot, lnot, pos, neg, 
 	assign,
+	initlst,initlstend,initlstitem
 };
 namespace assign_type {
-	extern const int normal, add, sub, mul, div, mod, shl, shr, and, or , xor;
+	extern const int normal, add, sub, mul, div, mod, shl, shr, and, or , xor, init;
 }
 
 
@@ -126,7 +175,6 @@ struct parser {
 	int quad_top;
 	vars stack;
 	labels label_stack;
-
 	std::map<int, std::pair<int, int> > quad_history;
 	std::vector<quad_type> quads;
 	std::stack<vars> rec_stack_vars;
@@ -143,6 +191,16 @@ struct parser {
 	int	label_cnt;
 	int input_data_cnt;
 	int action_called_cnt;
+	void binocular_operator(std::string const& op_name, quad_op op,
+		std::initializer_list<type_token> && ban);
+	void check_contain(std::string const& op_name,std::initializer_list<type_token> && lst);
+	void check_not(std::string const& op_name, type_token x);
+	void monocular_operator(std::string const& op_name, quad_op op,
+		std::initializer_list<type_token> && ban);
+	void assign_operator(int ass_type);
 	parser(lex_data const& d, grammar &g);
+	void parse() {
+		grm.parse_ll1(data);
+	}
 
 };

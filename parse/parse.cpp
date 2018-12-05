@@ -1,6 +1,12 @@
 #include "parse.h"
 #include "graph.h"
 #include "../error/error.h"
+#include "exp.h"
+#define _MYDEBUG_PARSER
+#ifdef _MYDEBUG_PARSER
+using std::cout;
+using std::endl;
+#endif
 
 namespace assign_type {
 	const static int normal = 1,
@@ -13,10 +19,77 @@ namespace assign_type {
 		shr = 8,
 		and = 9,
 		or = 10,
-		xor = 11;
+		xor = 11,
+		init= 12;
 }
+
+void parser::check_contain(std::string const& op_name,
+	std::initializer_list<type_token> && lst) {
+	for (auto &&x : lst) {
+		if (stack.now() == x) {
+			throw parse_error(op_name + " operator used on "
+				+ data.get_token_name(stack.top()));
+		}
+	}
+};
+void parser::check_not(std::string const& op_name, type_token x) {
+	if (stack.now() != x) {
+		throw parse_error(op_name + " operator used on "
+			+ data.get_token_name(stack.top()));
+	}
+}
+void parser::monocular_operator(std::string const& op_name, quad_op op,
+	std::initializer_list<type_token> && ban) {
+	for (auto &&x : ban) {
+		if (stack.now() == x) {
+			throw parse_error(op_name + " operator used on "
+				+ data.get_token_name(stack.top()));
+		}
+	}
+	int n = stack.pop();
+	int newvar = push_tmp_var();
+	add_quad(op, n, 0, newvar);
+
+};
+void parser::binocular_operator(std::string const& op_name, quad_op op,
+	std::initializer_list<type_token> && ban) {
+#ifdef _MYDEBUG_PARSER
+	std::cout << "\t--[BINO OP: " << op_name << " " << stack.size() << std::endl;
+
+#endif
+
+	for (auto &&x : ban) {
+		if (stack.now() == x) {
+			throw parse_error(op_name + " operator used on "
+				+ data.get_token_name(stack.top()));
+		}
+	}
+	int rhs = stack.pop();
+	for (auto &&x : ban) {
+		if (stack.now() == x) {
+			throw parse_error(op_name + " operator used on "
+				+ data.get_token_name(stack.top()));
+		}
+	}
+	int lhs = stack.pop();
+	int nv = push_tmp_var();
+	add_quad(op, lhs, rhs, nv);
+}
+
+
+void parser::assign_operator(int ass_type) {
+	int rhs = stack.pop();
+	int lhs = stack.pop();
+	add_quad(quad_op::assign, lhs, rhs, ass_type);
+};
+
 void parser::add_quad(quad_op op, int v1, int v2, int v3) {
 	std::pair<quad_op, quad_info > now = { op,{ v1, v2, v3 } };
+
+#ifdef _MYDEBUG_PARSER
+	cout <<"~~QUAT  "<< (int)op <<", "<< v1 << ", " << v2 << ", " << v3 << endl;
+#endif
+
 	if (quad_top < quads.size())quads[quad_top++] = now;
 	else {
 		quads.push_back(now);
@@ -36,6 +109,7 @@ void parser::return_to(int i) {
 void parser::new_history(int i) {
 	quad_history.insert_or_assign(i, std::make_pair(label_cnt, quad_top));
 }
+
 int parser::push_tmp_var() {
 	stack.push_id(input_data_cnt + tmp_var_cnt);
 	return tmp_var_cnt++;
@@ -59,19 +133,27 @@ parser::parser(lex_data const& d, grammar & g)
 	, tmp_var_cnt(0), input_data_cnt(d.lex_result.size()) {
 
 #define _GRAMMAR_ASSIGN_ACT(str,code) \
-	grm.assign_action(str, [&](int action_id ,int now) code)
+	grm.assign_action(str, [&](int action_id ,int now) { \
+		/*std::cout<<"__FUNC "<<str<<" CALLBEGIN"<<std::endl;*/\
+		if(action_id>=0) quad_history.emplace( action_id ,std::make_pair(label_cnt, quad_top) ) ;  \
+		code \
+		/*std::cout << "__FUNC " << str << " CALLEND" <<std::endl;*/\
+	})
 
 #pragma region predefined operations
 	_GRAMMAR_ASSIGN_ACT("return_to", {
+		cout << " \t-- call [return_to] , RETURN TO " << action_id <<" STACK "<< rec_stack_vars.size() << endl;
 		return_to(action_id);
 	});
 	_GRAMMAR_ASSIGN_ACT("push_stack", {
 		rec_stack_vars.push(stack);
 		rec_stack_labels.push(label_stack);
+		cout << " \t-- call [push_stack] , stack cnt" << rec_stack_vars.size() << " STACKNOW CNT" << stack.size()<< endl;
 	});
 	_GRAMMAR_ASSIGN_ACT("select_stack", {
 		rec_stack_vars.pop();
 		rec_stack_labels.pop();
+		cout << " \t-- call [select_stack] , stack cnt" << rec_stack_vars.size() << endl;
 	});
 #pragma endregion 
 
@@ -91,25 +173,11 @@ parser::parser(lex_data const& d, grammar & g)
 	_GRAMMAR_ASSIGN_ACT("{push_int}", {
 		stack.push_int(now);
 	});
+	_GRAMMAR_ASSIGN_ACT("{push_str}", {
+		stack.push_str(now);
+	});
 #pragma endregion 
 
-#pragma region check&&throw
-	auto check_contain = [&](std::string const& op_name,
-		std::initializer_list<type_token> && lst) {
-		for (auto &&x : lst) {
-			if (stack.now() == x) {
-				throw parse_error(op_name + " operator used on "
-					+ data.get_token_name(stack.top()));
-			}
-		}
-	};
-	auto check_not = [&](std::string const& op_name, type_token x) {
-		if (stack.now() != x) {
-			throw parse_error(op_name + " operator used on "
-				+ data.get_token_name(stack.top()));
-		}
-	};
-#pragma endregion
 
 #pragma region exp op::inc&dec
 
@@ -152,19 +220,7 @@ parser::parser(lex_data const& d, grammar & g)
 #pragma endregion 
 
 #pragma region exp op:: mono op
-	auto monocular_operator = [&](std::string const& op_name, quad_op op,
-		std::initializer_list<type_token> && ban) {
-		for (auto &&x : ban) {
-			if (stack.now() == x) {
-				throw parse_error(op_name + " operator used on "
-					+ data.get_token_name(stack.top()));
-			}
-		}
-		int n = stack.pop();
-		int newvar = push_tmp_var();
-		add_quad(op, n, 0, newvar);
 
-	};
 	_GRAMMAR_ASSIGN_ACT("{!@}", {
 		monocular_operator("!", quad_op::lnot,
 			{type_token::double_literal,type_token::string_literal});
@@ -184,25 +240,7 @@ parser::parser(lex_data const& d, grammar & g)
 #pragma endregion 
 
 #pragma region  exp op:: bino op
-	auto binocular_operator = [&](std::string const& op_name, quad_op op,
-		std::initializer_list<type_token> && ban) {
-		for (auto &&x : ban) {
-			if (stack.now() == x) {
-				throw parse_error(op_name + " operator used on "
-					+ data.get_token_name(stack.top()));
-			}
-		}
-		int rhs = stack.pop();
-		for (auto &&x : ban) {
-			if (stack.now() == x) {
-				throw parse_error(op_name + " operator used on "
-					+ data.get_token_name(stack.top()));
-			}
-		}
-		int lhs = stack.pop();
-		int nv = push_tmp_var();
-		add_quad(op, lhs, rhs, nv);
-	};
+
 	_GRAMMAR_ASSIGN_ACT("{@*@}", {
 		binocular_operator("*",quad_op::mul,{type_token::string_literal});
 	});
@@ -267,21 +305,16 @@ parser::parser(lex_data const& d, grammar & g)
 		binocular_operator("||",quad_op::lor,{ type_token::string_literal });
 	});
 
-	_GRAMMAR_ASSIGN_ACT("{{@[@}}", {
+	_GRAMMAR_ASSIGN_ACT("{@[@]}", {
 		binocular_operator("[]",quad_op::arrayval,{});
 	});
 
-	_GRAMMAR_ASSIGN_ACT("{{@.@}", {
+	_GRAMMAR_ASSIGN_ACT("{@.@}", {
 		binocular_operator(" . ",quad_op::structval,{});
 	});
 #pragma endregion 
 
 #pragma region exp op::assign_op
-	auto assign_operator = [&](int ass_type) {
-		int rhs = stack.pop();
-		int lhs = stack.pop();
-		add_quad(quad_op::assign, lhs, rhs, ass_type);
-	};
 	_GRAMMAR_ASSIGN_ACT("{@=@}", {
 		assign_operator(assign_type::normal);
 	});
@@ -464,7 +497,6 @@ parser::parser(lex_data const& d, grammar & g)
 
 #pragma endregion 
 
-
 #pragma region switch 
 
 	_GRAMMAR_ASSIGN_ACT("{switch_begin}", {
@@ -479,14 +511,12 @@ parser::parser(lex_data const& d, grammar & g)
 	});
 
 	_GRAMMAR_ASSIGN_ACT("{case_begin}", {
-
 		int ce = push_label(labels::case_end);
 		int chr = stack.pop();
 		int exp = stack.pop();
 		int nv = alloc_tmp_var();
 		add_quad(quad_op::sub, chr, exp, nv);
 		add_quad(quad_op::btrue, ce, nv, 0);
-
 	});
 
 	_GRAMMAR_ASSIGN_ACT("{case_end}", {
@@ -500,11 +530,160 @@ parser::parser(lex_data const& d, grammar & g)
 #pragma region break & continue 
 
 	_GRAMMAR_ASSIGN_ACT("{break}", {
-
+		labels::label case_end = label_stack.find_nearest(labels::case_end);
+		labels::label loop_end = label_stack.find_nearest(labels::loop_end);
+		int label_out = std::max(case_end.first, loop_end.first);
+		if(label_out<0) {
+			throw parse_error("break with no switch/loop");
+		}
+		add_quad(quad_op::jmp, label_out, 0, 0);
 	});
 	_GRAMMAR_ASSIGN_ACT("{continue}", {
-
+		labels::label for_suf = label_stack.find_nearest(labels::for_suf);
+		labels::label loop_begin = label_stack.find_nearest(labels::loop_begin);
+		int label_out = std::max(loop_begin.first, for_suf.first);
+		if (label_out<0) {
+			throw parse_error("continue with no for/while");
+		}
+		add_quad(quad_op::jmp, label_out, 0, 0);
 	});
 
+#pragma endregion 
+
+#pragma region var & array def
+	_GRAMMAR_ASSIGN_ACT("{int16}", {
+		stack.push_type(types::int16);
+	});
+	_GRAMMAR_ASSIGN_ACT("{uint16}", {
+		stack.push_type(types::uint16);
+	});
+	_GRAMMAR_ASSIGN_ACT("{int32}", {
+		stack.push_type(types::int32);
+	});
+	_GRAMMAR_ASSIGN_ACT("{uint32}", {
+		stack.push_type(types::uint32);
+	});
+	_GRAMMAR_ASSIGN_ACT("{int64}", {
+		stack.push_type(types::int64);
+	});
+	_GRAMMAR_ASSIGN_ACT("{uint64}", {
+		stack.push_type(types::uint64);
+	});
+	_GRAMMAR_ASSIGN_ACT("{char8}", {
+		stack.push_type(types::char8);
+	});
+	_GRAMMAR_ASSIGN_ACT("{uchar8}", {
+		stack.push_type(types::uchar8);
+	});
+	_GRAMMAR_ASSIGN_ACT("{float32}", {
+		stack.push_type(types::float32);
+	});
+	_GRAMMAR_ASSIGN_ACT("{float64}", {
+		stack.push_type(types::float64);
+	});
+	_GRAMMAR_ASSIGN_ACT("{void}", {
+		stack.push_type(types::void_type);
+	});
+	_GRAMMAR_ASSIGN_ACT("{struct_var}", {
+		stack.push_type(types::struct_id(stack.pop()));
+	});
+	_GRAMMAR_ASSIGN_ACT("{def_array}",{
+		// now is int_const
+		int id = stack.pop();
+		int ty = stack.top();
+		stack.push_id(id);
+		add_quad(quad_op::newvar, id, ty, now);
+	});
+
+	_GRAMMAR_ASSIGN_ACT("{var_def_end}",{
+		int id = stack.pop();
+		int ty = stack.top();
+		add_quad(quad_op::newvar, id, ty, 0);
+	});
+
+	_GRAMMAR_ASSIGN_ACT("{var_init_end}", {
+		int id = stack.pop();
+		int ty = stack.top();
+		add_quad(quad_op::newvar, id, ty, 0);
+		add_quad(quad_op::assign, id, now, assign_type::init);
+	});
+
+	_GRAMMAR_ASSIGN_ACT("{init_list_begin}", {
+		int ilist_id = push_tmp_var();
+		add_quad(quad_op::initlst, ilist_id, 0, 0);
+	});
+	_GRAMMAR_ASSIGN_ACT("{init_list_item}",{
+		int item = stack.pop();
+		int lstid = stack.top();
+		add_quad(quad_op::initlstitem, lstid, item, 0);
+	});
+	_GRAMMAR_ASSIGN_ACT("{init_list_end}",{
+		int lstid = stack.pop();
+		int id = stack.top();
+		add_quad(quad_op::initlstend, lstid, 0, 0);
+		add_quad(quad_op::assign, id, lstid, assign_type::init);
+	});
+
+	_GRAMMAR_ASSIGN_ACT("{arr_init_str}", {
+		int str = stack.pop();
+		int id = stack.top();
+		add_quad(quad_op::assign, id, str, assign_type::init);
+	});
+	_GRAMMAR_ASSIGN_ACT("{def_array_end}", {
+		stack.pop();// pop id
+	});
+
+	_GRAMMAR_ASSIGN_ACT("{var_def_list_end}", {
+		stack.pop();// pop type
+	});
+
+#pragma endregion 
+
+#pragma region struct def
+	
+	_GRAMMAR_ASSIGN_ACT("{struct_begin}", {
+		int id = stack.top();
+		add_quad(quad_op::structdef, id, 0, 0);
+	});
+
+	_GRAMMAR_ASSIGN_ACT("{struct_end}", {
+		int id = stack.pop();
+		add_quad(quad_op::structend, id, 0, 0);
+	});
+
+#pragma endregion 
+
+#pragma region func decl & def
+	_GRAMMAR_ASSIGN_ACT("{func_begin}", {
+		int id = stack.pop();
+		int ty = stack.pop();
+		stack.push_id(id);
+		add_quad(quad_op::func, id, ty, 0);
+	});
+
+	_GRAMMAR_ASSIGN_ACT("{func_end}", {
+		int id = stack.pop();
+		add_quad(quad_op::funcend, id, 0, 0);
+	});
+	_GRAMMAR_ASSIGN_ACT("{param_var}", {
+		int id = stack.pop();
+		int ty = stack.pop();
+		add_quad(quad_op::funcparam, id, ty, 0);
+	});
+	_GRAMMAR_ASSIGN_ACT("{param_array}", {
+		int id = stack.pop();
+		int ty = stack.pop();
+		add_quad(quad_op::funcparam, id, ty, 1);
+	});
+#pragma endregion 
+
+#pragma region codeblock
+	_GRAMMAR_ASSIGN_ACT("{code_block}",{
+		add_quad(quad_op::cblock,0,0,0);
+	});
+
+	_GRAMMAR_ASSIGN_ACT("{code_block_end}",{
+		add_quad(quad_op::cend,0,0,0);
+	});
 #pragma endregion 
 }

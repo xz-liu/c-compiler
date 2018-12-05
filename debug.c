@@ -1,9 +1,3 @@
-struct A {
-	int a, b, c;
-	char f, g, h;
-	long long fuck;
-	char xa[10];
-};
 int ret(int a, char b[]) {
 	return b[a];
 }
@@ -15,8 +9,8 @@ int main() {
 	struct A didi;
 	didi.fuck = 5;
 	didi.f = ret(didi.c, didi.b) + 5;
-	if (a >= didi.xa[0])a = '0';
-	else if (fewfe == (didi.xa[1] + 1)) {
+	if (a >= didi.a )a = '0';
+	else if (a == (didi.a+ 1)) {
 		while (a == b)a++;
 		for (a = 4; a>8; --a) {
 			didi.fuck += a;

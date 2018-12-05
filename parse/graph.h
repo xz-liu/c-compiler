@@ -7,7 +7,7 @@ struct grammar {
 	using production = std::vector<int>;
 	bool ll1_table_product_cmp(product_reference const& a, product_reference const &b);
 public:
-	using semantic_action = std::function<void(int)>;
+	using semantic_action = std::function<void(int,int)>;
 	using ll1_table_pred = std::pair<int, token>;
 	using ll1_table_item = std::set<std::pair<int, int>,
 		std::function<bool (grammar::product_reference const& , grammar::product_reference const &)>>;
@@ -73,7 +73,9 @@ private:
 		if (it != ll1_table.end())  return &it->second;
 		return nullptr;
 	}
-	bool parse_ll1(lex_data const& data, std::stack<ll1_stack_element> &sta, int &now,int now_w);
+	bool parse_ll1(lex_data const& data, 
+		std::stack<ll1_stack_element> &sta, 
+		int &now,int now_w,int & now_id);
 	
 	int cnt;
 	int get_tok(std::string const&s) {
@@ -100,8 +102,8 @@ public:
 		std::stack< ll1_stack_element> sta;
 		sta.push(id_dummy);
 		sta.push(id_s);
-		int now = 0;
-		return parse_ll1(data, sta, now,id_dummy);
+		int now = 0, now_act=0;
+		return parse_ll1(data, sta, now,id_dummy,now_act);
 	}
 	void debug();
 	int add_symbol(std::string const& s) {

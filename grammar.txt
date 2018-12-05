@@ -21,9 +21,6 @@ WHILE_STATMENT
     code
     jmp loop_begin
     loop_end
-if_stmt :  'if' {if_begin} '(' exp_or_str {if_check} ')' code {if_end} else_stmt {else_end} ;
-else_stmt : 'else' else_follow code
-        | ;
 
 IF_STATMENT
     check_data
@@ -34,14 +31,6 @@ IF_STATMENT
     if_end 
     else_code
     else_end 
-
-switch_stmt : 'switch' {switch_begin} '(' exp ')' '{' case_list default '}' {switch_end} ;
-i_c : int_const {push_int}
-        | char_const {push_char} ;
-case_list : case case_list 
-        | ;
-case : 'case' i_c {case_begin} ':' code {case_end} ;
-default : 'default' ':' code ;
 
 SWITCH 
     exp (stack_top)
@@ -66,3 +55,29 @@ SWITCH
 
 label 
 jmp 
+
+DECL_LIST
+    push type
+    
+    push id 
+    push val
+    pop val 
+    pop id 
+    pop type 
+    decl id type 
+    assign id = val 
+    push type
+
+    push id 
+    push int_const
+    pop int_const
+    pop type  
+    decl id type int_const
+    
+    initlist begin
+    
+    push exp
+    pop exp
+    add initlist val
+
+    initlist end
