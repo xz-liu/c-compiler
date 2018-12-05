@@ -36,3 +36,4 @@ Release/*
 *.filters
 *.user
 *.vcxproj
+c_bnf.txt

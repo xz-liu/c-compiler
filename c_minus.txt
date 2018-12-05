@@ -181,28 +181,3 @@ id_suffix : '[' exp ']'  {@[@]}
 
 )";
 
-/*
-quad type : 
-label , pos , 0 , 0             定义一个叫做pos的label
-jmp , pos, 0 , 0                无条件跳转到名叫pos的label
-btrue , pos, pred , 0            若pred为真 跳转到pos
-bfalse , pos, pred , 0            若pred为假 跳转到pos
-newvar , id , type , array      新建一个type类型的名字叫id的变量 若array为0是变量，array不为0是长度为array的数组
-func , id , type , 0            名字为id 返回值为type的函数
-funcparam , type , array       func的参数，类型是type，array不为零为数组
-funcend , id , 0, 0
-structdef , id , 0 , 0          名字为id的struct
-structend, id ,  0 , 0          名字为id的struct定义结束        
-codeblockbegin , 0 ,  0  ,     标记一个代码块的开始
-codeblockend , 0 , 0  ,        ~~~~~~~~~~~~~~结束        
-push , val , 0 ,0               将val push进堆栈
-call , id , 0 , to              调用id函数，返回值存在to中
-ret, 0 , 0                      函数返回
-retval, 0, 0 ,to                函数返回，返回值存在to中
-op , lhs, rhs, to               双目运算符，运算结果存入to中
-op , val, 0, to                 单目运算符，运算结果存入to中
-assign , lhs, rhs, type         lhs ?? rhs  ?? 可以是+= -= *= /= %= <<= >>= ^= &= |= 
-initlst,id,0,0
-initend,id,0,0
-
-*/

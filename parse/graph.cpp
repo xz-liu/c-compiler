@@ -5,7 +5,7 @@
 //
 //#define _MYDEBUG
 #define _MYDEBUG_PARSER
-#define _MYDEBUG_NOACTION
+//#define _MYDEBUG_NOACTION
 #ifdef _MYDEBUG 
 using std::cout; using std::endl;
 #endif

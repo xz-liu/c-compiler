@@ -136,7 +136,7 @@ struct vars {
 	size_t size( ) { return now_pos.size(); }
 	
 };
-enum class quad_op {
+enum class quat_op {
 	label ,
 	jmp,
 	btrue ,
@@ -167,19 +167,19 @@ namespace assign_type {
 
 
 struct parser {
-	using quad_info = std::array<int, 3>;
-	using quad_type = std::pair<quad_op, quad_info >;
+	using quat_info = std::array<int, 3>;
+	using quat_type = std::pair<quat_op, quat_info >;
 	lex_data data;
 
 	grammar & grm;
-	int quad_top;
+	int quat_top;
 	vars stack;
 	labels label_stack;
-	std::map<int, std::pair<int, int> > quad_history;
-	std::vector<quad_type> quads;
+	std::map<int, std::pair<int, int> > quat_history;
+	std::vector<quat_type> quats;
 	std::stack<vars> rec_stack_vars;
 	std::stack<labels> rec_stack_labels;
-	void add_quad(quad_op, int, int, int);
+	void add_quat(quat_op, int, int, int);
 	void return_to(int);
 	void new_history(int);
 	int push_tmp_var();
@@ -191,13 +191,14 @@ struct parser {
 	int	label_cnt;
 	int input_data_cnt;
 	int action_called_cnt;
-	void binocular_operator(std::string const& op_name, quad_op op,
+	void binocular_operator(std::string const& op_name, quat_op op,
 		std::initializer_list<type_token> && ban);
 	void check_contain(std::string const& op_name,std::initializer_list<type_token> && lst);
 	void check_not(std::string const& op_name, type_token x);
-	void monocular_operator(std::string const& op_name, quad_op op,
+	void monocular_operator(std::string const& op_name, quat_op op,
 		std::initializer_list<type_token> && ban);
 	void assign_operator(int ass_type);
+	void check_find_label(labels::label const& lb, std::string const& msg);
 	parser(lex_data const& d, grammar &g);
 	void parse() {
 		grm.parse_ll1(data);
