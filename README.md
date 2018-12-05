@@ -190,7 +190,7 @@ id_suffix : '[' exp ']'  {@[@]}
 
 ### intermediate representation 
 |QUAT TYPE | VAL1 | VAL2 | VAL3 | OPERATION|
-|-|-|-|-|-|-|
+|----------|------|------|------|----------|
 |label | pos | 0 | 0|定义一个叫做pos的label|
 |jmp | pos| 0 | 0|无条件跳转到名叫pos的label|
 |btrue | pos| pred | 0|若pred为真 跳转到pos|
