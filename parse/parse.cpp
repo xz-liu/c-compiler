@@ -1,27 +1,13 @@
 #include "parse.h"
 #include "graph.h"
 #include "../error/error.h"
-#include "exp.h"
+#include "type.h"
 //#define _MYDEBUG_PARSER
 #ifdef _MYDEBUG_PARSER
 using std::cout;
 using std::endl;
 #endif
 
-namespace assign_type {
-	const static int normal = 1,
-		add = 2,
-		sub = 3,
-		mul = 4,
-		div = 5,
-		mod = 6,
-		shl = 7,
-		shr = 8,
-		and = 9,
-		or = 10,
-		xor = 11,
-		init= 12;
-}
 void parser::check_find_label(labels::label const& lb, std::string const& msg) {
 	if (lb.second == labels::fail) {
 		throw parse_error(msg);
@@ -58,7 +44,7 @@ void parser::monocular_operator(std::string const& op_name, quat_op op,
 void parser::binocular_operator(std::string const& op_name, quat_op op,
 	std::initializer_list<type_token> && ban) {
 #ifdef _MYDEBUG_PARSER
-	std::cout << "\t--[BINO OP: " << op_name << " " << stack.size() << std::endl;
+	//std::cout << "\t--[BINO OP: " << op_name << " " << stack.size() << std::endl;
 
 #endif
 
@@ -86,20 +72,30 @@ void parser::assign_operator(int ass_type) {
 	int lhs = stack.pop();
 	stack.push_id(lhs);
 	add_quat(quat_op::assign, lhs, rhs, ass_type);
-};
+}
+void parser::try_place_label(int label) {
+	if (label_stack.placed(label))return;
+	label_stack.place(label);
+	add_quat(quat_op::label, label, 0, 0);
+}
+;
 
 void parser::add_quat(quat_op op, int v1, int v2, int v3) {
 	std::pair<quat_op, quat_info > now = { op,{ v1, v2, v3 } };
 
-#ifdef _MYDEBUG_PARSER
-	cout <<"~~QUAT  "<< (int)op <<", "<< v1 << ", " << v2 << ", " << v3 << endl;
-#endif
+//#ifdef _MYDEBUG_PARSER
+	std::cout << "[[ GEN QUAT -- " ;
+	types::debug_single_quat(now, label_stack, data);
+//#endif
 
 	if (quat_top < quats.size())quats[quat_top++] = now;
 	else {
 		quats.push_back(now);
 		quat_top++;
 	}
+}
+void parser::show_quats() {
+	
 }
 void parser::return_to(int i) {
 	action_called_cnt = i;
@@ -116,11 +112,13 @@ void parser::new_history(int i) {
 }
 
 int parser::push_tmp_var() {
-	stack.push_id(input_data_cnt + tmp_var_cnt);
-	return tmp_var_cnt++;
+	int push = input_data_cnt + tmp_var_cnt;
+	stack.push_id(push);
+	++tmp_var_cnt;
+	return push;
 }
 int parser::alloc_tmp_var() {
-	return tmp_var_cnt++;
+	return input_data_cnt+ tmp_var_cnt++;
 }
 int parser::push_label(labels::label_type ty) {
 	label_stack.push(ty,label_cnt);
@@ -139,10 +137,10 @@ parser::parser(lex_data const& d, grammar & g)
 
 #define _GRAMMAR_ASSIGN_ACT(str,code) \
 	grm.assign_action(str, [&](int action_id ,int now) { \
-		/*std::cout<<"__FUNC "<<str<<" CALLBEGIN"<<std::endl;*/\
+		/*stack.debug(data) ;*/\
 		if(action_id>=0) quat_history.emplace( action_id ,std::make_pair(label_cnt, quat_top) ) ;  \
 		code \
-		/*std::cout << "__FUNC " << str << " CALLEND" <<std::endl;*/\
+		/*stack.debug(data);*/\
 	})
 
 #pragma region predefined operations
@@ -368,24 +366,21 @@ parser::parser(lex_data const& d, grammar & g)
 	});
 #pragma endregion 
 
-#pragma region call&return
-	_GRAMMAR_ASSIGN_ACT("{call_func}", {
+#pragma region call 
+	_GRAMMAR_ASSIGN_ACT("{call_func_end}", {
+		int nv = push_tmp_var();
+		add_quat(quat_op::callend, nv, 0, 0);
+
+	});
+	_GRAMMAR_ASSIGN_ACT("{call_func_begin}", {
 		check_not("call func" ,type_token::identifier);
-		int n = stack.pop();
-		add_quat(quat_op::call, n,0,0);
+		int id = stack.pop();
+		add_quat(quat_op::call, id,0,0);
 
 	});
 	_GRAMMAR_ASSIGN_ACT("{call_func_push}", {
-		int n = stack.top();
-		add_quat(quat_op::push, n, 0, 0);
-	});
-	_GRAMMAR_ASSIGN_ACT("{return}", {
-		add_quat(quat_op::ret,0,0,0);
-	});
-	_GRAMMAR_ASSIGN_ACT("{return@}", {
 		int n = stack.pop();
-		int nv = push_tmp_var();
-		add_quat(quat_op::assign, nv, n, assign_type::normal);
+		add_quat(quat_op::push, n, 0, 0);
 	});
 #pragma  endregion
 
@@ -444,7 +439,7 @@ parser::parser(lex_data const& d, grammar & g)
 		check_find_label(for_suf, "for_check failed : for_suf notfound");
 		add_quat(quat_op::btrue, for_begin.first, n, 0);
 		add_quat(quat_op::bfalse, loop_end.first, n, 0);
-		add_quat(quat_op::label, for_suf.first, 0, 0);
+		try_place_label(for_suf.first) ;
 
 	});
 	_GRAMMAR_ASSIGN_ACT("{for_suf}", {
@@ -455,7 +450,7 @@ parser::parser(lex_data const& d, grammar & g)
 
 
 		add_quat(quat_op::jmp, loop_begin.first, 0, 0);
-		add_quat(quat_op::label, for_begin.first, 0, 0);
+		try_place_label(for_begin.first) ;
 	});
 	_GRAMMAR_ASSIGN_ACT("{for_end}", {
 		labels::label loop_end = label_stack.find_nearest(labels::loop_end);
@@ -465,7 +460,7 @@ parser::parser(lex_data const& d, grammar & g)
 		check_find_label(for_suf, "for_end failed : for_suf notfound");
 
 		add_quat(quat_op::jmp, for_suf.first, 0, 0);
-		add_quat(quat_op::label, loop_end.first, 0, 0);
+		try_place_label(loop_end.first) ;
 	});
 #pragma endregion 
 
@@ -475,9 +470,10 @@ parser::parser(lex_data const& d, grammar & g)
 		push_label(labels::else_end);
 	});
 	_GRAMMAR_ASSIGN_ACT("{if_check}", {
+		int exp = stack.pop();
 		labels::label if_end = label_stack.find_nearest(labels::if_end);
 		check_find_label(if_end, "if_check failed : if_end notfound");
-		add_quat(quat_op::bfalse, if_end.first,0,0);
+		add_quat(quat_op::bfalse, if_end.first,exp,0);
 	});
 	_GRAMMAR_ASSIGN_ACT("{if_end}", {
 		labels::label if_end = label_stack.find_nearest(labels::if_end);
@@ -485,12 +481,12 @@ parser::parser(lex_data const& d, grammar & g)
 		labels::label else_end = label_stack.find_nearest(labels::else_end);
 		check_find_label(else_end, "if_end failed : else_end notfound");
 		add_quat(quat_op::jmp, else_end.first, 0, 0);
-		add_quat(quat_op::label, if_end.first, 0, 0);
+		try_place_label(if_end.first) ;
 	});
 	_GRAMMAR_ASSIGN_ACT("{else_end}", {
 		labels::label else_end = label_stack.find_nearest(labels::else_end);
 		check_find_label(else_end, "else_end failed : else_end notfound");
-		add_quat(quat_op::label, else_end.first, 0, 0);
+		try_place_label(else_end.first) ;
 	});
 
 #pragma endregion 
@@ -505,13 +501,13 @@ parser::parser(lex_data const& d, grammar & g)
 		labels::label switch_end = label_stack.find_nearest(labels::switch_end);
 		check_find_label(switch_end, "switch_end failed : switch_end notfound");
 		stack.pop();
-		add_quat(quat_op::label,switch_end.first,0,0);
+		try_place_label(switch_end.first) ;
 	});
 
 	_GRAMMAR_ASSIGN_ACT("{case_begin}", {
 		int ce = push_label(labels::case_end);
 		int chr = stack.pop();
-		int exp = stack.pop();
+		int exp = stack.top();
 		int nv = alloc_tmp_var();
 		add_quat(quat_op::sub, chr, exp, nv);
 		add_quat(quat_op::btrue, ce, nv, 0);
@@ -520,7 +516,7 @@ parser::parser(lex_data const& d, grammar & g)
 	_GRAMMAR_ASSIGN_ACT("{case_end}", {
 		labels::label case_end = label_stack.find_nearest(labels::case_end);
 		check_find_label(case_end, "case_end failed : case_end notfound");
-		add_quat(quat_op::label, case_end.first, 0, 0);
+		try_place_label(case_end.first) ;
 	});
 
 #pragma endregion 
@@ -528,9 +524,9 @@ parser::parser(lex_data const& d, grammar & g)
 #pragma region break & continue 
 
 	_GRAMMAR_ASSIGN_ACT("{break}", {
-		labels::label case_end = label_stack.find_nearest(labels::case_end);
+		labels::label switch_end = label_stack.find_nearest(labels::switch_end);
 		labels::label loop_end = label_stack.find_nearest(labels::loop_end);
-		int label_out = std::max(case_end.first, loop_end.first);
+		int label_out = std::max(switch_end.first, loop_end.first);
 		if(label_out<0) {
 			throw parse_error("break with no switch/loop");
 		}
@@ -596,14 +592,15 @@ parser::parser(lex_data const& d, grammar & g)
 	_GRAMMAR_ASSIGN_ACT("{var_def_end}",{
 		int id = stack.pop();
 		int ty = stack.top();
-		add_quat(quat_op::newvar, id, ty, 0);
+		add_quat(quat_op::newvar, id, ty, -1);
 	});
 
 	_GRAMMAR_ASSIGN_ACT("{var_init_end}", {
+		int exp = stack.pop();
 		int id = stack.pop();
 		int ty = stack.top();
 		add_quat(quat_op::newvar, id, ty, 0);
-		add_quat(quat_op::assign, id, now, assign_type::init);
+		add_quat(quat_op::assign, id, exp, assign_type::init);
 	});
 
 	_GRAMMAR_ASSIGN_ACT("{init_list_begin}", {
@@ -660,8 +657,9 @@ parser::parser(lex_data const& d, grammar & g)
 	});
 
 	_GRAMMAR_ASSIGN_ACT("{func_end}", {
-		int id = stack.pop();
-		add_quat(quat_op::funcend, id, 0, 0);
+		//int ret = stack.pop();
+		int ed = stack.pop();
+		add_quat(quat_op::funcend, ed, 0, 0);
 	});
 	_GRAMMAR_ASSIGN_ACT("{param_var}", {
 		int id = stack.pop();
@@ -673,6 +671,16 @@ parser::parser(lex_data const& d, grammar & g)
 		int ty = stack.pop();
 		add_quat(quat_op::funcparam, id, ty, 1);
 	});
+
+	_GRAMMAR_ASSIGN_ACT("{return}", {
+		add_quat(quat_op::ret,0,0,0);
+	});
+
+	_GRAMMAR_ASSIGN_ACT("{return@}", {
+		int n = stack.pop();
+		add_quat(quat_op::retval, 0, 0, n);
+	});
+
 #pragma endregion 
 
 #pragma region codeblock
@@ -685,3 +693,4 @@ parser::parser(lex_data const& d, grammar & g)
 	});
 #pragma endregion 
 }
+

@@ -19,24 +19,21 @@ type_spec : int_type
         | char_type 
         | 'void' {void} 
         | 'struct' id {push_id} {struct_var} ;
-int_type : int16_type {int16}
-        | uint16_type {uint16}
-        | int32_type {int32}
-        | uint32_type {uint32}
-        | int64_type {int64}
-        | uint64_type {uint64} ;
-int16_type : 'short' ;
-uint16_type : 'unsigned' 'short' ;
-int32_type : 'int' 
-        | 'long' 
-        | 'long' 'int' ;
-uint32_type : 'unsigned' 'int' 
-        |  'unsigned' 
-        | 'unsigned' 'long' ;
-int64_type :  'long' 'long' 'int' 
-        | 'long' 'long' ;
-uint64_type :  'unsigned' 'long' 'long' 
-        |  'unsigned' 'long' 'long' 'int' ;
+int_type : signed_int_type 
+        | 'unsigned' unsigned_int_type ;
+signed_int_type : 'short' redundant_int {int16}
+        | 'int' {int32}
+        | 'long' signed_int_32_64 ;
+signed_int_32_64 : 'long' {int64} redundant_int 
+        | redundant_int {int32}  ;
+unsigned_int_type : 'short' redundant_int {uint16}
+        | 'int' {uint32}
+        | 'long' unsigned_int_32_64 ;
+unsigned_int_32_64 : 'long' redundant_int {uint64}  
+        | redundant_int {uint32}  ;
+
+redundant_int : 'int' 
+        | ;
 
 float_type : 'float' {float32}
         | 'double' {float64} ;
@@ -81,7 +78,7 @@ normal_stmt : ';'
         | exp_or_str ';' {pop_top}
         | 'break' ';' {break}
         | 'continue' ';' {continue} ;
-call_func : '(' call_params ')' ;
+call_func : '(' {call_func_begin} call_params ')' {call_func_end} ;
 call_params : call_param_list 
         | ;
 call_param_list : exp_or_str {call_func_push} call_param_follow ;
@@ -94,7 +91,7 @@ i_c : int_const {push_int}
         | char_const {push_char} ;
 case_list : case case_list 
         | ;
-case : 'case' i_c {case_begin} ':' code {case_end} ;
+case : 'case' i_c {case_begin} ':' code_list {case_end} ;
 default : 'default' ':' code ;
 if_stmt :  'if' {if_begin} '(' exp_or_str {if_check} ')' code {if_end} else_stmt {else_end} ;
 else_stmt : 'else'  code
@@ -175,8 +172,8 @@ factors : int_const {push_int}
         | '(' exp ')' ;
 
 id_suffix : '[' exp ']'  {@[@]} 
-        | call_func {call_func} 
-        | '.' id {@.@} 
+        | call_func 
+        | '.' id {push_id} {@.@} 
         | ;
 
 )";

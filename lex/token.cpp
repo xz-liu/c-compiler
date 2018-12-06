@@ -223,8 +223,10 @@ void lex_next_word(std::string const& s, int &position, std::vector<token_pair> 
 {\
 	auto v = _STDF ;\
 	auto f = find(_VLIT.begin(), _VLIT.end(), v);\
-	if (f == _VLIT.end())_VLIT.push_back(v);\
-	now_num = _VLIT.size() - 1;\
+	if (f == _VLIT.end()){\
+		_VLIT.push_back(v);\
+		now_num = _VLIT.size() - 1;\
+	}else now_num = f - _VLIT.begin();\
 }\
 
 

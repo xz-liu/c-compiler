@@ -1,42 +1,5 @@
 #pragma once
 #include "graph.h"
-
-struct var_scope {
-	std::vector<int> id_set;
-	using handle_scope = std::shared_ptr<var_scope>;
-	std::vector<handle_scope> inner;
-	std::shared_ptr<var_scope> father;
-	var_scope(handle_scope hs): father(hs){}
-};
-
-struct types {
-	using type = std::pair<int, int>;
-	static const int
-		none = -1,
-		void_type = 0,
-		int16 = 1,
-		int32 = 2,
-		int64 = 3,
-		uint16 = 4,
-		uint32 = 5,
-		uint64 = 6,
-		char8 = 7,
-		uchar8 = 8,
-		float32 = 9,
-		float64 = 10,
-		type_struct = 11;
-	enum id_type {
-		func,
-		struct_type,
-		variable,
-		param,
-	};
-	using id_full_type = std::pair<id_type, type>;
-	int struct_cnt;
-	static int struct_id(int now) {
-		return type_struct + now;
-	}
-};
 struct labels {
 	enum label_type {
 		loop_begin,
@@ -75,13 +38,13 @@ struct labels {
 		vec_label.pop_back();
 		return x;
 	}
-	auto operator[](int i) {
+	label operator[](int i) const {
 		return vec_label[i];
 	}
-	auto top_type( ) {
+	auto top_type( ) const{
 		return vec_label.back().second;
 	}
-	label find_nearest(label_type ty) {
+	label find_nearest(label_type ty) const {
 		for (auto it=vec_label.rbegin();it!=vec_label.rend();it++) {
 			if (it->second == ty)return *it;
 		}
@@ -89,8 +52,8 @@ struct labels {
 	}
 };
 struct vars {
-	std::stack<int> now_pos;
-	std::stack<type_token> now_type;
+	std::vector<int> now_pos;
+	std::vector<type_token> now_type;
 	vars & operator=(vars const&rhs) {
 		now_pos = rhs.now_pos;
 		now_type = rhs.now_type;
@@ -102,39 +65,49 @@ struct vars {
 	}
 	vars() = default;
 	void push_id(int now) {
-		now_pos.push(now);
-		now_type.push(type_token::identifier);
+		now_pos.push_back(now);
+		now_type.push_back(type_token::identifier);
 	}
 	void push_str(int now) {
-		now_pos.push(now);
-		now_type.push(type_token::string_literal);
+		now_pos.push_back(now);
+		now_type.push_back(type_token::string_literal);
 	}
 	void push_char(int now) {
-		now_pos.push(now);
-		now_type.push(type_token::char_literal);
+		now_pos.push_back(now);
+		now_type.push_back(type_token::char_literal);
 	}
 	void push_int(int now) {
-		now_pos.push(now);
-		now_type.push(type_token::int_literal);
+		now_pos.push_back(now);
+		now_type.push_back(type_token::int_literal);
 	}
 	void push_type ( int now) {
-		now_pos.push(now);
-		now_type.push(type_token::type);
+		now_pos.push_back(now);
+		now_type.push_back(type_token::type);
 	}
 	void push_float(int now) {
-		now_pos.push(now);
-		now_type.push(type_token::double_literal);
+		now_pos.push_back(now);
+		now_type.push_back(type_token::double_literal);
 	}
-	type_token now() { return now_type.top(); }
+	type_token now() { return now_type.back(); }
 	int pop() {
-		int n = now_pos.top();
-		now_pos.pop();
-		now_type.pop();
+		int n = now_pos.back();
+		now_pos.pop_back();
+		now_type.pop_back();
 		return n;
 	}
-	int top() { return now_pos.top();}
+	int top() { return now_pos.back();}
 	size_t size( ) { return now_pos.size(); }
-	
+
+	void debug(lex_data const& data) {
+		std::cout << " --";
+		for (int i = 0; i<now_pos.size(); i++) {
+			if( now_type[i] ==type_token::type)
+				std::cout << "[" << get_type_name(now_pos[i], data) << "] ";
+			else 
+				std::cout << "{" << get_name_of_now(now_pos[i], data) << "} ";
+		}
+		std::cout << std::endl;
+	}
 };
 enum class quat_op {
 	label ,
@@ -151,7 +124,9 @@ enum class quat_op {
 	cend,
 	push ,
 	call,
+	callend,
 	ret,
+	retval,
 	arrayval, structval , 
 	add, sub,mul, div, mod ,
 	shl, shr, 
@@ -162,7 +137,18 @@ enum class quat_op {
 	initlst,initlstend,initlstitem
 };
 namespace assign_type {
-	extern const int normal, add, sub, mul, div, mod, shl, shr, and, or , xor, init;
+	static constexpr int normal = 1,
+		add = 2,
+		sub = 3,
+		mul = 4,
+		div = 5,
+		mod = 6,
+		shl = 7,
+		shr = 8,
+		and = 9,
+		or = 10,
+		xor = 11,
+		init = 12;
 }
 
 
@@ -200,6 +186,7 @@ struct parser {
 	void assign_operator(int ass_type);
 	void check_find_label(labels::label const& lb, std::string const& msg);
 	parser(lex_data const& d, grammar &g);
+	void show_quats();
 	void parse() {
 		grm.parse_ll1(data);
 	}

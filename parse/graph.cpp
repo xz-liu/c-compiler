@@ -4,7 +4,7 @@
 
 //
 //#define _MYDEBUG
-#define _MYDEBUG_PARSER
+//#define _MYDEBUG_PARSER
 //#define _MYDEBUG_NOACTION
 #ifdef _MYDEBUG 
 using std::cout; using std::endl;
@@ -157,15 +157,17 @@ void grammar::fill_ll1_table() {
 	}
 }
 
-bool grammar::parse_ll1(lex_data const & data, std::stack<grammar::ll1_stack_element>& sta, int & now, int now_w,int & now_action_id) {
+bool grammar::parse_ll1(lex_data const & data,
+	std::stack<grammar::ll1_stack_element>& sta, int & now, int & now_action_id,int rec_cnt) {
+	max_rec_cnt = std::max(max_rec_cnt, rec_cnt);
 	auto id_top = sta.top();
 	while (id_top != id_dummy) {
 		if (is_semantic_action(id_top)) {
 #ifdef _MYDEBUG_PARSER
-			std::cout << "call func " << get_name(id_top) << std::endl;
+			std::cout << "call func " << get_name(id_top) <<" With "<< get_name_of_now(now-1,data) <<std::endl;
 #endif
 #ifndef _MYDEBUG_NOACTION
-			action[get_name(id_top)](now_action_id++,now_w);
+			action[get_name(id_top)](now_action_id++, now-1);
 #endif
 			sta.pop();
 			id_top = sta.top();
@@ -176,11 +178,11 @@ bool grammar::parse_ll1(lex_data const & data, std::stack<grammar::ll1_stack_ele
 			std::cout << " terminator ---";
 #endif
 #ifdef _MYDEBUG_PARSER
-			std::cout << "CURRENT _STACK TOP___ " << get_name(id_top) << " _CURRENT_NOW " << data.get_token_name(now);// << std::endl;
+			std::cout << "Top --- " << get_name(id_top) << " , NOW -- <"
+				<< data.get_token_name(now) << "," << get_name_of_now(now, data) << " >";// << std::endl;
 #endif
 			if (data.cmp_token(now, terminator(id_top))) {
 				sta.pop();
-				now_w = now;
 				now++;
 #ifdef _MYDEBUG_PARSER
 				std::cout << " accept" << std::endl;
@@ -192,20 +194,16 @@ bool grammar::parse_ll1(lex_data const & data, std::stack<grammar::ll1_stack_ele
 				return false;
 			}
 		} else {
-
-#ifdef _MYDEBUG_PARSER
-			std::cout << std::endl;
-#endif
 			auto r = find_ll1(id_top, data.get_token(now));
 			if (r) {
 				bool good = false;
 				const int act_id = now_action_id;
 				for (auto it = r->begin(); it != r->end(); it++) {
-					std::stack<ll1_stack_element> tmp = sta;
-					tmp.pop();
 					int n = now;
+					std::stack<ll1_stack_element> tmp;
+					tmp.push(id_dummy);
+					//tmp.pop();
 					auto &prod = productions[it->first][it->second];
-
 #ifdef _MYDEBUG_PARSER
 					std::cout << "!! try prod " << get_name(it->first) << "=>";
 					for (auto && p : prod) std::cout << "{" << get_name(p) << "}";
@@ -215,21 +213,15 @@ bool grammar::parse_ll1(lex_data const & data, std::stack<grammar::ll1_stack_ele
 					action["push_stack"](-1, 0);
 #endif
 					for (auto it = prod.rbegin(); it != prod.rend(); it++) tmp.push(*it);
-					if (parse_ll1(data, tmp, n, now_w,now_action_id)) {
-
-						if (id_top == id_s && n == data.lex_result.size()) {
-							std::cout << "THIS WORKS !!!" << std::endl;
-						}
-
+					if (parse_ll1(data, tmp, n, now_action_id,rec_cnt+1)) {
 						if (id_top != id_s || n == data.lex_result.size()) {
 #ifdef _MYDEBUG_PARSER
 							std::cout << "CURRENT _STACK TOP___ " << get_name(id_top) << " _CURRENT_NOW " << data.get_token_name(now);// << std::endl;
 #endif
-							sta = tmp; now = n; good = true;
+							sta.pop(); now = n;  good = true;
 #ifndef _MYDEBUG_NOACTION
 							action["select_stack"](-1, 0);
 #endif
-
 #ifdef _MYDEBUG_PARSER				
 							std::cout << "\t-- select prod" << get_name(it->first) << "=>";
 							for (auto && p : prod) std::cout << "{" << get_name(p) << "}";
@@ -237,35 +229,32 @@ bool grammar::parse_ll1(lex_data const & data, std::stack<grammar::ll1_stack_ele
 #endif
 							break;
 						}
-
+					}
 #ifndef _MYDEBUG_NOACTION   
-						now_action_id = act_id;
-						action["return_to"](now_action_id,0);
+					now_action_id = act_id;
+					action["return_to"](now_action_id, 0);
 #endif
 #ifdef  _MYDEBUG_PARSER
-						std::cout << "\t-- reject prod" << get_name(it->first) << "=>";
-						for (auto && p : prod) std::cout << "{" << get_name(p) << "}";
-						std::cout << std::endl;
+					std::cout << "\t-- reject prod" << get_name(it->first) << "=>";
+					for (auto && p : prod) std::cout << "{" << get_name(p) << "}";
+					std::cout << std::endl;
 #endif
-
-					}
 				}
 				if (!good) {
 #ifdef _MYDEBUG_PARSER				
 					std::cout << "\t-- reject [" << get_name(id_top) << "] with [" << data.get_token_name(now)
 						<< "] -- all productions tried" << std::endl;
 #endif
-#ifndef _MYDEBUG_NOACTION   
-					now_action_id = act_id;
-					action["return_to"](now_action_id, 0);
-#endif
-
+//#ifndef _MYDEBUG_NOACTION   
+//					now_action_id = act_id;
+//					action["return_to"](now_action_id, 0);
+//#endif
 					return false;
 				}
 			} else {
-#ifndef _MYDEBUG_NOACTION   
-				action["return_to"](now_action_id, 0);
-#endif
+//#ifndef _MYDEBUG_NOACTION   
+//				action["return_to"](now_action_id, 0);
+//#endif
 #ifdef _MYDEBUG_PARSER
 				std::cout << "\t reject [" << get_name(id_top) << "] with [" << data.get_token_name(now)
 					<< "] - no possible way" << std::endl;
@@ -304,7 +293,7 @@ void grammar::init(std::string const & bnf) {
 			cout << " || ";
 #endif
 			add_production(s, vec);
-		}
+	}
 #ifdef _MYDEBUG
 
 		cout << endl;

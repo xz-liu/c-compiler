@@ -2,6 +2,10 @@
 #include "../lex/lex.h"
 #include "../basic/bin_tree.h"
 //
+
+std::string get_name_of_now(int now, lex_data const & data);
+std::string get_type_name(int now, lex_data const &data);
+
 struct grammar {
 	using product_reference = std::pair<int, int>;
 	using production = std::vector<int>;
@@ -75,7 +79,7 @@ private:
 	}
 	bool parse_ll1(lex_data const& data, 
 		std::stack<ll1_stack_element> &sta, 
-		int &now,int now_w,int & now_id);
+		int &now,int & now_id,int);
 	
 	int cnt;
 	int get_tok(std::string const&s) {
@@ -92,7 +96,7 @@ private:
 	}
 	void init(std::string const& s);
 public:
-	int id_eps, id_dummy, id_s;
+	int id_eps, id_dummy, id_s,max_rec_cnt;
 	std::string const& get_name(int t) const {
 		return rev_mp[t];
 	}
@@ -102,8 +106,11 @@ public:
 		std::stack< ll1_stack_element> sta;
 		sta.push(id_dummy);
 		sta.push(id_s);
-		int now = 0, now_act=0;
-		return parse_ll1(data, sta, now,id_dummy,now_act);
+		max_rec_cnt = 0;
+		int now = 0, now_act = 0;
+		std::cout<<"PARSER RESULT"<< parse_ll1(data, sta, now, now_act, 0)<<std::endl;
+		std::cout << "MAX " << max_rec_cnt << std::endl;
+		return true;
 	}
 	void debug();
 	int add_symbol(std::string const& s) {

@@ -202,14 +202,16 @@ id_suffix : '[' exp ']'  {@[@]}
 |structdef | id | 0 | 0 |    名字为id的struct|
 |structend| id |  0 | 0   |   名字为id的struct定义结束 |
 |cblock | 0 |  0  |   0|  标记一个代码块的开始|
-|cend | 0 | 0  |  0|      ~~~~~~~~~~~~~~结束|        
-|push | val | 0 |0  |     将val push进堆栈|
-|call | id | 0 | to   |  调用id函数，返回值存在to中|
+|cend | 0 | 0  |  0|      ~~~~~~~~~~~~~~结束|
+|call | id | 0 |    |  调用id函数|        
+|push | val | 0 |0  |     val为参数|
+|callend | to | 0 |   |  返回值存在to中|
 |ret| 0 | 0 |0 |   函数返回|
 |retval| 0| 0 |to |  函数返回，返回值存在to中|
 |op | lhs| rhs| to | 双目运算符，运算结果存入to中|
 |op | val| 0| to |单目运算符，运算结果存入to中|
+|inc/dec|val | 0 | 0 | 自增/自减
 |assign | lhs| rhs| type | lhs ?= rhs  |
 |initlst|id|0|0 |  初始化列表|
 |initend|id|0|0| 初始化列表结束|
-|initlstitem | id | 0 |0 | 初始化列表元素|
+|initlstitem | val | 0 |0 | 初始化列表元素|
