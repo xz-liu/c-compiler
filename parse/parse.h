@@ -18,6 +18,7 @@ struct labels {
 	labels() = default;
 	using label = std::pair<int, label_type >;
 	std::vector<label> vec_label;
+	std::vector<bool> label_vis;
 	auto begin() {
 		return vec_label.rbegin();
 	}
@@ -41,7 +42,15 @@ struct labels {
 	label operator[](int i) const {
 		return vec_label[i];
 	}
-	auto top_type( ) const{
+	bool placed(int i)  {
+		if (i >= label_vis.size())label_vis.resize(i*2+1);
+		return label_vis[i];
+	}
+	void place(int i) {
+		if (i >= label_vis.size())label_vis.resize(i*2+1);
+		label_vis[i] = true;
+	}
+	auto top_type() const {
 		return vec_label.back().second;
 	}
 	label find_nearest(label_type ty) const {
@@ -184,6 +193,7 @@ struct parser {
 	void monocular_operator(std::string const& op_name, quat_op op,
 		std::initializer_list<type_token> && ban);
 	void assign_operator(int ass_type);
+	void try_place_label(int label);
 	void check_find_label(labels::label const& lb, std::string const& msg);
 	parser(lex_data const& d, grammar &g);
 	void show_quats();

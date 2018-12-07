@@ -35,4 +35,5 @@ Debug/*
 Release/*
 *.filters
 *.user
-*.vcxproj
+*.txt
+! c_minus.txt

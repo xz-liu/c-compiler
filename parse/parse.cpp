@@ -137,10 +137,10 @@ parser::parser(lex_data const& d, grammar & g)
 
 #define _GRAMMAR_ASSIGN_ACT(str,code) \
 	grm.assign_action(str, [&](int action_id ,int now) { \
-		/*stack.debug(data) ;*/\
+		stack.debug(data) ;\
 		if(action_id>=0) quat_history.emplace( action_id ,std::make_pair(label_cnt, quat_top) ) ;  \
 		code \
-		/*stack.debug(data);*/\
+		stack.debug(data);\
 	})
 
 #pragma region predefined operations
@@ -401,6 +401,9 @@ parser::parser(lex_data const& d, grammar & g)
 		check_find_label(nearest_lb, "while_end failed : loop_begin notfound");
 
 		add_quat(quat_op::jmp, nearest_lb.first, 0, 0);
+		auto nearest_end = label_stack.find_nearest(labels::loop_end);
+		check_find_label(nearest_end, "while_check failed : loop_end notfound");
+		try_place_label(nearest_end.first);
 	});
 #pragma endregion 
 
