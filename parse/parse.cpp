@@ -423,6 +423,7 @@ parser::parser(lex_data const& d, grammar & g)
 		loop_end
 	 */
 	_GRAMMAR_ASSIGN_ACT("{for_init}", {
+		stack.pop();
 		int loop_begin = push_label(labels::loop_begin);
 		push_label(labels::for_suf);
 		push_label(labels::loop_end);
@@ -446,6 +447,7 @@ parser::parser(lex_data const& d, grammar & g)
 
 	});
 	_GRAMMAR_ASSIGN_ACT("{for_suf}", {
+		stack.pop();
 		labels::label loop_begin = label_stack.find_nearest(labels::loop_begin);
 		check_find_label(loop_begin, "for_suf failed : loop_begin notfound");
 		labels::label for_begin = label_stack.find_nearest(labels::for_begin);
@@ -602,7 +604,7 @@ parser::parser(lex_data const& d, grammar & g)
 		int exp = stack.pop();
 		int id = stack.pop();
 		int ty = stack.top();
-		add_quat(quat_op::newvar, id, ty, 0);
+		add_quat(quat_op::newvar, id, ty, -1);
 		add_quat(quat_op::assign, id, exp, assign_type::init);
 	});
 

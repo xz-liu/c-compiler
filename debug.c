@@ -23,7 +23,7 @@ int main(){
 	int a;
 	int b=5,c,D=10;
 	struct A didi; 
-	didi.fuck=5;
+	didi.xa[b]=5;
 	didi.f|=ret(didi.c,didi.b)+5&a||(D-1<<21);
     if(a>= didi.f)a='0';
 	else if(a==(didi.a+1)){

@@ -171,9 +171,9 @@ factors : int_const {push_int}
         | id {push_id} id_suffix
         | '(' exp ')' ;
 
-id_suffix : '[' exp ']'  {@[@]} 
-        | call_func 
-        | '.' id {push_id} {@.@} 
+id_suffix : '[' exp ']'  {@[@]} id_suffix
+        | call_func  id_suffix
+        | '.' id {push_id} {@.@} id_suffix 
         | ;
 
 )";

@@ -159,10 +159,7 @@ void types::debug_single_quat(
 		cout << get_name_of_now(qt.second[0], data) << endl;
 		break;
 	case quat_op::cblock:
-		cout << "-- {" << endl;
-		break;
 	case quat_op::cend:
-		cout << "-- }" << endl;
 		break;
 	case quat_op::push:
 		cout << get_name_of_now(qt.second[0], data) << endl;
@@ -201,6 +198,8 @@ void types::debug_single_quat(
 		break;
 	case quat_op::inc:
 	case quat_op::dec:
+		cout << get_name_of_now(qt.second[0], data) << endl;
+		break;
 	case quat_op::bnot:
 	case quat_op::lnot:
 	case quat_op::pos:
