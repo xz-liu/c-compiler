@@ -37,3 +37,4 @@ Release/*
 *.user
 *.txt
 ! c_minus.txt
+lex.cpp

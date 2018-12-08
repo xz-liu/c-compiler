@@ -15,7 +15,7 @@ void debug_string(std::string const& s) {
 	using std::cout;
 	using std::endl;
 	lex_data data_c(s);
-
+	//cout << grm.parse_ll1(data_c) << endl;
 	data_c.debug();
 	parser parse(data_c, grm);
 	parse.parse();

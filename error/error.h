@@ -23,5 +23,6 @@ protected:\
 define_new_error_type(cpp, "ERROR ON PREPROCESSING: ");
 define_new_error_type(parse, "ERROR ON PARSING: ");
 define_new_error_type(lex, "ERROR ON LEXICAL ANALYSISING: ");
+define_new_error_type(dag, "ERROR ON DAG OPTIMIZER");
 
 #undef define_new_error_type

@@ -1,18 +1,18 @@
 
 FOR_STATMENT
-    init code
+    // init code
     jmp for_begin
-    loop_begin
-    check_data
-        true -> for_begin
-        false -> loop_end
-    for_suf
-    suf data
+    label loop_begin
+    // exp 
+    btrue  for_begin exp
+    bfalse  loop_end exp
+    label for_suf
+    // suf code
     jmp loop_begin
-    for_begin
-    code
+    label for_begin
+    // code
     jmp for_suf
-    loop_end
+    label loop_end
 
 WHILE_STATMENT
     loop_begin
@@ -33,23 +33,15 @@ IF_STATMENT
     else_end 
 
 SWITCH 
-    exp (stack_top)
-
+    // exp (stack_top)
     push c
     pop i pop c 
-    bneq i,c, case_end
+    sub i,c, tmp
+    btrue case_end tmp
     push i
+    // code_list
     label case_end 
-
-    push c
-    pop i pop c 
-    bneq i,c, case_end
-    push i
-    label case_end 
-
-    break 
-    jmp switch_end 
-
+    // default code_list
     label switch_end 
     pop i
 

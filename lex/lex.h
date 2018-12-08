@@ -157,10 +157,15 @@ struct lex_data {
 		return token::dummy;
 	}
 	void debug() {
+		std::cout << "STRING LIST:";
 		output_vector(vlit_str);
+		std::cout << "INT LIST:";
 		output_vector(vlit_int);
+		std::cout << "FLOAT LIST:";
 		output_vector(vlit_dbl);
+		std::cout << "CHAR LIST:";
 		output_vector(vlit_chr);
+		std::cout << "ID LIST:";
 		output_vector(vlit_idt);
 		output_vector(vlit_file);
 		for (auto r : lex_result) {

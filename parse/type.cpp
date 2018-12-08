@@ -83,7 +83,7 @@ std::string get_name_of_now(int now,lex_data const & data) {
 	}
 	return "{@Failed}";
 }
-std::string get_assign_type_name(int now, lex_data const &data) {
+std::string get_assign_type_name(int now) {
 	switch (now) {
 		case assign_type::normal : return "normal";
 		case assign_type::add : return "add";
@@ -160,6 +160,7 @@ void types::debug_single_quat(
 		break;
 	case quat_op::cblock:
 	case quat_op::cend:
+		cout << endl;
 		break;
 	case quat_op::push:
 		cout << get_name_of_now(qt.second[0], data) << endl;
@@ -210,12 +211,15 @@ void types::debug_single_quat(
 	case quat_op::assign:
 		cout << get_name_of_now(qt.second[0], data) << ","
 			<< get_name_of_now(qt.second[1], data) << ","
-			<< get_assign_type_name(qt.second[2], data) << endl;
+			<< get_assign_type_name(qt.second[2]) << endl;
 		break;
 	case quat_op::initlst:
 	case quat_op::initlstend:
-	case quat_op::initlstitem:
 		cout << get_name_of_now(qt.second[0], data) << endl;
+		break;
+	case quat_op::initlstitem:
+		cout << get_name_of_now(qt.second[0], data) <<","
+			<< get_name_of_now(qt.second[1], data) << endl;
 		break;
 	}
 	

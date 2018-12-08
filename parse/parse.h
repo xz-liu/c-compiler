@@ -19,6 +19,7 @@ struct labels {
 	using label = std::pair<int, label_type >;
 	std::vector<label> vec_label;
 	std::vector<bool> label_vis;
+	std::vector<label_type> vec_type;
 	auto begin() {
 		return vec_label.rbegin();
 	}
@@ -33,6 +34,8 @@ struct labels {
 	}
 	void push(label_type ty, int i) {
 		vec_label.emplace_back(i, ty);
+		if (i >= vec_type.size())vec_type.resize(2 * i + 1);
+		vec_type[i] = ty;
 	}
 	label pop() {
 		auto x = vec_label.back();
@@ -40,7 +43,7 @@ struct labels {
 		return x;
 	}
 	label operator[](int i) const {
-		return vec_label[i];
+		return { i, vec_type[i] };
 	}
 	bool placed(int i)  {
 		if (i >= label_vis.size())label_vis.resize(i*2+1);
@@ -52,6 +55,16 @@ struct labels {
 	}
 	auto top_type() const {
 		return vec_label.back().second;
+	}
+	label pop_nearest(label_type ty) {
+		for (auto it = vec_label.rbegin(); it != vec_label.rend(); it++) {
+			if (it->second == ty) {
+				label ret = *it;
+				vec_label.erase((++it).base());
+				return ret;
+			}
+		}
+		return { -1,fail };
 	}
 	label find_nearest(label_type ty) const {
 		for (auto it=vec_label.rbegin();it!=vec_label.rend();it++) {
@@ -97,6 +110,14 @@ struct vars {
 		now_pos.push_back(now);
 		now_type.push_back(type_token::double_literal);
 	}
+	void push_delimeter(int now) {
+		now_pos.push_back(now);
+		now_type.push_back(type_token::delimiter);
+	}
+	void push(int now,type_token ty) {
+		now_pos.push_back(now);
+		now_type.push_back(ty);
+	}
 	type_token now() { return now_type.back(); }
 	int pop() {
 		int n = now_pos.back();
@@ -106,7 +127,7 @@ struct vars {
 	}
 	int top() { return now_pos.back();}
 	size_t size( ) { return now_pos.size(); }
-
+	bool empty() const { return now_pos.empty(); }
 	void debug(lex_data const& data) {
 		std::cout << " --";
 		for (int i = 0; i<now_pos.size(); i++) {
@@ -157,7 +178,8 @@ namespace assign_type {
 		and = 9,
 		or = 10,
 		xor = 11,
-		init = 12;
+		init = 12,
+		error = 13;
 }
 
 
@@ -192,13 +214,13 @@ struct parser {
 	void check_not(std::string const& op_name, type_token x);
 	void monocular_operator(std::string const& op_name, quat_op op,
 		std::initializer_list<type_token> && ban);
-	void assign_operator(int ass_type);
 	void try_place_label(int label);
+	void handle_assign();
 	void check_find_label(labels::label const& lb, std::string const& msg);
 	parser(lex_data const& d, grammar &g);
 	void show_quats();
-	void parse() {
-		grm.parse_ll1(data);
+	bool parse() {
+		return grm.parse_ll1(data);
 	}
 
 };

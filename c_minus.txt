@@ -31,7 +31,6 @@ unsigned_int_type : 'short' redundant_int {uint16}
         | 'long' unsigned_int_32_64 ;
 unsigned_int_32_64 : 'long' redundant_int {uint64}  
         | redundant_int {uint32}  ;
-
 redundant_int : 'int' 
         | ;
 
@@ -92,7 +91,7 @@ i_c : int_const {push_int}
 case_list : case case_list 
         | ;
 case : 'case' i_c {case_begin} ':' code_list {case_end} ;
-default : 'default' ':' code ;
+default : 'default' ':' code_list ;
 if_stmt :  'if' {if_begin} '(' exp_or_str {if_check} ')' code {if_end} else_stmt {else_end} ;
 else_stmt : 'else'  code
         | ;
@@ -103,18 +102,18 @@ return_stmt : 'return' return_follow ;
 return_follow : ';' {return} 
         | exp_or_str {return@} ';'  ;
 exp	:  term_assign exp_assign ;
-exp_assign :  '=' term_assign {@=@} exp_assign 
-        |   '+=' term_assign {@+=@} exp_assign 
-        |   '-=' term_assign {@-=@} exp_assign 
-        |   '*=' term_assign {@*=@} exp_assign 
-        |   '/=' term_assign {@/=@} exp_assign 
-        |   '%=' term_assign {@%=@} exp_assign 
-        |   '<<=' term_assign {@<<=@} exp_assign 
-        |   '>>=' term_assign {@>>=@} exp_assign 
-        |   '&=' term_assign {@&=@} exp_assign 
-        |   '^=' term_assign {@^=@} exp_assign 
-        |   '|=' term_assign {@|=@} exp_assign 
-        |  ;
+exp_assign :  '=' {push_delimeter} term_assign  exp_assign 
+        |   '+=' {push_delimeter} term_assign  exp_assign 
+        |   '-=' {push_delimeter} term_assign  exp_assign 
+        |   '*=' {push_delimeter} term_assign  exp_assign 
+        |   '/=' {push_delimeter} term_assign  exp_assign 
+        |   '%=' {push_delimeter} term_assign  exp_assign 
+        |   '<<=' {push_delimeter} term_assign  exp_assign 
+        |   '>>=' {push_delimeter} term_assign  exp_assign 
+        |   '&=' {push_delimeter} term_assign  exp_assign 
+        |   '^=' {push_delimeter} term_assign  exp_assign 
+        |   '|=' {push_delimeter} term_assign  exp_assign 
+        | {handle_assign} ;
 term_assign : term_log_or exp_log_or ;
 exp_log_or :  '||' term_log_or {@||@} exp_log_or 
         |  ;

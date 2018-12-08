@@ -4,11 +4,14 @@
 
 
 struct var_scope {
-	std::vector<int> id_set;
+	std::vector<int> var_set;
 	using handle_scope = std::shared_ptr<var_scope>;
 	std::vector<handle_scope> inner;
 	std::shared_ptr<var_scope> father;
 	var_scope(handle_scope hs) : father(hs) {}
+	handle_scope create_new_scope() {
+		handle_scope handle(new var_scope(this));
+	}
 };
 
 struct types {

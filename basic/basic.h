@@ -29,6 +29,7 @@
 #include<iomanip>
 #include<iterator>
 #include<thread>
+#include<memory>
 #include<sstream>
 
 template<class Seq,class Func>

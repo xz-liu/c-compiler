@@ -107,10 +107,10 @@ public:
 		sta.push(id_dummy);
 		sta.push(id_s);
 		max_rec_cnt = 0;
-		int now = 0, now_act = 0;
-		std::cout<<"PARSER RESULT"<< parse_ll1(data, sta, now, now_act, 0)<<std::endl;
-		std::cout << "MAX " << max_rec_cnt << std::endl;
-		return true;
+		int now = 0, now_act = 0; 
+		bool result= parse_ll1(data, sta, now, now_act, 0);
+		//std::cout << "MAX " << max_rec_cnt << std::endl;
+		return result;
 	}
 	void debug();
 	int add_symbol(std::string const& s) {
@@ -170,44 +170,3 @@ public:
 		else return it->second;
 	}
 };
-
-struct ast :bin_tree<std::string> {
-private:
-	using _Base = bin_tree<std::string>;
-public:
-	using ast_node = _Base::node;
-	using ast_ptr = _Base::ptr;
-
-	ast() :_Base() {}
-	static ast_ptr add_child(ast_ptr & n, const std::string &s) {
-		if (n->has_lchild())return nullptr;
-		else return n->insert_as_lchild(s);
-	}
-	static ast_ptr add_sibling(ast_ptr & n, const std::string &s) {
-		if (n->has_rchild())return nullptr;
-		else return n->insert_as_rchild(s);
-	}
-	static	ast_ptr child(ast_ptr & n) {
-		return n->lc;
-	}
-	static ast_ptr sibling(ast_ptr & n) {
-		return n->rc;
-	}
-	static std::string & dump(ast_ptr& n) {
-		return n->val;
-	}
-	void debug(ast_ptr n) {
-		using std::cout;
-		using std::endl;
-		if (!n)return;
-		dump(n);
-		debug(sibling(n));
-		cout << "{" << endl;
-		debug(child(n));
-		cout << "}" << endl;
-	}
-	void debug() {
-		debug(root);
-	}
-};
-

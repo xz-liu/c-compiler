@@ -245,16 +245,9 @@ bool grammar::parse_ll1(lex_data const & data,
 					std::cout << "\t-- reject [" << get_name(id_top) << "] with [" << data.get_token_name(now)
 						<< "] -- all productions tried" << std::endl;
 #endif
-//#ifndef _MYDEBUG_NOACTION   
-//					now_action_id = act_id;
-//					action["return_to"](now_action_id, 0);
-//#endif
 					return false;
 				}
 			} else {
-//#ifndef _MYDEBUG_NOACTION   
-//				action["return_to"](now_action_id, 0);
-//#endif
 #ifdef _MYDEBUG_PARSER
 				std::cout << "\t reject [" << get_name(id_top) << "] with [" << data.get_token_name(now)
 					<< "] - no possible way" << std::endl;
@@ -285,7 +278,9 @@ void grammar::init(std::string const & bnf) {
 			std::vector<std::string> vec;
 			while (true) {
 				cin >> t;
+#ifdef _MYDEBUG
 				std::cout << "{" << t << "}";
+#endif
 				if (t == "|" || t == ";")break;
 				vec.push_back(t);
 			}
@@ -306,8 +301,6 @@ void grammar::init(std::string const & bnf) {
 	id_s = get_tok(S);
 	fill_ll1_table();
 }
-
-
 
 grammar::grammar()
 	:token_map(get_token_map()) {

@@ -13,6 +13,22 @@ void parser::check_find_label(labels::label const& lb, std::string const& msg) {
 		throw parse_error(msg);
 	}
 };
+int token_to_assign_type(token ty) {
+	switch (ty) {
+	case token::assign:return assign_type::normal;
+	case token::addass:return assign_type::add;
+	case token::subass:return assign_type::sub;
+	case token::mulass:return assign_type::mul;
+	case token::divass:return assign_type::div;
+	case token::modass:return assign_type::mod;
+	case token::shlass:return assign_type::shl;
+	case token::shrass:return assign_type::shr;
+	case token::andass:return assign_type::and;
+	case token::orass:return assign_type:: or ;
+	case token::xorass:return assign_type::xor;
+	}
+	return assign_type::error;
+}
 void parser::check_contain(std::string const& op_name,
 	std::initializer_list<type_token> && lst) {
 	for (auto &&x : lst) {
@@ -66,17 +82,23 @@ void parser::binocular_operator(std::string const& op_name, quat_op op,
 	add_quat(op, lhs, rhs, nv);
 }
 
-
-void parser::assign_operator(int ass_type) {
-	int rhs = stack.pop();
-	int lhs = stack.pop();
-	stack.push_id(lhs);
-	add_quat(quat_op::assign, lhs, rhs, ass_type);
-}
 void parser::try_place_label(int label) {
 	if (label_stack.placed(label))return;
 	label_stack.place(label);
 	add_quat(quat_op::label, label, 0, 0);
+}
+void parser::handle_assign() {
+	while (true) {
+		type_token top_type = stack.now();
+		int rhs = stack.pop();
+		if (stack.empty() || stack.now() != type_token::delimiter) {
+			stack.push(rhs, top_type);
+			break;
+		}
+		token op = data.get_token(stack.pop());
+		int lhs = stack.top();
+		add_quat(quat_op::assign, lhs, rhs, token_to_assign_type(op));
+	}
 }
 ;
 
@@ -137,10 +159,10 @@ parser::parser(lex_data const& d, grammar & g)
 
 #define _GRAMMAR_ASSIGN_ACT(str,code) \
 	grm.assign_action(str, [&](int action_id ,int now) { \
-		stack.debug(data) ;\
+		/*stack.debug(data) ;*/\
 		if(action_id>=0) quat_history.emplace( action_id ,std::make_pair(label_cnt, quat_top) ) ;  \
 		code \
-		stack.debug(data);\
+		/*stack.debug(data) ;*/\
 	})
 
 #pragma region predefined operations
@@ -317,52 +339,17 @@ parser::parser(lex_data const& d, grammar & g)
 #pragma endregion 
 
 #pragma region exp op::assign_op
-	_GRAMMAR_ASSIGN_ACT("{@=@}", {
-		assign_operator(assign_type::normal);
+	_GRAMMAR_ASSIGN_ACT("{push_delimeter}",{
+		stack.push_delimeter(now);
 	});
-
-	_GRAMMAR_ASSIGN_ACT("{@+=@}", {
-		assign_operator(assign_type::add);
+	_GRAMMAR_ASSIGN_ACT("{swap}",{
+		int a = stack.pop();
+		int b = stack.pop();
+		stack.push_delimeter(b);
+		stack.push_id(a);
 	});
-
-	_GRAMMAR_ASSIGN_ACT("{@-=@}", {
-		assign_operator(assign_type::sub);
-	});
-
-	_GRAMMAR_ASSIGN_ACT("{@*=@}", {
-		assign_operator(assign_type::mul);
-	});
-
-	_GRAMMAR_ASSIGN_ACT("{@/=@}", {
-		assign_operator(assign_type::div);
-	});
-
-	_GRAMMAR_ASSIGN_ACT("{@%=@}", {
-		assign_operator(assign_type::mod);
-	});
-
-	_GRAMMAR_ASSIGN_ACT("{@<<=@}", {
-		assign_operator(assign_type::shl);
-	});
-
-	_GRAMMAR_ASSIGN_ACT("{@>>=@}", {
-		assign_operator(assign_type::shr);
-	});
-
-	_GRAMMAR_ASSIGN_ACT("{@=@}", {
-		assign_operator(assign_type::normal);
-	});
-
-	_GRAMMAR_ASSIGN_ACT("{@&=@}", {
-		assign_operator(assign_type::and);
-	});
-
-	_GRAMMAR_ASSIGN_ACT("{@|=@}", {
-		assign_operator(assign_type:: or );
-	});
-
-	_GRAMMAR_ASSIGN_ACT("{@^=@}", {
-		assign_operator(assign_type::xor);
+	_GRAMMAR_ASSIGN_ACT("{handle_assign}",{
+		handle_assign();
 	});
 #pragma endregion 
 
@@ -397,31 +384,17 @@ parser::parser(lex_data const& d, grammar & g)
 		add_quat(quat_op::bfalse, nearest_end.first, n, 0);
 	});
 	_GRAMMAR_ASSIGN_ACT("{while_end}", {
-		auto nearest_lb = label_stack.find_nearest(labels::loop_begin);
+		auto nearest_lb = label_stack.pop_nearest(labels::loop_begin);
 		check_find_label(nearest_lb, "while_end failed : loop_begin notfound");
 
 		add_quat(quat_op::jmp, nearest_lb.first, 0, 0);
-		auto nearest_end = label_stack.find_nearest(labels::loop_end);
+		auto nearest_end = label_stack.pop_nearest(labels::loop_end);
 		check_find_label(nearest_end, "while_check failed : loop_end notfound");
 		try_place_label(nearest_end.first);
 	});
 #pragma endregion 
 
 #pragma region  for_stmt
-	/*
-		init code
-		jmp for_begin
-		loop_begin
-		check_data
-			true -> for_begin
-			false -> loop_end
-		for_suf
-		suf data
-		jmp check_data
-		for_begin
-		jmp for_suf
-		loop_end
-	 */
 	_GRAMMAR_ASSIGN_ACT("{for_init}", {
 		stack.pop();
 		int loop_begin = push_label(labels::loop_begin);
@@ -458,14 +431,16 @@ parser::parser(lex_data const& d, grammar & g)
 		try_place_label(for_begin.first) ;
 	});
 	_GRAMMAR_ASSIGN_ACT("{for_end}", {
-		labels::label loop_end = label_stack.find_nearest(labels::loop_end);
+		labels::label loop_end = label_stack.pop_nearest(labels::loop_end);
 		check_find_label(loop_end, "for_end failed : loop_end notfound");
 
-		labels::label for_suf = label_stack.find_nearest(labels::for_suf);
+		labels::label for_suf = label_stack.pop_nearest(labels::for_suf);
 		check_find_label(for_suf, "for_end failed : for_suf notfound");
-
 		add_quat(quat_op::jmp, for_suf.first, 0, 0);
 		try_place_label(loop_end.first) ;
+		label_stack.pop_nearest(labels::loop_begin);
+		label_stack.pop_nearest(labels::for_begin);
+
 	});
 #pragma endregion 
 
@@ -481,7 +456,7 @@ parser::parser(lex_data const& d, grammar & g)
 		add_quat(quat_op::bfalse, if_end.first,exp,0);
 	});
 	_GRAMMAR_ASSIGN_ACT("{if_end}", {
-		labels::label if_end = label_stack.find_nearest(labels::if_end);
+		labels::label if_end = label_stack.pop_nearest(labels::if_end);
 		check_find_label(if_end, "if_end failed : if_end notfound");
 		labels::label else_end = label_stack.find_nearest(labels::else_end);
 		check_find_label(else_end, "if_end failed : else_end notfound");
@@ -489,7 +464,7 @@ parser::parser(lex_data const& d, grammar & g)
 		try_place_label(if_end.first) ;
 	});
 	_GRAMMAR_ASSIGN_ACT("{else_end}", {
-		labels::label else_end = label_stack.find_nearest(labels::else_end);
+		labels::label else_end = label_stack.pop_nearest(labels::else_end);
 		check_find_label(else_end, "else_end failed : else_end notfound");
 		try_place_label(else_end.first) ;
 	});
@@ -519,7 +494,7 @@ parser::parser(lex_data const& d, grammar & g)
 	});
 
 	_GRAMMAR_ASSIGN_ACT("{case_end}", {
-		labels::label case_end = label_stack.find_nearest(labels::case_end);
+		labels::label case_end = label_stack.pop_nearest(labels::case_end);
 		check_find_label(case_end, "case_end failed : case_end notfound");
 		try_place_label(case_end.first) ;
 	});
