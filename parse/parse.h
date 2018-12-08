@@ -164,7 +164,10 @@ enum class quat_op {
 	bxor,bor,band,lor,land, 
 	inc ,dec, bnot, lnot, pos, neg, 
 	assign,
-	initlst,initlstend,initlstitem
+	initlst,initlstend,initlstitem,
+	//before type check 
+	type_cast,
+
 };
 namespace assign_type {
 	static constexpr int normal = 1,

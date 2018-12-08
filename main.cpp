@@ -19,7 +19,7 @@ void debug_string(std::string const& s) {
 	data_c.debug();
 	parser parse(data_c, grm);
 	parse.parse();
-	types::debug_quat(parse.quats, parse.label_stack, data_c);
+	symbols::debug_quat(parse.quats, parse.label_stack, data_c);
 }
 
 int main() {

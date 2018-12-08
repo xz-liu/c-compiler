@@ -107,7 +107,7 @@ void parser::add_quat(quat_op op, int v1, int v2, int v3) {
 
 //#ifdef _MYDEBUG_PARSER
 	std::cout << "[[ GEN QUAT -- " ;
-	types::debug_single_quat(now, label_stack, data);
+	symbols::debug_single_quat(now, label_stack, data);
 //#endif
 
 	if (quat_top < quats.size())quats[quat_top++] = now;
@@ -526,40 +526,40 @@ parser::parser(lex_data const& d, grammar & g)
 
 #pragma region var & array def
 	_GRAMMAR_ASSIGN_ACT("{int16}", {
-		stack.push_type(types::int16);
+		stack.push_type(symbols::int16);
 	});
 	_GRAMMAR_ASSIGN_ACT("{uint16}", {
-		stack.push_type(types::uint16);
+		stack.push_type(symbols::uint16);
 	});
 	_GRAMMAR_ASSIGN_ACT("{int32}", {
-		stack.push_type(types::int32);
+		stack.push_type(symbols::int32);
 	});
 	_GRAMMAR_ASSIGN_ACT("{uint32}", {
-		stack.push_type(types::uint32);
+		stack.push_type(symbols::uint32);
 	});
 	_GRAMMAR_ASSIGN_ACT("{int64}", {
-		stack.push_type(types::int64);
+		stack.push_type(symbols::int64);
 	});
 	_GRAMMAR_ASSIGN_ACT("{uint64}", {
-		stack.push_type(types::uint64);
+		stack.push_type(symbols::uint64);
 	});
 	_GRAMMAR_ASSIGN_ACT("{char8}", {
-		stack.push_type(types::char8);
+		stack.push_type(symbols::char8);
 	});
 	_GRAMMAR_ASSIGN_ACT("{uchar8}", {
-		stack.push_type(types::uchar8);
+		stack.push_type(symbols::uchar8);
 	});
 	_GRAMMAR_ASSIGN_ACT("{float32}", {
-		stack.push_type(types::float32);
+		stack.push_type(symbols::float32);
 	});
 	_GRAMMAR_ASSIGN_ACT("{float64}", {
-		stack.push_type(types::float64);
+		stack.push_type(symbols::float64);
 	});
 	_GRAMMAR_ASSIGN_ACT("{void}", {
-		stack.push_type(types::void_type);
+		stack.push_type(symbols::void_type);
 	});
 	_GRAMMAR_ASSIGN_ACT("{struct_var}", {
-		stack.push_type(types::struct_id(stack.pop()));
+		stack.push_type(symbols::struct_id(stack.pop()));
 	});
 	_GRAMMAR_ASSIGN_ACT("{def_array}",{
 		// now is int_const
