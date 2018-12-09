@@ -15,12 +15,14 @@ protected:\
 	std::string prefix= error_prefix;\
 	std::string msg_;\
 	template<class _NOW,class ..._STR>void strappend(_NOW now,_STR... str)\
-		{msg+=now;}\
+		{msg_+=now;}\
 	template<class _NOW>void strappend(_NOW now){msg_+=now;}\
 }
 
 define_new_error_type(cpp, "ERROR ON PREPROCESSING: ");
+
 define_new_error_type(parse, "ERROR ON PARSING: ");
+
 define_new_error_type(lex, "ERROR ON LEXICAL ANALYSISING: ");
 define_new_error_type(type, "ERROR ON TYPE DEDUCTION: ");
 define_new_error_type(scope, "ERROR ON SCOPE CHECK: ");

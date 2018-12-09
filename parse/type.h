@@ -23,6 +23,9 @@ struct scope
 		return handle;
 	}
 	std::map<std::string, id_info> id_map;
+	void insert_new_id(std::string const& id,int pos, id_type ty) {
+		id_map.emplace(id, std::make_pair(ty, pos));
+	}
 	id_type get_type_of_id(int id, lex_data const& data) {
 		return id_map[get_name_of_now(id,data)].first;
 	}
@@ -32,7 +35,7 @@ struct scope
 
 	handle_scope find_handle_of_id(int id, lex_data const& data) {
 		auto it = id_map.find(get_name_of_now(id, data));
-		if(it== id_map.end())
+		if(it!= id_map.end())
 			return shared_from_this();
 		if(father) 
 			return father->find_handle_of_id(id,data);
@@ -42,10 +45,11 @@ struct scope
 
 
 struct func_def {
-
-	std::vector<int, bool> params;
+	std::vector<std::pair <int, bool>> params;
 	int return_type;
 	std::map<int, int> id_to_param;
+	explicit func_def(int ty_id):return_type(ty_id){}
+	
 	bool add_param(int str, int type_id,bool arr) {
 		if (set_contains(id_to_param, str))return false;
 		params.emplace_back(type_id,arr);
@@ -55,9 +59,14 @@ struct func_def {
 };
 
 struct struct_def {
-	std::vector<int> members;
-	std::map<int, int> id_to_member;
-	bool add_member(int str,int type_id) {
+	std::vector<std::pair<int,int>> members;
+	std::map<std::string, int> id_to_member;
+	int find_member(std::string const& str) {
+		auto it=id_to_member.find(str);
+		if (it == id_to_member.end())return -1;
+		return it->second;
+	}
+	bool add_member(std::string const &str, std::pair<int, int> type_id) {
 		if(set_contains(id_to_member,str))return false;
 		members.push_back(type_id);
 		id_to_member[str] = members.size() - 1;
@@ -65,6 +74,8 @@ struct struct_def {
 	}
 };
 
+template<class T>
+using with_scope = std::pair<T, scope::handle_scope>;
 
 struct symbols {
 	// type_id , arr
@@ -90,13 +101,18 @@ struct symbols {
 	static int struct_id(int now) {
 		return struct_type + now;
 	}
-	static int struct_index(int now) {
+	static int struct_id_pos(int now) {
 		return now - struct_type;
 	}
 	static bool is_struct(int i) {
 		return i >= struct_type;
 	}
 	
+	int struct_index(int now) {
+		return struct_id_map[now];
+	}
+	
+
 	static void debug_single_quat(parser::quat_type const & qt, labels const & label_lst, lex_data const & data);
 	static void debug_quat(std::vector<parser::quat_type> const & quats, labels const & label_lst, lex_data const & data);
 	static bool is_int (int ty) {
@@ -132,15 +148,37 @@ struct symbols {
 	// <id , <id_type, index> >
 	std::vector<func_def> func_list;
 	std::vector<struct_def> struct_list;
-	std::vector<var_def> var_list;
+	std::vector<with_scope<var_def>>var_list;
+	std::map<int, int> struct_id_map;
+
+	int new_var(int ty_id,int arr_size, bool is_lvalue,scope::handle_scope handle) {
+		var_list.push_back({ { {ty_id,arr_size},is_lvalue }, handle});
+		return var_list.size() - 1;
+	}
+	int new_struct() {
+		struct_list.push_back(struct_def());
+		return struct_list.size() - 1;
+	}
+	int new_func(int ty_id) {
+		func_list.push_back(func_def(ty_id));
+		return func_list.size() - 1;
+	}
+	bool is_tmp_var(int id) {
+		return (id >= tmp_var_begin);
+	}
+	int curr_call_id, curr_struct, curr_push_order, curr_init_list,tmp_var_cnt;
+	const int tmp_var_begin;
 	lex_data const& data;
 	scope::handle_scope root_scope,h_curr;
 	int binocular_type_cast(type , type , quat_op op);
 	void monocular_type_check(type ty, quat_op op);
 	void assign_type_check(type lhs, type rhs, int atype);
+	bool can_cast_to_bool(type ty) {
+		return is_basic_type(ty.first) && !ty.second;
+	}
 	std::vector<parser::quat_type> quats;
 	void check_scope(scope::handle_scope hscope, int id);
 	void handle_single_quat(parser::quat_type const & qt, lex_data const & data);
-	symbols(std::vector<parser::quat_type> const&unhandled_quats , lex_data const& data);
+	symbols(parser const&p);
 
 };

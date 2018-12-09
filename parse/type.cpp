@@ -71,7 +71,7 @@ std::string get_label_type_name(labels::label_type ty) {
 std::string get_name_of_now(int now, lex_data const & data) {
 	if (now < 0)return  "{@False}";
 	if (now >= data.lex_result.size()) {
-		return std::string("{@Temp_") + std::to_string(now - data.lex_result.size())+"}";
+		return std::string("{@Temp_") + std::to_string(now - data.lex_result.size()) + "}";
 	}
 	switch (data.get_type_token(now)) {
 	case type_token::string_literal:return data.get_str(now);
@@ -102,7 +102,7 @@ std::string get_assign_type_name(int now) {
 }
 std::string get_type_name(int now, lex_data const &data) {
 	if (symbols::is_struct(now)) {
-		return "{@struct}" + get_name_of_now(symbols::struct_index(now), data);
+		return "{@struct}" + get_name_of_now(symbols::struct_id_pos(now), data);
 	}
 	switch (now) {
 	case symbols::none: return "none";
@@ -126,6 +126,29 @@ std::string get_type_name(symbols::type now, lex_data const& data) {
 		return get_type_name(now.first, data) + "[" + std::to_string(now.second) + "]";
 	}
 	return get_type_name(now.first, data);
+}
+bool is_const(int id, lex_data const& data) {
+	if (id < 0 || id >= data.lex_result.size())return false;
+	switch (data.get_type_token(id)) {
+	case type_token::string_literal:
+	case type_token::int_literal:
+	case type_token::double_literal:
+	case type_token::char_literal:
+		return true;
+	}
+	return false;
+}
+symbols::type get_const_type(int id, lex_data const& data) {
+	switch (data.get_type_token(id)) {
+	case type_token::string_literal:
+		return { symbols::char8,data.get_str(id).size() };
+	case type_token::int_literal:
+		return { symbols::int64,0 };
+	case type_token::double_literal:
+		return { symbols::float64,0 };
+	case type_token::char_literal:
+		return { symbols::char8, 0 };
+	}
 }
 
 void symbols::debug_single_quat(
@@ -229,6 +252,9 @@ void symbols::debug_single_quat(
 		cout << get_name_of_now(qt.second[0], data) << ","
 			<< get_name_of_now(qt.second[1], data) << endl;
 		break;
+	case quat_op::type_cast:
+		cout << get_name_of_now(qt.second[0], data) << ","
+			<< get_type_name(qt.second[1], data) << " [" << qt.second[2] << "] " << endl;
 	}
 
 }
@@ -307,22 +333,26 @@ void symbols::monocular_type_check(type ty, quat_op op) {
 }
 
 void symbols::assign_type_check(type lhs, type rhs, int atype) {
-	if (!is_basic_type(lhs.first) || !is_basic_type(rhs.first))
-		throw type_error("Cannot assign " + get_type_name(rhs, data) + " to " + get_type_name(lhs, data));
 	if (lhs.second || rhs.second) {
 		if (atype == assign_type::init) {
 			if (lhs.first == rhs.first&& rhs.second <= lhs.second) {
 				return;
 			}
 		}
-		throw type_error("Cannot assign " + get_type_name(rhs, data) + " to " + get_type_name(lhs, data));
+		throw type_error("Cannot assign array " + get_type_name(rhs, data) + " to " + get_type_name(lhs, data));
+	}
+	if (!is_basic_type(lhs.first) || !is_basic_type(rhs.first)) {
+		if (lhs.first == rhs.first&& atype == assign_type::init)return;
+
+		throw type_error("Cannot assign !basic type " + get_type_name(rhs, data) + " to " + get_type_name(lhs, data));
 	}
 	switch (atype) {
 	case assign_type::normal:
 	case assign_type::add:
 	case assign_type::sub:
 	case assign_type::mul:
-	case assign_type::div:break;
+	case assign_type::init:
+	case assign_type::div:return;
 	case assign_type::mod:
 	case assign_type::shl:
 	case assign_type::shr:
@@ -331,74 +361,220 @@ void symbols::assign_type_check(type lhs, type rhs, int atype) {
 	case assign_type::xor:
 		if (is_int_or_char(lhs.first) && is_int_or_char(rhs.first))return;
 	}
-	throw type_error("Cannot assign " + get_type_name(rhs, data) + " to " + get_type_name(lhs, data));
+	throw type_error("Cannot assign " + get_assign_type_name(atype) + " " + get_type_name(rhs, data) + " to " + get_type_name(lhs, data));
 }
 
-void throw_scope_error(int id,lex_data const &data,scope::handle_scope h_curr) {
-	throw scope_error("In " + h_curr->scope_name + " :" + " undefined symbol ", get_name_of_now(id, data));
+void throw_scope_error(int id, lex_data const &data, scope::handle_scope h_curr, std::string const& def) {
+	throw scope_error("In " + h_curr->scope_name + " :  " + def + " symbol <"+ get_name_of_now(id, data) + ">");
 }
-
 void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & data) {
 	using std::cout;
 	using std::endl;
+#define get_var_or_const_type(ty,id) \
+	if (is_const(id, data)) {\
+		ty = get_const_type(id, data);\
+	} else {\
+		auto handle = h_curr->find_handle_of_id(id, data);\
+		if (!handle)throw_scope_error(id, data, h_curr, "undefined");\
+		if (handle->get_type_of_id(id, data) != scope::variable)\
+			throw type_error("symbol mismatch, need variable or constexpr :" + get_name_of_now(id, data));\
+		ty = var_list[handle->get_index(id, data)].first.first;\
+	}\
+
+#define type_cast(ty2,size2,id_to_cast,islvalue,id_scope,tvc)\
+	id_scope->insert_new_id(get_name_of_now(tvc, data), new_var(ty2, size2, islvalue, id_scope), scope::variable);\
+	quats.push_back(std::make_pair(quat_op::type_cast,std::array<int,3>{id_to_cast, ty2, tvc}));\
+
 	switch (qt.first) {
 	case quat_op::label:
 	case quat_op::jmp:
 		quats.push_back(qt);
 		break;
 	case quat_op::btrue:
-	case quat_op::bfalse: {
+	case quat_op::bfalse:
+	{
 		int exp = qt.second[1];
-		auto handle = h_curr->find_handle_of_id(exp, data);
-		if (!handle)throw_scope_error(exp, data, h_curr);
-		if(handle->get_type_of_id(exp,data) == scope::variable) {
-			if(can_cast_to_bool(var_list[handle->get_index(exp,data)].first)) {
-				quats.push_back(qt);
-				break;
+		if (is_const(exp, data)) {
+			if (get_const_type(exp, data).second)
+				throw type_error("array cannot convert to bool");
+			quats.push_back(qt);
+			break;
+		} else {
+			auto handle = h_curr->find_handle_of_id(exp, data);
+			if (!handle)throw_scope_error(exp, data, h_curr, "undefined");
+			if (handle->get_type_of_id(exp, data) == scope::variable) {
+				if (can_cast_to_bool(var_list[handle->get_index(exp, data)].first.first)) {
+					quats.push_back(qt);
+					break;
+				}
 			}
+			throw type_error(get_name_of_now(exp, data) + " is not an exp");
 		}
-		throw type_error(get_name_of_now(exp, data) + " is not an exp"); 
-		break;
+	}break;
+	case quat_op::newvar:
+	{
+		int id = qt.second[0], ty = qt.second[1], arr = qt.second[2];
+		auto h_id = h_curr->find_handle_of_id(id, data);
+		if (h_id == h_curr)throw_scope_error(id, data, h_curr, "redefined");
+		if (is_struct(ty)) {
+			auto h_type = h_curr->find_handle_of_id(struct_id_pos(ty), data);
+			if (!h_type)throw_scope_error(struct_id_pos(ty), data, h_curr, "undefined");
+			else ty = struct_id(h_type->get_index(struct_id_pos(ty), data));
+		}
+		if (arr <= 0) arr = 0;
+		else arr = data.get_int(arr);
+		h_curr->insert_new_id(get_name_of_now(id, data), new_var(ty, arr, true, h_curr), scope::variable);
+		if (curr_struct >= 0) {
+			struct_list[curr_struct].add_member(get_name_of_now(id,data), { ty,arr });
+		}
 	}
-	case quat_op::newvar: {
-		int id = qt.second[0], type = qt.second[1], arr = qt.second[2];
-		
-	}
-		/*cout << get_name_of_now(qt.second[0], data) << ","
-			<< get_type_name(qt.second[1], data) << ","
-			<< " [ " << get_name_of_now(qt.second[2], data) << " ] " << endl;*/
-		break;
+	break;
 	case quat_op::func:
-		cout << get_name_of_now(qt.second[0], data) << ","
-			<< get_type_name(qt.second[1], data) << endl;
-		break;
+	{
+		int id = qt.second[0], ty = qt.second[1];
+		if (h_curr->find_handle_of_id(id, data))
+			throw_scope_error(id, data, h_curr, "redefined");
+		if (is_struct(ty)) {
+			auto h_type = h_curr->find_handle_of_id(struct_id_pos(ty), data);
+			if (!h_type)throw_scope_error(struct_id_pos(ty), data, h_curr, "undefined");
+			else ty = struct_id(h_type->get_index(struct_id_pos(ty), data));
+
+		}
+		h_curr->insert_new_id(get_name_of_now(id, data), new_func(ty), scope::func);
+		h_curr = h_curr->create_new_scope("function " + get_name_of_now(id, data));
+		quats.push_back(qt);
+	}
+	break;
 	case quat_op::funcparam:
-		cout << get_name_of_now(qt.second[0], data) << ","
-			<< get_type_name(qt.second[1], data) << ","
-			<< " [ " << qt.second[2] << " ] " << endl;
-		break;
+	{
+		int id = qt.second[0], ty = qt.second[1], pt = qt.second[2];
+		if (h_curr->find_handle_of_id(id, data))
+			throw_scope_error(id, data, h_curr, "redefined");
+		if (is_struct(ty)) {
+			auto h_type = h_curr->find_handle_of_id(struct_id_pos(ty), data);
+			if (!h_type)throw_scope_error(struct_id_pos(ty), data, h_curr, "undefined");
+			else ty = struct_id(h_type->get_index(struct_id_pos(ty), data));
+		}
+		h_curr->insert_new_id(get_name_of_now(id, data), new_var(ty, pt, true, h_curr), scope::variable);
+		func_list[func_list.size() - 1].add_param(id, ty, pt);
+	}
+	break;
 	case quat_op::funcend:
+	{
+		h_curr = h_curr->father;
+		quats.push_back(qt);
+		break;
+	}
+	//incomplete !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	case quat_op::structdef:
+	{
+		int id = qt.second[0];
+		if (h_curr->find_handle_of_id(id, data))
+			throw_scope_error(id, data, h_curr, "redefined");
+		quats.push_back(qt);
+		curr_struct = new_struct();
+		h_curr->insert_new_id(get_name_of_now(id, data), curr_struct, scope::struct_type);
+		h_curr = h_curr->create_new_scope("struct " + get_name_of_now(id, data));
+		break;
+	}
 	case quat_op::structend:
-		cout << get_name_of_now(qt.second[0], data) << endl;
-		break;
+	{
+		curr_struct = -1;
+		h_curr = h_curr->father;
+	}		break;
 	case quat_op::cblock:
+	{
+		h_curr = h_curr->create_new_scope("NONAME_SCOPE");
+	}break;
 	case quat_op::cend:
-		cout << endl;
-		break;
+	{
+		h_curr = h_curr->father;
+	}break;
 	case quat_op::push:
-		cout << get_name_of_now(qt.second[0], data) << endl;
-		break;
+	{
+		int id = qt.second[0];
+		type ty;
+		get_var_or_const_type(ty, id);
+		auto param_ty = func_list[curr_call_id].params[curr_push_order++];
+		if (!ty.second && !param_ty.second) {
+			if (ty.first != param_ty.first) {
+				assign_type_check(param_ty, ty, assign_type::init);
+				type_cast(param_ty.first, ty.second, id, false, h_curr, tmp_var_cnt);
+				quats.emplace_back(quat_op::push, std::array<int, 3> { tmp_var_cnt, 0, 0 });
+				tmp_var_cnt++;
+			} else { quats.push_back(qt); }
+		} else if (ty.second&& param_ty.second) {
+			if (ty.first != param_ty.first)throw type_error("param type mismatch : cannot convert array of types");
+			quats.push_back(qt);
+		} else {
+			throw type_error("param type mismatch : cannot convert with arrays and vars");
+		}
+	}break;
 	case quat_op::call:
+	{
+		int id = qt.second[0];
+		auto handle = h_curr->find_handle_of_id(id, data);
+		if (!handle)throw_scope_error(id, data, h_curr, "undefined");
+		if (handle->get_type_of_id(id, data) != scope::func)
+			throw type_error("call op used on symbol " + get_name_of_now(id, data));
+		curr_call_id = handle->get_index(id, data);
+		curr_push_order = 0;
+		quats.push_back(qt);
+	}break;
 	case quat_op::callend:
-		cout << get_name_of_now(qt.second[0], data) << endl;
+		quats.push_back(qt);
 		break;
-	case quat_op::ret: break;
+	case quat_op::ret:
+	{
+		int func_type = func_list[func_list.size() - 1].return_type;
+		if (func_type != void_type)throw type_error("function needs return value");
+	}break;
 	case quat_op::retval:
-		cout << get_name_of_now(qt.second[2], data) << endl;
-		break;
+	{
+		int func_type = func_list[func_list.size() - 1].return_type;
+		if (func_type == void_type)throw type_error("function cannot return value");
+		int id = qt.second[2];
+		type ty;
+		get_var_or_const_type(ty, id);
+		if (ty.second)throw type_error("cannot return an array");
+		if (ty.first != func_type) {
+			if (is_basic_type(ty.first) && is_basic_type(func_type)) {
+				type_cast(func_type, 0, id, false, h_curr, tmp_var_cnt);
+				tmp_var_cnt++;
+			} else throw type_error("cannot convert struct types");
+		}
+		quats.push_back(qt);
+	}break;
 	case quat_op::arrayval:
+	{
+		int id1 = qt.second[0], id2 = qt.second[1], idres = qt.second[2];
+		type ty1, ty2;
+		get_var_or_const_type(ty1, id1);
+		get_var_or_const_type(ty2, id2);
+		if (!ty1.second || ty2.second || !is_int_or_char(ty2.first)) {
+			throw type_error("array subscription with wrong param :"+ get_type_name(ty1.first,data)+" , "+get_type_name(ty2.first,data));
+		}
+		h_curr->insert_new_id(get_name_of_now(idres, data), new_var(ty1.first, 0, true, h_curr), scope::variable);
+		quats.push_back(qt);
+
+	}break;
 	case quat_op::structval:
+	{
+		int id1 = qt.second[0], id2 = qt.second[1], idres = qt.second[2];
+		type ty1, tyres;
+		get_var_or_const_type(ty1, id1);
+		if (!is_struct(ty1.first) || ty1.second)
+			throw type_error(". operator needs struct");
+		int index1 = root_scope->get_index(struct_index(ty1.first),data);
+
+		int memb = struct_list[index1].find_member(get_name_of_now(id2, data));
+		if (memb < 0) {
+			throw_scope_error(id2, data, h_curr, "undefined");
+		}
+		tyres = struct_list[index1].members[memb];
+		h_curr->insert_new_id(get_name_of_now(idres, data), new_var(tyres.first, tyres.second, true, h_curr), scope::variable);
+		quats.push_back(qt);
+	}break;
 	case quat_op::add:
 	case quat_op::sub:
 	case quat_op::mul:
@@ -417,40 +593,115 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 	case quat_op::band:
 	case quat_op::lor:
 	case quat_op::land:
-		cout << get_name_of_now(qt.second[0], data) << ","
-			<< get_name_of_now(qt.second[1], data) << ","
-			<< get_name_of_now(qt.second[2], data) << endl;
-		break;
+	{
+		int id1 = qt.second[0], id2 = qt.second[1], idres = qt.second[2];
+		type ty1, ty2, tyres;
+		get_var_or_const_type(ty1, id1);
+		get_var_or_const_type(ty2, id2);
+		int cast = binocular_type_cast(ty1, ty2, qt.first);
+		switch (cast) {
+		case tya_to_tyb:
+		{
+			type_cast(ty2.first, ty2.second, id1, false, h_curr, tmp_var_cnt);
+			quats.push_back({ qt.first, {tmp_var_cnt,id2,idres} });
+			tyres = ty2;
+			tmp_var_cnt++;
+		}
+		case tyb_to_tya:
+		{
+			type_cast(ty1.first, ty1.second, id2, false, h_curr, tmp_var_cnt);
+			quats.push_back({ qt.first,{ id1,tmp_var_cnt,idres } });
+			tyres = ty1;
+			tmp_var_cnt++;
+		}
+		case no_type_cast:
+		{
+			tyres = ty1;
+		}
+		}
+		h_curr->insert_new_id(get_name_of_now(idres, data), new_var(tyres.first, tyres.second, false, h_curr), scope::variable);
+	}break;
 	case quat_op::inc:
 	case quat_op::dec:
-		cout << get_name_of_now(qt.second[0], data) << endl;
-		break;
+	{
+		int id = qt.second[0];
+		if (is_const(id, data)) throw type_error("++/-- called to constexpr");
+		type ty;
+		get_var_or_const_type(ty, id);//just for check scope
+		quats.push_back(qt);
+	} break;
 	case quat_op::bnot:
 	case quat_op::lnot:
 	case quat_op::pos:
 	case quat_op::neg:
-		cout << get_name_of_now(qt.second[0], data) << ","
-			<< get_name_of_now(qt.second[2], data) << endl;
-		break;
+	{
+		int id = qt.second[0];
+		type ty;
+		get_var_or_const_type(ty, id);
+		monocular_type_check(ty, qt.first);
+		quats.push_back(qt);
+	} break;
 	case quat_op::assign:
-		cout << get_name_of_now(qt.second[0], data) << ","
-			<< get_name_of_now(qt.second[1], data) << ","
-			<< get_assign_type_name(qt.second[2]) << endl;
-		break;
+	{
+		int id1 = qt.second[0], id2 = qt.second[1], atype = qt.second[2];
+		type ty1, ty2;
+		get_var_or_const_type(ty2, id2);
+		if (is_const(id1, data))throw type_error("cannot assign value to constexpr.");
+		else {
+			auto handle = h_curr->find_handle_of_id(id1, data);
+			if (!handle) {
+				if(is_tmp_var(id1)) {
+					h_curr->insert_new_id(get_name_of_now(id1, data), new_var(ty2.first, ty2.second, true, h_curr), scope::variable);
+					handle = h_curr;
+				}
+				else throw_scope_error(id1, data, h_curr, "undefined");
+			}if (handle->get_type_of_id(id1, data) != scope::variable)
+				throw type_error("symbol mismatch, need variable or constexpr :" + get_name_of_now(id1, data));
+			ty1 = var_list[handle->get_index(id1, data)].first.first;
+		}
+		int index1 = h_curr->find_handle_of_id(id1, data)->get_index(id1, data);
+		if (var_list[index1].first.second) {
+			assign_type_check(ty1, ty2, atype);
+			quats.push_back(qt);
+		} else throw type_error("cannot assign rvalue : ", get_name_of_now(id1, data));
+	} break;
 	case quat_op::initlst:
-	case quat_op::initlstend:
-		cout << get_name_of_now(qt.second[0], data) << endl;
-		break;
-	case quat_op::initlstitem:
-		cout << get_name_of_now(qt.second[0], data) << ","
-			<< get_name_of_now(qt.second[1], data) << endl;
-		break;
+	{
+		int id = qt.second[0];
+		curr_init_list = new_var(none, 0, false, h_curr);
+		h_curr->insert_new_id(get_name_of_now(id, data), curr_init_list, scope::variable);
 	}
-	
+	break;
+	case quat_op::initlstend:
+	{
+		curr_init_list = -1;
+	}
+	case quat_op::initlstitem:
+	{
+		int id = qt.second[1];
+		type ty, &tylist = var_list[curr_init_list].first.first;
+		get_var_or_const_type(ty, id);
+		if (tylist.first == none) {
+			tylist.first = ty.first;
+			quats.push_back({ quat_op::initlst,{ qt.second[0], 0, 0 } });
+		} else {
+			if (tylist.first != ty.first) throw type_error("init list with multiple type");
+		}
+		var_list[curr_init_list].first.first.second++;
+	}break;
+	}
+
 }
 
-symbols::symbols(std::vector<parser::quat_type> const&unhandled_quats, lex_data const& data)
-	:data(data) ,root_scope(std::make_shared<scope>(nullptr,"GLOBAL")){
+symbols::symbols(parser const& p)
+	:data(p.data),
+	root_scope(std::make_shared<scope>(nullptr, "GLOBAL")),
+	curr_call_id(-1), curr_struct(-1), curr_push_order(0), curr_init_list(-1),
+	tmp_var_cnt(p.tmp_var_cnt + p.input_data_cnt),tmp_var_begin(p.input_data_cnt) {
 	h_curr = root_scope;
-	
+	for (auto &&qt : p.quats) {
+		debug_single_quat(qt, p.label_stack, data);
+		handle_single_quat(qt, data);
+	}
+	//curr_call_id, curr_struct, curr_push_order, curr_init_list, tmp_var_cnt;
 }

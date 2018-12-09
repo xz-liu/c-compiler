@@ -20,15 +20,22 @@ void debug_string(std::string const& s) {
 	parser parse(data_c, grm);
 	parse.parse();
 	symbols::debug_quat(parse.quats, parse.label_stack, data_c);
+	cout << " -------------------------" << endl;
+	symbols sym(parse);
+	sym.debug_quat(sym.quats, parse.label_stack, data_c);
 }
 
 int main() {
-	std::ifstream ifs("debug.c");
-	std::string s,c;
-	freopen("output.txt", "w", stdout);
-	while (std::getline(ifs, s))c += s;
-	debug_string(c);
-	std::cout << "DONE" << std::endl;
+	try {
+		std::ifstream ifs("debug.c");
+		std::string s, c;
+		freopen("output.txt", "w", stdout);
+		while (std::getline(ifs, s))c += s;
+		debug_string(c);
+		std::cout << "DONE" << std::endl;
+	}catch(std::exception& e) {
+		std::cout << e.what();
+	}
 	//while (1);
 	return 0;
 }
