@@ -24,7 +24,7 @@ define_new_error_type(cpp, "ERROR ON PREPROCESSING: ");
 define_new_error_type(parse, "ERROR ON PARSING: ");
 
 define_new_error_type(lex, "ERROR ON LEXICAL ANALYSISING: ");
-define_new_error_type(type, "ERROR ON TYPE DEDUCTION: ");
+define_new_error_type(type, "ERROR ON TYPE CHECK: ");
 define_new_error_type(scope, "ERROR ON SCOPE CHECK: ");
 
 #undef define_new_error_type

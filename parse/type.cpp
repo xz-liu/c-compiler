@@ -701,7 +701,7 @@ symbols::symbols(parser const& p)
 	tmp_var_cnt(p.tmp_var_cnt + p.input_data_cnt),tmp_var_begin(p.input_data_cnt) {
 	h_curr = root_scope;
 	for (auto &&qt : p.quats) {
-		debug_single_quat(qt, p.label_stack, data);
+		//debug_single_quat(qt, p.label_stack, data);
 		handle_single_quat(qt, data);
 	}
 	//curr_call_id, curr_struct, curr_push_order, curr_init_list, tmp_var_cnt;

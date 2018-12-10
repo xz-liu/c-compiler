@@ -1,5 +1,7 @@
 #pragma once
 #include "graph.h"
+#include "../error/error.h"
+
 struct labels {
 	enum label_type {
 		loop_begin,
@@ -222,8 +224,10 @@ struct parser {
 	void check_find_label(labels::label const& lb, std::string const& msg);
 	parser(lex_data const& d, grammar &g);
 	void show_quats();
-	bool parse() {
-		return grm.parse_ll1(data);
+	void parse() {
+		if(!grm.parse_ll1(data)) {
+			throw parse_error("the input is rejected");
+		}
 	}
 
 };

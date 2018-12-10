@@ -8,7 +8,6 @@ struct scope
 		func,
 		struct_type,
 		variable,
-		param,
 	};
 	using id_info = std::pair <id_type, int >;
 	std::string scope_name;
@@ -97,7 +96,6 @@ struct symbols {
 		float64 = 10,
 		struct_type = 11;
 
-	int struct_cnt;
 	static int struct_id(int now) {
 		return struct_type + now;
 	}

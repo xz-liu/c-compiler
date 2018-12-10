@@ -105,10 +105,10 @@ void parser::handle_assign() {
 void parser::add_quat(quat_op op, int v1, int v2, int v3) {
 	std::pair<quat_op, quat_info > now = { op,{ v1, v2, v3 } };
 
-//#ifdef _MYDEBUG_PARSER
+#ifdef _MYDEBUG_PARSER
 	std::cout << "[[ GEN QUAT -- " ;
 	symbols::debug_single_quat(now, label_stack, data);
-//#endif
+#endif
 
 	if (quat_top < quats.size())quats[quat_top++] = now;
 	else {

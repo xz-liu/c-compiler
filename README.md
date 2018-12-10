@@ -5,6 +5,77 @@ A simple C compiler with limited grammar supported
 
 ## Frontend 
 
+*  lex 
+     * regex match
+*  parser
+     *  reads string as grammar
+     *  terminator
+          *  str surronded with ' '
+          *  int_const
+          *  float_const
+          *  char_const
+          *  string
+          *  id    
+     *  semantic action 
+          *  str surronded with {} 
+          *  function param
+               *  action id
+               *  now  
+     *  parse algorithm
+          *  LL1
+          *  multiple productions for one LL1 table item
+          *  sort productions to avoid loop 
+*  literals
+     *  int literal (int64)
+     *  float literal (float64)
+     *  char literal (char8)
+     *  string literal (char8[]) 
+*  scopes
+     *  function scope
+     *  code block scope
+     *  struct scope
+*  id type     
+     *  variable
+     *  function
+     *  struct  
+*  supported grammar
+     *  types
+          *  char8
+          *  uchar8
+          *  int16
+          *  uint16
+          *  int32
+          *  uint32
+          *  int64
+          *  uint64
+          *  float32
+          *  float64
+          *  void
+          *  struct id
+     *  statements
+          *  if 
+          *  else
+          *  switch
+          *  case
+          *  for
+          *  while
+          *  break
+          *  continue
+          *  return
+          *  expression
+               *  = (+=, -=, *=, /=, %=, |=, &=, ^=, >>=, <<=)
+               *  \+ -
+               *  \* / %
+               *  << >>
+               *  || && 
+               *  | & ^ 
+               *  ++ --
+               *  ~ ! - +
+               *  [] . ()
+     *  function
+     *  struct
+
+ 
 ### grammar
 ```
 program : decl_list ;
@@ -25,24 +96,20 @@ type_spec : int_type
         | char_type 
         | 'void' {void} 
         | 'struct' id {push_id} {struct_var} ;
-int_type : int16_type {int16}
-        | uint16_type {uint16}
-        | int32_type {int32}
-        | uint32_type {uint32}
-        | int64_type {int64}
-        | uint64_type {uint64} ;
-int16_type : 'short' ;
-uint16_type : 'unsigned' 'short' ;
-int32_type : 'int' 
-        | 'long' 
-        | 'long' 'int' ;
-uint32_type : 'unsigned' 'int' 
-        |  'unsigned' 
-        | 'unsigned' 'long' ;
-int64_type :  'long' 'long' 'int' 
-        | 'long' 'long' ;
-uint64_type :  'unsigned' 'long' 'long' 
-        |  'unsigned' 'long' 'long' 'int' ;
+int_type : signed_int_type 
+        | 'unsigned' unsigned_int_type ;
+signed_int_type : 'short' redundant_int {int16}
+        | 'int' {int32}
+        | 'long' signed_int_32_64 ;
+signed_int_32_64 : 'long' {int64} redundant_int 
+        | redundant_int {int32}  ;
+unsigned_int_type : 'short' redundant_int {uint16}
+        | 'int' {uint32}
+        | 'long' unsigned_int_32_64 ;
+unsigned_int_32_64 : 'long' redundant_int {uint64}  
+        | redundant_int {uint32}  ;
+redundant_int : 'int' 
+        | ;
 
 float_type : 'float' {float32}
         | 'double' {float64} ;
@@ -87,7 +154,7 @@ normal_stmt : ';'
         | exp_or_str ';' {pop_top}
         | 'break' ';' {break}
         | 'continue' ';' {continue} ;
-call_func : '(' call_params ')' ;
+call_func : '(' {call_func_begin} call_params ')' {call_func_end} ;
 call_params : call_param_list 
         | ;
 call_param_list : exp_or_str {call_func_push} call_param_follow ;
@@ -100,8 +167,8 @@ i_c : int_const {push_int}
         | char_const {push_char} ;
 case_list : case case_list 
         | ;
-case : 'case' i_c {case_begin} ':' code {case_end} ;
-default : 'default' ':' code ;
+case : 'case' i_c {case_begin} ':' code_list {case_end} ;
+default : 'default' ':' code_list ;
 if_stmt :  'if' {if_begin} '(' exp_or_str {if_check} ')' code {if_end} else_stmt {else_end} ;
 else_stmt : 'else'  code
         | ;
@@ -112,18 +179,18 @@ return_stmt : 'return' return_follow ;
 return_follow : ';' {return} 
         | exp_or_str {return@} ';'  ;
 exp	:  term_assign exp_assign ;
-exp_assign :  '=' term_assign {@=@} exp_assign 
-        |   '+=' term_assign {@+=@} exp_assign 
-        |   '-=' term_assign {@-=@} exp_assign 
-        |   '*=' term_assign {@*=@} exp_assign 
-        |   '/=' term_assign {@/=@} exp_assign 
-        |   '%=' term_assign {@%=@} exp_assign 
-        |   '<<=' term_assign {@<<=@} exp_assign 
-        |   '>>=' term_assign {@>>=@} exp_assign 
-        |   '&=' term_assign {@&=@} exp_assign 
-        |   '^=' term_assign {@^=@} exp_assign 
-        |   '|=' term_assign {@|=@} exp_assign 
-        |  ;
+exp_assign :  '=' {push_delimeter} term_assign  exp_assign 
+        |   '+=' {push_delimeter} term_assign  exp_assign 
+        |   '-=' {push_delimeter} term_assign  exp_assign 
+        |   '*=' {push_delimeter} term_assign  exp_assign 
+        |   '/=' {push_delimeter} term_assign  exp_assign 
+        |   '%=' {push_delimeter} term_assign  exp_assign 
+        |   '<<=' {push_delimeter} term_assign  exp_assign 
+        |   '>>=' {push_delimeter} term_assign  exp_assign 
+        |   '&=' {push_delimeter} term_assign  exp_assign 
+        |   '^=' {push_delimeter} term_assign  exp_assign 
+        |   '|=' {push_delimeter} term_assign  exp_assign 
+        | {handle_assign} ;
 term_assign : term_log_or exp_log_or ;
 exp_log_or :  '||' term_log_or {@||@} exp_log_or 
         |  ;
@@ -180,11 +247,10 @@ factors : int_const {push_int}
         | id {push_id} id_suffix
         | '(' exp ')' ;
 
-id_suffix : '[' exp ']'  {@[@]} 
-        | call_func {call_func} 
-        | '.' id {@.@} 
+id_suffix : '[' exp ']'  {@[@]} id_suffix
+        | call_func  id_suffix
+        | '.' id {push_id} {@.@} id_suffix 
         | ;
-
 
 ```
 

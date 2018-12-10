@@ -17,12 +17,12 @@ int test(int a,int b){
 	return ans;
 }
 int main(){
+
 	struct my_struct a;
 	char str[100] = "this is a string!";
 	double Pi = 3.1415926;int i;
 	a.bb[5].b = Pi*(2 / 10 - 5);
 	a.b=a.a=2;
-	fuck=5;
 	for(i=0;i<5;++i){
 		if(a.a==2)	a.a--;
 		else if(a.a==1){
@@ -38,4 +38,3 @@ int main(){
 	}
 	return 0;
 }
-
