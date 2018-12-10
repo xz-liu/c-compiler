@@ -187,7 +187,7 @@ parser::parser(lex_data const& d, grammar & g)
 		stack.pop();
 	});
 	_GRAMMAR_ASSIGN_ACT("{push_id}", {
-		stack.push_id(now);
+		stack.push_id(data.find_first_pos(now));
 	});
 	_GRAMMAR_ASSIGN_ACT("{push_char}", {
 		stack.push_char(now);

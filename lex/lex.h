@@ -94,6 +94,14 @@ struct lex_data {
 		std::cout << std::endl;
 	}
 
+	int find_first_pos(int now) {
+		int now_it = lex_result[now].second;
+		for (int i = 0; i < lex_result.size();i++) {
+			if (lex_result[i].first==type_token::identifier&& lex_result[i].second == now_it)return i;
+		}
+		return now;
+	}
+
 	template<class T1, class T2>
 	static bool same_token(T1 a, T2 b) {
 		return (int)(a) == (int)(b);

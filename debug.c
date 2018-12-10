@@ -22,6 +22,7 @@ int main(){
 	double Pi = 3.1415926;int i;
 	a.bb[5].b = Pi*(2 / 10 - 5);
 	a.b=a.a=2;
+	fuck=5;
 	for(i=0;i<5;++i){
 		if(a.a==2)	a.a--;
 		else if(a.a==1){

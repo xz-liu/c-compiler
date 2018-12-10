@@ -50,6 +50,7 @@ std::string & get_quat_op_name(quat_op op) {
 		{quat_op::initlst, "initlst" },
 		{quat_op::initlstend, "initlstend" },
 		{quat_op::initlstitem, "initlstitem" },
+		{quat_op::type_cast,"type_cast"},
 	};
 	return mp[op];
 }
@@ -254,7 +255,8 @@ void symbols::debug_single_quat(
 		break;
 	case quat_op::type_cast:
 		cout << get_name_of_now(qt.second[0], data) << ","
-			<< get_type_name(qt.second[1], data) << " [" << qt.second[2] << "] " << endl;
+			<< get_type_name(qt.second[1], data) <<","
+			<<get_name_of_now(qt.second[2],data)<< endl;
 	}
 
 }
@@ -368,8 +370,6 @@ void throw_scope_error(int id, lex_data const &data, scope::handle_scope h_curr,
 	throw scope_error("In " + h_curr->scope_name + " :  " + def + " symbol <"+ get_name_of_now(id, data) + ">");
 }
 void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & data) {
-	using std::cout;
-	using std::endl;
 #define get_var_or_const_type(ty,id) \
 	if (is_const(id, data)) {\
 		ty = get_const_type(id, data);\
@@ -419,7 +419,6 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		if (is_struct(ty)) {
 			auto h_type = h_curr->find_handle_of_id(struct_id_pos(ty), data);
 			if (!h_type)throw_scope_error(struct_id_pos(ty), data, h_curr, "undefined");
-			else ty = struct_id(h_type->get_index(struct_id_pos(ty), data));
 		}
 		if (arr <= 0) arr = 0;
 		else arr = data.get_int(arr);
@@ -437,7 +436,6 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		if (is_struct(ty)) {
 			auto h_type = h_curr->find_handle_of_id(struct_id_pos(ty), data);
 			if (!h_type)throw_scope_error(struct_id_pos(ty), data, h_curr, "undefined");
-			else ty = struct_id(h_type->get_index(struct_id_pos(ty), data));
 
 		}
 		h_curr->insert_new_id(get_name_of_now(id, data), new_func(ty), scope::func);
@@ -453,7 +451,6 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		if (is_struct(ty)) {
 			auto h_type = h_curr->find_handle_of_id(struct_id_pos(ty), data);
 			if (!h_type)throw_scope_error(struct_id_pos(ty), data, h_curr, "undefined");
-			else ty = struct_id(h_type->get_index(struct_id_pos(ty), data));
 		}
 		h_curr->insert_new_id(get_name_of_now(id, data), new_var(ty, pt, true, h_curr), scope::variable);
 		func_list[func_list.size() - 1].add_param(id, ty, pt);
@@ -522,8 +519,12 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		quats.push_back(qt);
 	}break;
 	case quat_op::callend:
+	{
+		int id = qt.second[0];
+		h_curr->insert_new_id(get_name_of_now(id, data), 
+			new_var(func_list[curr_call_id].return_type, 0, false, h_curr), scope::variable);
 		quats.push_back(qt);
-		break;
+	}break;
 	case quat_op::ret:
 	{
 		int func_type = func_list[func_list.size() - 1].return_type;
@@ -565,7 +566,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		get_var_or_const_type(ty1, id1);
 		if (!is_struct(ty1.first) || ty1.second)
 			throw type_error(". operator needs struct");
-		int index1 = root_scope->get_index(struct_index(ty1.first),data);
+		int index1 = root_scope->get_index(struct_id_pos(ty1.first),data);
 
 		int memb = struct_list[index1].find_member(get_name_of_now(id2, data));
 		if (memb < 0) {

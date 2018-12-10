@@ -107,11 +107,6 @@ struct symbols {
 	static bool is_struct(int i) {
 		return i >= struct_type;
 	}
-	
-	int struct_index(int now) {
-		return struct_id_map[now];
-	}
-	
 
 	static void debug_single_quat(parser::quat_type const & qt, labels const & label_lst, lex_data const & data);
 	static void debug_quat(std::vector<parser::quat_type> const & quats, labels const & label_lst, lex_data const & data);
@@ -149,7 +144,6 @@ struct symbols {
 	std::vector<func_def> func_list;
 	std::vector<struct_def> struct_list;
 	std::vector<with_scope<var_def>>var_list;
-	std::map<int, int> struct_id_map;
 
 	int new_var(int ty_id,int arr_size, bool is_lvalue,scope::handle_scope handle) {
 		var_list.push_back({ { {ty_id,arr_size},is_lvalue }, handle});
