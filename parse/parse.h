@@ -226,7 +226,7 @@ struct parser {
 	void show_quats();
 	void parse() {
 		if(!grm.parse_ll1(data)) {
-			throw parse_error("the input is rejected");
+			grm.throw_last_error(data);
 		}
 	}
 

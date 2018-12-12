@@ -50,7 +50,9 @@ lex(std::string const& s,
 	std::vector<double		>& vlit_dbl,
 	std::vector<char		>& vlit_chr,
 	std::vector<std::string	>& vlit_idt,
-	std::vector<std::string	>& vlit_file
+	std::vector<std::string	>& vlit_file,
+	std::vector<int			>& word_pos,
+	std::vector<int			> const & lines
 
 );
 
@@ -62,11 +64,23 @@ struct lex_data {
 	std::vector<char		> vlit_chr;
 	std::vector<std::string	> vlit_idt;
 	std::vector<std::string	> vlit_file;
-
+	
 	std::vector<token_P2> lex_result;
+	std::vector<int> word_pos;
+	std::vector<int> lines;
+	lex_data(std::string const&s,std::vector<int> const&lines):lines(lines) {
+		lex_result = lex(s, vlit_str, vlit_int, vlit_dbl, vlit_chr, vlit_idt, vlit_file ,word_pos, lines);
+	}
 
-	lex_data(std::string const&s) {
-		lex_result = lex(s, vlit_str, vlit_int, vlit_dbl, vlit_chr, vlit_idt, vlit_file);
+	std::string in_line_and_chr(int now) {
+		std::string report;
+		auto line = std::lower_bound(lines.begin(), lines.end(), word_pos[now]);
+		if (*line != word_pos[now] )line--;
+
+		int chr = word_pos[now] - *line;
+		report += std::string("In line ") + std::to_string(distance(lines.begin(), line))
+			+ ", char " + std::to_string(chr) + ":";
+		return report;
 	}
 
 	std::string const& get_id( int now) const{

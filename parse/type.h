@@ -45,10 +45,12 @@ struct scope
 
 struct func_def {
 	std::vector<std::pair <int, bool>> params;
+	std::vector<int> param_offset;
+	int def_pos, stack_size;
 	int return_type;
 	std::map<int, int> id_to_param;
-	explicit func_def(int ty_id):return_type(ty_id){}
-	
+	explicit func_def(int ty_id):return_type(ty_id), def_pos(-1) {}
+	bool has_def() { return def_pos >= 0; }
 	bool add_param(int str, int type_id,bool arr) {
 		if (set_contains(id_to_param, str))return false;
 		params.emplace_back(type_id,arr);
@@ -59,6 +61,10 @@ struct func_def {
 
 struct struct_def {
 	std::vector<std::pair<int,int>> members;
+	std::vector<int> member_offset;
+	int struct_size;
+	bool is_union;
+	struct_def(bool is_union=false): is_union(is_union){}
 	std::map<std::string, int> id_to_member;
 	int find_member(std::string const& str) {
 		auto it=id_to_member.find(str);
@@ -158,6 +164,33 @@ struct symbols {
 	bool is_tmp_var(int id) {
 		return (id >= tmp_var_begin);
 	}
+
+	bool is_const(int id, lex_data const& data) {
+		if (id < 0 || id >= data.lex_result.size())return false;
+		switch (data.get_type_token(id)) {
+		case type_token::string_literal:
+		case type_token::int_literal:
+		case type_token::double_literal:
+		case type_token::char_literal:
+			return true;
+		}
+		return false;
+	}
+
+
+	symbols::type get_const_type(int id, lex_data const& data) {
+		switch (data.get_type_token(id)) {
+		case type_token::string_literal:
+			return { symbols::char8,data.get_str(id).size() };
+		case type_token::int_literal:
+			return { symbols::int64,0 };
+		case type_token::double_literal:
+			return { symbols::float64,0 };
+		case type_token::char_literal:
+			return { symbols::char8, 0 };
+		}
+	}
+
 	int curr_call_id, curr_struct, curr_push_order, curr_init_list,tmp_var_cnt;
 	const int tmp_var_begin;
 	lex_data const& data;

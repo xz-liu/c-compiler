@@ -188,6 +188,11 @@ bool grammar::parse_ll1(lex_data const & data,
 				std::cout << " accept" << std::endl;
 #endif
 			} else {
+				if (now<data.lex_result.size() &&now>= last_error_token) {
+					//std::cout << "----------" << last_error_token << std::endl;
+					last_error_token = now;
+					expected = id_top;
+				}
 #ifdef _MYDEBUG_PARSER
 				std::cout << " reject" << std::endl;
 #endif
@@ -245,9 +250,20 @@ bool grammar::parse_ll1(lex_data const & data,
 					std::cout << "\t-- reject [" << get_name(id_top) << "] with [" << data.get_token_name(now)
 						<< "] -- all productions tried" << std::endl;
 #endif
+
+					if (now<data.lex_result.size()&&now >= last_error_token) {
+						//std::cout << "----------" << last_error_token << std::endl;
+						last_error_token = now;
+						expected = id_top;
+					}
 					return false;
 				}
 			} else {
+				if (now<data.lex_result.size()&&now >= last_error_token) {
+					//std::cout << "----------" << last_error_token << std::endl;
+					last_error_token = now;
+					expected = id_top;
+				}
 #ifdef _MYDEBUG_PARSER
 				std::cout << "\t reject [" << get_name(id_top) << "] with [" << data.get_token_name(now)
 					<< "] - no possible way" << std::endl;
@@ -261,6 +277,7 @@ bool grammar::parse_ll1(lex_data const & data,
 }
 
 void grammar::init(std::string const & bnf) {
+	last_error_token = -1;
 	cnt = 0;
 	std::string s, S;
 	std::stringstream cin(bnf);

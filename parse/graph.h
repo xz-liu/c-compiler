@@ -1,6 +1,7 @@
 #pragma once
 #include "../lex/lex.h"
 #include "../basic/bin_tree.h"
+#include "../error/error.h"
 //
 
 std::string get_name_of_now(int now, lex_data const & data);
@@ -37,6 +38,7 @@ private:
 	std::map<int, std::set<int>> first_set;
 	std::map<int, std::set<int>> follow_set;
 	std::map<ll1_table_pred, ll1_table_item>ll1_table;
+	int last_error_token, expected;
 	template<class It>
 	std::set<int> first_set_of_prod(It begin,It end) {
 		std::set<int> ans;
@@ -168,5 +170,22 @@ public:
 		auto it = token_map.find(t);
 		if (it == token_map.end())return token::dummy;
 		else return it->second;
+	}
+
+	void throw_last_error(lex_data& data) {
+		std::string in_line = data.in_line_and_chr(last_error_token);
+		in_line += " got '" + get_name_of_now(last_error_token, data) + "', expected ";
+		for(auto &&x:first_set[expected]) {
+			if(id_eps==x) {
+				for(auto &&y:follow_set[expected]) {
+					in_line += get_name(y);
+					in_line += " ";
+				}
+			} else {
+				in_line += get_name(x);
+				in_line += " ";
+			}
+		}
+		throw parse_error(in_line);
 	}
 };

@@ -431,8 +431,9 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 	case quat_op::func:
 	{
 		int id = qt.second[0], ty = qt.second[1];
-		if (h_curr->find_handle_of_id(id, data))
+		if (h_curr->find_handle_of_id(id, data)) {
 			throw_scope_error(id, data, h_curr, "redefined");
+		}
 		if (is_struct(ty)) {
 			auto h_type = h_curr->find_handle_of_id(struct_id_pos(ty), data);
 			if (!h_type)throw_scope_error(struct_id_pos(ty), data, h_curr, "undefined");
@@ -676,7 +677,8 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 	case quat_op::initlstend:
 	{
 		curr_init_list = -1;
-	}
+		quats.push_back(qt);
+	}break;
 	case quat_op::initlstitem:
 	{
 		int id = qt.second[1];
@@ -689,6 +691,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 			if (tylist.first != ty.first) throw type_error("init list with multiple type");
 		}
 		var_list[curr_init_list].first.first.second++;
+		quats.push_back(qt);
 	}break;
 	}
 

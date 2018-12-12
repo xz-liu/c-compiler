@@ -281,3 +281,4 @@ id_suffix : '[' exp ']'  {@[@]} id_suffix
 |initlst|id|0|0 |  初始化列表|
 |initend|id|0|0| 初始化列表结束|
 |initlstitem | val | 0 |0 | 初始化列表元素|
+|type_cast|id|type|to| |

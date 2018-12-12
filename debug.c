@@ -1,6 +1,4 @@
-int putchar(int x);
-int getchar(int x);
-struct my_struct2{ int b; };
+struct  my_struct2{ int b; };
 struct my_struct {
 	int a, b, c, d;
 	char ch[10];
@@ -10,6 +8,7 @@ int test(int a,int b){
 	int c=a,d=b;
 	int ans=0;
 	while(a!=b){
+		int d;
 		ans+=c/d;
 		a++;
 	}
@@ -19,8 +18,9 @@ int test(int a,int b){
 int main(){
 
 	struct my_struct a;
-	char str[100] = "this is a string!";
+	char str[100] = "this is  not a string!";
 	double Pi = 3.1415926;int i;
+	
 	a.bb[5].b = Pi*(2 / 10 - 5);
 	a.b=a.a=2;
 	for(i=0;i<5;++i){
@@ -31,9 +31,9 @@ int main(){
 		}else a.b+=a.a;
 	}
 	switch (test(4, 6)) {
-	case 1:putchar('2');
+	case 1:
 		break;
-	default:putchar('4');
+	default:
 		break;
 	}
 	return 0;

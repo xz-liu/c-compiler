@@ -101,101 +101,101 @@ regex_table::regex_table() :table{
 
 } {}
 token_name_type::token_name_type() {
-	_name.emplace(token::toktypedef, "toktypedef");
-	_name.emplace(token::tokvoid, "tokvoid");
-	_name.emplace(token::tokconst, "tokconst");
-	_name.emplace(token::tokvolatile, "tokvolatile");
-	_name.emplace(token::tokregister, "tokregister");
-	_name.emplace(token::tokchar, "tokchar");
-	_name.emplace(token::tokint, "tokint");
-	_name.emplace(token::tokunsigned, "tokunsigned");
-	_name.emplace(token::tokshort, "tokshort");
-	_name.emplace(token::toklong, "toklong");
-	_name.emplace(token::tokfloat, "tokfloat");
-	_name.emplace(token::tokdouble, "tokdouble");
-	_name.emplace(token::toksizeof, "toksizeof");
-	_name.emplace(token::tokstruct, "tokstruct");
-	_name.emplace(token::tokenum, "tokenum");
-	_name.emplace(token::tokunion, "tokunion");
-	_name.emplace(token::tokif, "tokif");
-	_name.emplace(token::tokelse, "tokelse");
-	_name.emplace(token::tokdo, "tokdo");
-	_name.emplace(token::tokfor, "tokfor");
-	_name.emplace(token::tokwhile, "tokwhile");
-	_name.emplace(token::tokreturn, "tokreturn");
-	_name.emplace(token::tokgoto, "tokgoto");
-	_name.emplace(token::tokswitch, "tokswitch");
-	_name.emplace(token::tokcase, "tokcase");
-	_name.emplace(token::tokdefault, "tokdefault");
-	_name.emplace(token::tokbreak, "tokbreak");
-	_name.emplace(token::tokcontinue, "tokcontinue");
-	_name.emplace(token::tokauto, "tokauto");
-	_name.emplace(token::tokextern, "tokextern");
-	_name.emplace(token::tokstatic, "tokstatic");
-	_name.emplace(token::tokpragma, "tokpragma");
-	_name.emplace(token::tokinclude, "tokinclude");
-	_name.emplace(token::tokdefine, "tokdefine");
-	_name.emplace(token::tokundef, "tokundef");
-	_name.emplace(token::tokifdef, "tokifdef");
-	_name.emplace(token::tokelif, "tokelif");
-	_name.emplace(token::tokendif, "tokendif");
+	_name.emplace(token::toktypedef, "typedef");
+	_name.emplace(token::tokvoid, "void");
+	_name.emplace(token::tokconst, "const");
+	_name.emplace(token::tokvolatile, "volatile");
+	_name.emplace(token::tokregister, "register");
+	_name.emplace(token::tokchar, "char");
+	_name.emplace(token::tokint, "int");
+	_name.emplace(token::tokunsigned, "unsigned");
+	_name.emplace(token::tokshort, "short");
+	_name.emplace(token::toklong, "long");
+	_name.emplace(token::tokfloat, "float");
+	_name.emplace(token::tokdouble, "double");
+	_name.emplace(token::toksizeof, "sizeof");
+	_name.emplace(token::tokstruct, "struct");
+	_name.emplace(token::tokenum, "enum");
+	_name.emplace(token::tokunion, "union");
+	_name.emplace(token::tokif, "if");
+	_name.emplace(token::tokelse, "else");
+	_name.emplace(token::tokdo, "do");
+	_name.emplace(token::tokfor, "for");
+	_name.emplace(token::tokwhile, "while");
+	_name.emplace(token::tokreturn, "return");
+	_name.emplace(token::tokgoto, "goto");
+	_name.emplace(token::tokswitch, "switch");
+	_name.emplace(token::tokcase, "case");
+	_name.emplace(token::tokdefault, "default");
+	_name.emplace(token::tokbreak, "break");
+	_name.emplace(token::tokcontinue, "continue");
+	_name.emplace(token::tokauto, "auto");
+	_name.emplace(token::tokextern, "extern");
+	_name.emplace(token::tokstatic, "static");
+	_name.emplace(token::tokpragma, "pragma");
+	_name.emplace(token::tokinclude, "include");
+	_name.emplace(token::tokdefine, "define");
+	_name.emplace(token::tokundef, "undef");
+	_name.emplace(token::tokifdef, "ifdef");
+	_name.emplace(token::tokelif, "elif");
+	_name.emplace(token::tokendif, "endif");
 	_name.emplace(token::double_literal, "double_literal");
 	_name.emplace(token::int_literal, "int_literal");
 	_name.emplace(token::char_literal, "char_literal");
 	_name.emplace(token::string_literal, "string_literal");
 	_name.emplace(token::include_file, "include_file");
 	_name.emplace(token::identifier, "identifier");
-	_name.emplace(token::inc, "inc");
-	_name.emplace(token::dec, "dec");
-	_name.emplace(token::addass, "addass");
-	_name.emplace(token::subass, "subass");
-	_name.emplace(token::mulass, "mulass");
-	_name.emplace(token::divass, "divass");
-	_name.emplace(token::modass, "modass");
-	_name.emplace(token::shlass, "shlass");
-	_name.emplace(token::shrass, "shrass");
-	_name.emplace(token::orass, "orass");
-	_name.emplace(token::andass, "andass");
-	_name.emplace(token::xorass, "xorass");
-	_name.emplace(token::equal, "equal");
-	_name.emplace(token::lor, "lor");
-	_name.emplace(token::land, "land");
-	_name.emplace(token::nequal, "nequal");
-	_name.emplace(token::lequal, "lequal");
-	_name.emplace(token::gequal, "gequal");
-	_name.emplace(token::shl, "shl");
-	_name.emplace(token::shr, "shr");
-	_name.emplace(token::point, "point");
-	_name.emplace(token::arrow, "arrow");
-	_name.emplace(token::tokellipsis, "tokellipsis");
-	_name.emplace(token::hashhash, "hashhash");
-	_name.emplace(token::hash, "hash");
-	_name.emplace(token::semicolon, "semicolon");
-	_name.emplace(token::colon, "colon");
-	_name.emplace(token::question, "question");
-	_name.emplace(token::toksigned, "toksigned");
-	_name.emplace(token::lbrace, "lbrace");
-	_name.emplace(token::rbrace, "rbrace");
-	_name.emplace(token::lbracket, "lbracket");
-	_name.emplace(token::rbracket, "rbracket");
-	_name.emplace(token::lparenthesis, "lparenthesis");
-	_name.emplace(token::rparenthesis, "rparenthesis");
-	_name.emplace(token::add, "add");
-	_name.emplace(token::sub, "sub");
-	_name.emplace(token::mul, "mul");
-	_name.emplace(token::div, "div");
-	_name.emplace(token::mod, "mod");
-	_name.emplace(token::not, "not");
-	_name.emplace(token::bnot, "bnot");
-	_name.emplace(token::band, "band");
-	_name.emplace(token::bor, "bor");
-	_name.emplace(token::bxor, "bxor");
-	_name.emplace(token::greater, "greater");
-	_name.emplace(token::less, "less");
-	_name.emplace(token::assign, "assign");
-	_name.emplace(token::comma, "comma");
-	_name.emplace(token::whitespace, "whitespace");
-	_name.emplace(token::dummy, "#");
+	_name.emplace(token::inc, "++");
+	_name.emplace(token::dec, "--");
+	_name.emplace(token::addass, "+=");
+	_name.emplace(token::subass, "-=");
+	_name.emplace(token::mulass, "*=");
+	_name.emplace(token::divass, "/=");
+	_name.emplace(token::modass, "%=");
+	_name.emplace(token::shlass, "<<=");
+	_name.emplace(token::shrass, ">>=");
+	_name.emplace(token::orass, "|=");
+	_name.emplace(token::andass, "&=");
+	_name.emplace(token::xorass, "^=");
+	_name.emplace(token::equal, "==");
+	_name.emplace(token::lor, "||");
+	_name.emplace(token::land, "&&");
+	_name.emplace(token::nequal, "!=");
+	_name.emplace(token::lequal, "<=");
+	_name.emplace(token::gequal, ">=");
+	_name.emplace(token::shl, "<<");
+	_name.emplace(token::shr, ">>");
+	_name.emplace(token::point, ".");
+	_name.emplace(token::arrow, "->");
+	_name.emplace(token::tokellipsis, "...");
+	_name.emplace(token::hashhash, "##");
+	_name.emplace(token::hash, "#");
+	_name.emplace(token::semicolon, ";");
+	_name.emplace(token::colon, ":");
+	_name.emplace(token::question, "?");
+	_name.emplace(token::toksigned, "signed");
+	_name.emplace(token::lbrace, "{");
+	_name.emplace(token::rbrace, "}");
+	_name.emplace(token::lbracket, "[");
+	_name.emplace(token::rbracket, "]");
+	_name.emplace(token::lparenthesis, "(");
+	_name.emplace(token::rparenthesis, ")");
+	_name.emplace(token::add, "+");
+	_name.emplace(token::sub, "-");
+	_name.emplace(token::mul, "*");
+	_name.emplace(token::div, "/");
+	_name.emplace(token::mod, "%");
+	_name.emplace(token::not, "!");
+	_name.emplace(token::bnot, "~");
+	_name.emplace(token::band, "&");
+	_name.emplace(token::bor, "|");
+	_name.emplace(token::bxor, "^");
+	_name.emplace(token::greater, ">");
+	_name.emplace(token::less, "<");
+	_name.emplace(token::assign, "=");
+	_name.emplace(token::comma, ",");
+	_name.emplace(token::whitespace, " ");
+	_name.emplace(token::dummy, "end of file");
 }
 
 token_name_type token_name;
@@ -237,9 +237,12 @@ lex(std::string const& s,
 	std::vector<double		>& vlit_dbl,
 	std::vector<char		>& vlit_chr,
 	std::vector<std::string	>& vlit_idt,
-	std::vector<std::string	>& vlit_file
+	std::vector<std::string	>& vlit_file,
+	std::vector<int			>& word_pos,
+	std::vector<int			> const & lines
 
 ) {
+	word_pos.clear();
 	static regex_table reg;
 	std::vector<token_P2 > res;
 	auto it = s.begin();
@@ -282,6 +285,7 @@ lex(std::string const& s,
 					default:
 						break;
 					}
+					word_pos.push_back(std::distance(s.begin(), it));
 					res.emplace_back(tt, now_num);
 				}//std::cerr << token_name[e.second] << " \"" << str <<"\""<< std::endl;
 
@@ -290,9 +294,17 @@ lex(std::string const& s,
 			}
 		}
 		if (unsucc) {
-			int cnt = 0;
-			std::string report = "Unexpected character :";
-			while (cnt < 20 && it != s.end())report.push_back(*it++);
+			std::string report;
+			int dis = std::distance(s.begin(), it);
+			auto line = std::lower_bound(lines.begin(), lines.end(), dis);
+			if (*line != dis)line--;
+
+			int chr = dis - *line;
+			report += std::string("In line ") + std::to_string(distance(lines.begin(), line)) 
+					+ ", char "+std::to_string(chr) + ": Unexpected character '";;
+			report.push_back(*it);
+			report += "'. ";
+
 			throw (lex_error(report));
 		}
 	}

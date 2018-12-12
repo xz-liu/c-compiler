@@ -9,8 +9,7 @@ decl : type_spec id {push_id} var_or_func
         | ';' ;
 var_or_func : '(' {func_begin}  params ')' func_follow {func_end}
         | var_def_follow var_def_list_follow ;
-func_follow : ';' 
-        | code_block ;
+func_follow :  code_block ;
 struct_decl : 'struct' id {push_id} '{' {struct_begin}  def_list '}' ';' {struct_end} ; 
 exp_or_str : exp  
         | string {push_str} ;
