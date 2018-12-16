@@ -175,6 +175,7 @@ public:
 	void throw_last_error(lex_data& data) {
 		std::string in_line = data.in_line_and_chr(last_error_token);
 		in_line += " got '" + get_name_of_now(last_error_token, data) + "', expected ";
+		in_line += get_name(expected);
 		for(auto &&x:first_set[expected]) {
 			if(id_eps==x) {
 				for(auto &&y:follow_set[expected]) {

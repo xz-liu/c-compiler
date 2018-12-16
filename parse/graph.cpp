@@ -201,61 +201,79 @@ bool grammar::parse_ll1(lex_data const & data,
 		} else {
 			auto r = find_ll1(id_top, data.get_token(now));
 			if (r) {
-				bool good = false;
-				const int act_id = now_action_id;
-				for (auto it = r->begin(); it != r->end(); it++) {
-					int n = now;
-					std::stack<ll1_stack_element> tmp;
-					tmp.push(id_dummy);
-					//tmp.pop();
-					auto &prod = productions[it->first][it->second];
+				if(r->size()>1) {
+					bool good = false;
+					const int act_id = now_action_id;
+					for (auto it = r->begin(); it != r->end(); it++) {
+						int n = now;
+						std::stack<ll1_stack_element> tmp;
+						tmp.push(id_dummy);
+						//tmp.pop();
+						auto &prod = productions[it->first][it->second];
 #ifdef _MYDEBUG_PARSER
-					std::cout << "!! try prod " << get_name(it->first) << "=>";
-					for (auto && p : prod) std::cout << "{" << get_name(p) << "}";
-					std::cout << std::endl;
+						std::cout << "!! try prod " << get_name(it->first) << "=>";
+						for (auto && p : prod) std::cout << "{" << get_name(p) << "}";
+						std::cout << std::endl;
 #endif
 #ifndef _MYDEBUG_NOACTION
-					action["push_stack"](-1, 0);
+						action["push_stack"](-1, 0);
 #endif
-					for (auto it = prod.rbegin(); it != prod.rend(); it++) tmp.push(*it);
-					if (parse_ll1(data, tmp, n, now_action_id,rec_cnt+1)) {
-						if (id_top != id_s || n == data.lex_result.size()) {
+						for (auto it = prod.rbegin(); it != prod.rend(); it++) tmp.push(*it);
+						if (parse_ll1(data, tmp, n, now_action_id, rec_cnt + 1)) {
+							if (id_top != id_s || n == data.lex_result.size()) {
 #ifdef _MYDEBUG_PARSER
-							std::cout << "CURRENT _STACK TOP___ " << get_name(id_top) << " _CURRENT_NOW " << data.get_token_name(now);// << std::endl;
+								std::cout << "CURRENT _STACK TOP___ " << get_name(id_top) << " _CURRENT_NOW " << data.get_token_name(now);// << std::endl;
 #endif
-							sta.pop(); now = n;  good = true;
+								sta.pop(); now = n;  good = true;
 #ifndef _MYDEBUG_NOACTION
-							action["select_stack"](-1, 0);
+								action["select_stack"](-1, 0);
 #endif
 #ifdef _MYDEBUG_PARSER				
-							std::cout << "\t-- select prod" << get_name(it->first) << "=>";
-							for (auto && p : prod) std::cout << "{" << get_name(p) << "}";
-							std::cout << std::endl;
+								std::cout << "\t-- select prod" << get_name(it->first) << "=>";
+								for (auto && p : prod) std::cout << "{" << get_name(p) << "}";
+								std::cout << std::endl;
 #endif
-							break;
+								break;
+							}
 						}
-					}
 #ifndef _MYDEBUG_NOACTION   
-					now_action_id = act_id;
-					action["return_to"](now_action_id, 0);
+						now_action_id = act_id;
+						action["return_to"](now_action_id, 0);
 #endif
 #ifdef  _MYDEBUG_PARSER
-					std::cout << "\t-- reject prod" << get_name(it->first) << "=>";
-					for (auto && p : prod) std::cout << "{" << get_name(p) << "}";
-					std::cout << std::endl;
+						std::cout << "\t-- reject prod" << get_name(it->first) << "=>";
+						for (auto && p : prod) std::cout << "{" << get_name(p) << "}";
+						std::cout << std::endl;
 #endif
-				}
-				if (!good) {
+					}
+					if (!good) {
 #ifdef _MYDEBUG_PARSER				
-					std::cout << "\t-- reject [" << get_name(id_top) << "] with [" << data.get_token_name(now)
-						<< "] -- all productions tried" << std::endl;
+						std::cout << "\t-- reject [" << get_name(id_top) << "] with [" << data.get_token_name(now)
+							<< "] -- all productions tried" << std::endl;
 #endif
 
-					if (now<data.lex_result.size()&&now >= last_error_token) {
+						if (now<data.lex_result.size() && now >= last_error_token) {
+							//std::cout << "----------" << last_error_token << std::endl;
+							last_error_token = now;
+							expected = id_top;
+						}
+						return false;
+					}
+				}
+				else if(r->size()==1) {
+					sta.pop();
+					auto &pro = productions[r->begin()->first][r->begin()->second];
+					for (auto it = pro.rbegin(); it != pro.rend(); ++it)sta.push(*it);
+				}else {
+					if (now<data.lex_result.size() && now >= last_error_token) {
 						//std::cout << "----------" << last_error_token << std::endl;
 						last_error_token = now;
 						expected = id_top;
 					}
+#ifdef _MYDEBUG_PARSER
+					std::cout << "\t reject [" << get_name(id_top) << "] with [" << data.get_token_name(now)
+						<< "] - no possible way" << std::endl;
+#endif
 					return false;
 				}
 			} else {

@@ -23,8 +23,53 @@ void debug_string(std::string const& s,std::vector<int> const& vec) {
 	symbols sym(parse);
 	sym.debug_quat(sym.quats, parse.label_stack, data_c);
 }
-void handle_now( int now ,symbols const& syn,scope::handle_scope hscope) {
-	if(syn.is)
+void handle() {
+	std::set<int64_t> dag;
+
+	auto h=[&](int now, symbols & syn, lex_data & data, scope::handle_scope hscope) {
+	if (syn.is_const(now, data)) {// const 
+		symbols::type ty = syn.get_const_type(now, data);
+		if (ty.first == symbols::int32) {
+			//int const
+			int64_t val = data.get_int(now);
+			//insert your code here
+			if(dag.find(val)==dag.end()) {
+				std::cout << "NONONO" << std::endl;
+			}
+
+		} else if (ty.first == symbols::char8) {
+			if (ty.second >= 1) {
+				//string 
+				std::string s = data.get_str(now);
+			} else {
+				//char
+				char c = data.get_char(now);
+			}
+		} else {
+			// ....
+		}
+	} else { // id
+			 // 当前id的作用域
+		scope::handle_scope hid = hscope->find_handle_of_id(now, data);
+		int index = hid->get_index(now, data);
+		switch (hid->get_type_of_id(now, data)) {
+		case scope::struct_type:
+		{
+			syn.struct_list[index];//....
+		}
+		case scope::func:
+		{
+			syn.func_list[index];//....
+		}
+		case scope::variable:
+		{
+			auto v=	syn.var_list[index];//....
+			//h(v.first.first.first, syn, data, hscope);
+		}
+		}
+	}
+};
+
 }
 
 int main() {
@@ -52,4 +97,3 @@ int main() {
 	//while (1);
 	return 0;
 }
-

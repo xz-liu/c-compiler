@@ -20,6 +20,7 @@ int main(){
 	struct my_struct a;
 	char str[100] = "this is  not a string!";
 	double Pi = 3.1415926;int i;
+	int ar[45]={1,2,4,55};
 	
 	a.bb[5].b = Pi*(2 / 10 - 5);
 	a.b=a.a=2;

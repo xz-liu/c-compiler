@@ -128,29 +128,7 @@ std::string get_type_name(symbols::type now, lex_data const& data) {
 	}
 	return get_type_name(now.first, data);
 }
-bool is_const(int id, lex_data const& data) {
-	if (id < 0 || id >= data.lex_result.size())return false;
-	switch (data.get_type_token(id)) {
-	case type_token::string_literal:
-	case type_token::int_literal:
-	case type_token::double_literal:
-	case type_token::char_literal:
-		return true;
-	}
-	return false;
-}
-symbols::type get_const_type(int id, lex_data const& data) {
-	switch (data.get_type_token(id)) {
-	case type_token::string_literal:
-		return { symbols::char8,data.get_str(id).size() };
-	case type_token::int_literal:
-		return { symbols::int64,0 };
-	case type_token::double_literal:
-		return { symbols::float64,0 };
-	case type_token::char_literal:
-		return { symbols::char8, 0 };
-	}
-}
+
 
 void symbols::debug_single_quat(
 	parser::quat_type const & qt,
@@ -255,8 +233,8 @@ void symbols::debug_single_quat(
 		break;
 	case quat_op::type_cast:
 		cout << get_name_of_now(qt.second[0], data) << ","
-			<< get_type_name(qt.second[1], data) <<","
-			<<get_name_of_now(qt.second[2],data)<< endl;
+			<< get_type_name(qt.second[1], data) << ","
+			<< get_name_of_now(qt.second[2], data) << endl;
 	}
 
 }
@@ -266,6 +244,18 @@ void symbols::debug_quat(std::vector<parser::quat_type> const & quats,
 	for (auto && qt : quats) {
 		debug_single_quat(qt, label_lst, data);
 	}
+}
+
+void symbols::debug_quat(std::vector<quat> const & quats,
+	labels const & label_lst,
+	lex_data const & data) {
+	for (auto && qt : quats) {
+		debug_single_quat(qt, label_lst, data);
+	}
+}
+
+void symbols::debug_single_quat(quat const & qt, labels const & label_lst, lex_data const & data) {
+	debug_single_quat(qt.first, label_lst, data);
 }
 
 
@@ -337,7 +327,7 @@ void symbols::monocular_type_check(type ty, quat_op op) {
 void symbols::assign_type_check(type lhs, type rhs, int atype) {
 	if (lhs.second || rhs.second) {
 		if (atype == assign_type::init) {
-			if (lhs.first == rhs.first&& rhs.second <= lhs.second) {
+			if (same_cat_type(lhs.first, rhs.first) && rhs.second <= lhs.second) {
 				return;
 			}
 		}
@@ -367,9 +357,9 @@ void symbols::assign_type_check(type lhs, type rhs, int atype) {
 }
 
 void throw_scope_error(int id, lex_data const &data, scope::handle_scope h_curr, std::string const& def) {
-	throw scope_error("In " + h_curr->scope_name + " :  " + def + " symbol <"+ get_name_of_now(id, data) + ">");
+	throw scope_error("In " + h_curr->scope_name + " :  " + def + " symbol <" + get_name_of_now(id, data) + ">");
 }
-void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & data) {
+void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & data, int quat_pos) {
 #define get_var_or_const_type(ty,id) \
 	if (is_const(id, data)) {\
 		ty = get_const_type(id, data);\
@@ -383,12 +373,16 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 
 #define type_cast(ty2,size2,id_to_cast,islvalue,id_scope,tvc)\
 	id_scope->insert_new_id(get_name_of_now(tvc, data), new_var(ty2, size2, islvalue, id_scope), scope::variable);\
-	quats.push_back(std::make_pair(quat_op::type_cast,std::array<int,3>{id_to_cast, ty2, tvc}));\
+	push_quat(std::make_pair(quat_op::type_cast,std::array<int,3>{id_to_cast, ty2, tvc})) ;\
 
+	//#define push_quat(_QT) quats.emplace_back((parser::quat_type)_QT, h_curr)
+	auto push_quat = [&](parser::quat_type q) {
+		quats.emplace_back(q, h_curr);
+	};
 	switch (qt.first) {
 	case quat_op::label:
 	case quat_op::jmp:
-		quats.push_back(qt);
+		push_quat(qt);
 		break;
 	case quat_op::btrue:
 	case quat_op::bfalse:
@@ -397,14 +391,14 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		if (is_const(exp, data)) {
 			if (get_const_type(exp, data).second)
 				throw type_error("array cannot convert to bool");
-			quats.push_back(qt);
+			push_quat(qt);
 			break;
 		} else {
 			auto handle = h_curr->find_handle_of_id(exp, data);
 			if (!handle)throw_scope_error(exp, data, h_curr, "undefined");
 			if (handle->get_type_of_id(exp, data) == scope::variable) {
 				if (can_cast_to_bool(var_list[handle->get_index(exp, data)].first.first)) {
-					quats.push_back(qt);
+					push_quat(qt);
 					break;
 				}
 			}
@@ -424,7 +418,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		else arr = data.get_int(arr);
 		h_curr->insert_new_id(get_name_of_now(id, data), new_var(ty, arr, true, h_curr), scope::variable);
 		if (curr_struct >= 0) {
-			struct_list[curr_struct].add_member(get_name_of_now(id,data), { ty,arr });
+			struct_list[curr_struct].add_member(get_name_of_now(id, data), { ty,arr }, *this);
 		}
 	}
 	break;
@@ -439,9 +433,9 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 			if (!h_type)throw_scope_error(struct_id_pos(ty), data, h_curr, "undefined");
 
 		}
-		h_curr->insert_new_id(get_name_of_now(id, data), new_func(ty), scope::func);
+		h_curr->insert_new_id(get_name_of_now(id, data), new_func(ty, quat_pos), scope::func);
 		h_curr = h_curr->create_new_scope("function " + get_name_of_now(id, data));
-		quats.push_back(qt);
+		push_quat(qt);
 	}
 	break;
 	case quat_op::funcparam:
@@ -454,13 +448,13 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 			if (!h_type)throw_scope_error(struct_id_pos(ty), data, h_curr, "undefined");
 		}
 		h_curr->insert_new_id(get_name_of_now(id, data), new_var(ty, pt, true, h_curr), scope::variable);
-		func_list[func_list.size() - 1].add_param(id, ty, pt);
+		func_list[func_list.size() - 1].add_param(id, ty, pt, *this);
 	}
 	break;
 	case quat_op::funcend:
 	{
 		h_curr = h_curr->father;
-		quats.push_back(qt);
+		push_quat(qt);
 		break;
 	}
 	//incomplete !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -469,7 +463,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		int id = qt.second[0];
 		if (h_curr->find_handle_of_id(id, data))
 			throw_scope_error(id, data, h_curr, "redefined");
-		quats.push_back(qt);
+		push_quat(qt);
 		curr_struct = new_struct();
 		h_curr->insert_new_id(get_name_of_now(id, data), curr_struct, scope::struct_type);
 		h_curr = h_curr->create_new_scope("struct " + get_name_of_now(id, data));
@@ -482,7 +476,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 	}		break;
 	case quat_op::cblock:
 	{
-		h_curr = h_curr->create_new_scope("NONAME_SCOPE");
+		h_curr = h_curr->create_new_scope("_");
 	}break;
 	case quat_op::cend:
 	{
@@ -500,10 +494,10 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 				type_cast(param_ty.first, ty.second, id, false, h_curr, tmp_var_cnt);
 				quats.emplace_back(quat_op::push, std::array<int, 3> { tmp_var_cnt, 0, 0 });
 				tmp_var_cnt++;
-			} else { quats.push_back(qt); }
+			} else { push_quat(qt); }
 		} else if (ty.second&& param_ty.second) {
 			if (ty.first != param_ty.first)throw type_error("param type mismatch : cannot convert array of types");
-			quats.push_back(qt);
+			push_quat(qt);
 		} else {
 			throw type_error("param type mismatch : cannot convert with arrays and vars");
 		}
@@ -517,14 +511,14 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 			throw type_error("call op used on symbol " + get_name_of_now(id, data));
 		curr_call_id = handle->get_index(id, data);
 		curr_push_order = 0;
-		quats.push_back(qt);
+		push_quat(qt);
 	}break;
 	case quat_op::callend:
 	{
 		int id = qt.second[0];
-		h_curr->insert_new_id(get_name_of_now(id, data), 
+		h_curr->insert_new_id(get_name_of_now(id, data),
 			new_var(func_list[curr_call_id].return_type, 0, false, h_curr), scope::variable);
-		quats.push_back(qt);
+		push_quat(qt);
 	}break;
 	case quat_op::ret:
 	{
@@ -545,7 +539,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 				tmp_var_cnt++;
 			} else throw type_error("cannot convert struct types");
 		}
-		quats.push_back(qt);
+		push_quat(qt);
 	}break;
 	case quat_op::arrayval:
 	{
@@ -554,10 +548,10 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		get_var_or_const_type(ty1, id1);
 		get_var_or_const_type(ty2, id2);
 		if (!ty1.second || ty2.second || !is_int_or_char(ty2.first)) {
-			throw type_error("array subscription with wrong param :"+ get_type_name(ty1.first,data)+" , "+get_type_name(ty2.first,data));
+			throw type_error("array subscription with wrong param :" + get_type_name(ty1.first, data) + " , " + get_type_name(ty2.first, data));
 		}
 		h_curr->insert_new_id(get_name_of_now(idres, data), new_var(ty1.first, 0, true, h_curr), scope::variable);
-		quats.push_back(qt);
+		push_quat(qt);
 
 	}break;
 	case quat_op::structval:
@@ -567,7 +561,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		get_var_or_const_type(ty1, id1);
 		if (!is_struct(ty1.first) || ty1.second)
 			throw type_error(". operator needs struct");
-		int index1 = root_scope->get_index(struct_id_pos(ty1.first),data);
+		int index1 = root_scope->get_index(struct_id_pos(ty1.first), data);
 
 		int memb = struct_list[index1].find_member(get_name_of_now(id2, data));
 		if (memb < 0) {
@@ -575,7 +569,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		}
 		tyres = struct_list[index1].members[memb];
 		h_curr->insert_new_id(get_name_of_now(idres, data), new_var(tyres.first, tyres.second, true, h_curr), scope::variable);
-		quats.push_back(qt);
+		push_quat(qt);
 	}break;
 	case quat_op::add:
 	case quat_op::sub:
@@ -605,14 +599,14 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		case tya_to_tyb:
 		{
 			type_cast(ty2.first, ty2.second, id1, false, h_curr, tmp_var_cnt);
-			quats.push_back({ qt.first, {tmp_var_cnt,id2,idres} });
+			push_quat({ qt.first, {tmp_var_cnt,id2,idres} });
 			tyres = ty2;
 			tmp_var_cnt++;
 		}
 		case tyb_to_tya:
 		{
 			type_cast(ty1.first, ty1.second, id2, false, h_curr, tmp_var_cnt);
-			quats.push_back({ qt.first,{ id1,tmp_var_cnt,idres } });
+			push_quat({ qt.first,{ id1,tmp_var_cnt,idres } });
 			tyres = ty1;
 			tmp_var_cnt++;
 		}
@@ -630,7 +624,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		if (is_const(id, data)) throw type_error("++/-- called to constexpr");
 		type ty;
 		get_var_or_const_type(ty, id);//just for check scope
-		quats.push_back(qt);
+		push_quat(qt);
 	} break;
 	case quat_op::bnot:
 	case quat_op::lnot:
@@ -641,7 +635,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		type ty;
 		get_var_or_const_type(ty, id);
 		monocular_type_check(ty, qt.first);
-		quats.push_back(qt);
+		push_quat(qt);
 	} break;
 	case quat_op::assign:
 	{
@@ -652,11 +646,10 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		else {
 			auto handle = h_curr->find_handle_of_id(id1, data);
 			if (!handle) {
-				if(is_tmp_var(id1)) {
+				if (is_tmp_var(id1)) {
 					h_curr->insert_new_id(get_name_of_now(id1, data), new_var(ty2.first, ty2.second, true, h_curr), scope::variable);
 					handle = h_curr;
-				}
-				else throw_scope_error(id1, data, h_curr, "undefined");
+				} else throw_scope_error(id1, data, h_curr, "undefined");
 			}if (handle->get_type_of_id(id1, data) != scope::variable)
 				throw type_error("symbol mismatch, need variable or constexpr :" + get_name_of_now(id1, data));
 			ty1 = var_list[handle->get_index(id1, data)].first.first;
@@ -664,7 +657,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		int index1 = h_curr->find_handle_of_id(id1, data)->get_index(id1, data);
 		if (var_list[index1].first.second) {
 			assign_type_check(ty1, ty2, atype);
-			quats.push_back(qt);
+			push_quat(qt);
 		} else throw type_error("cannot assign rvalue : ", get_name_of_now(id1, data));
 	} break;
 	case quat_op::initlst:
@@ -677,7 +670,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 	case quat_op::initlstend:
 	{
 		curr_init_list = -1;
-		quats.push_back(qt);
+		push_quat(qt);
 	}break;
 	case quat_op::initlstitem:
 	{
@@ -686,12 +679,12 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		get_var_or_const_type(ty, id);
 		if (tylist.first == none) {
 			tylist.first = ty.first;
-			quats.push_back({ quat_op::initlst,{ qt.second[0], 0, 0 } });
+			push_quat({ quat_op::initlst,{ qt.second[0], 0, 0 } });
 		} else {
 			if (tylist.first != ty.first) throw type_error("init list with multiple type");
 		}
 		var_list[curr_init_list].first.first.second++;
-		quats.push_back(qt);
+		push_quat(qt);
 	}break;
 	}
 
@@ -701,11 +694,36 @@ symbols::symbols(parser const& p)
 	:data(p.data),
 	root_scope(std::make_shared<scope>(nullptr, "GLOBAL")),
 	curr_call_id(-1), curr_struct(-1), curr_push_order(0), curr_init_list(-1),
-	tmp_var_cnt(p.tmp_var_cnt + p.input_data_cnt),tmp_var_begin(p.input_data_cnt) {
+	tmp_var_cnt(p.tmp_var_cnt + p.input_data_cnt), tmp_var_begin(p.input_data_cnt) {
 	h_curr = root_scope;
+	int cnt = 0;
 	for (auto &&qt : p.quats) {
 		//debug_single_quat(qt, p.label_stack, data);
-		handle_single_quat(qt, data);
+		handle_single_quat(qt, data, cnt++);
 	}
 	//curr_call_id, curr_struct, curr_push_order, curr_init_list, tmp_var_cnt;
+}
+
+bool struct_def::add_member(std::string const & str, std::pair<int, int> type_id, symbols & sym) {
+	if (is_union) {
+		member_offset.push_back(0);
+	} else { member_offset.push_back(struct_size); }
+	int curr_var_size = sym.get_type_size(type_id);
+	if (curr_var_size < 0)throw type_error("struct member type error");
+	struct_size += curr_var_size;
+	if (set_contains(id_to_member, str))return false;
+	members.push_back(type_id);
+	id_to_member[str] = members.size() - 1;
+	return true;
+}
+
+bool func_def::add_param(int str, int type_id, bool arr, symbols const & sym) {
+	if (set_contains(id_to_param, str))return false;
+	params.emplace_back(type_id, arr);
+	param_offset.push_back(stack_size);
+	int curr_var_size = arr ? sym.pointer_size : sym.get_type_size({ type_id,0 });
+	if (curr_var_size < 0)throw type_error("function param type error");
+	stack_size += curr_var_size;
+	id_to_param[str] = params.size() - 1;
+	return true;
 }
