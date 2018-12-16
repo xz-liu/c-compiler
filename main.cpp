@@ -7,7 +7,7 @@
 #include "parse\parse.h"
 #include "parse/exp.h"
 #include "parse/type.h"
-//#define _MYDEBUG_NOCATCH
+#define _MYDEBUG_NOCATCH
 //
 void debug_string(std::string const& s,std::vector<int> const& vec) {
 	static grammar grm;
@@ -22,6 +22,7 @@ void debug_string(std::string const& s,std::vector<int> const& vec) {
 	cout << " -------------------------" << endl;
 	symbols sym(parse);
 	sym.debug_quat(sym.quats, parse.label_stack, data_c);
+	sym.debug();
 }
 void handle() {
 	std::set<int64_t> dag;

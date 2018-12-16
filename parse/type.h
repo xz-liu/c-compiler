@@ -40,6 +40,32 @@ struct scope
 			return father->find_handle_of_id(id, data);
 		return nullptr;
 	}
+	void debug(std::string prefix="") {
+		using std::cout;
+		using std::endl;
+		cout << prefix << scope_name << "{" << endl;
+		prefix.push_back('\t');
+		for (auto && x: id_map) {
+			cout << prefix << x.first << ":";
+			switch (x.second.first) {
+			case struct_type:
+				cout << "\"STRUCT\" ," << x.second.second << endl;
+				break;
+			case func:
+				cout << "\"FUNCTION\" ," << x.second.second << endl;
+				break;
+			case variable:
+				cout << "\"VARIABLE\" ," << x.second.second << endl;
+				break;
+			}
+		}
+		for(auto&& ch:inner) {
+			ch->debug(prefix);
+		}
+		prefix.pop_back();
+		cout << prefix << "}" << endl;
+
+	}
 };
 
 
@@ -49,7 +75,7 @@ struct func_def {
 	int def_pos, stack_size;
 	int return_type;
 	std::map<int, int> id_to_param;
-	explicit func_def(int ty_id,int def_pos) :return_type(ty_id), def_pos(def_pos) {}
+	explicit func_def(int ty_id,int def_pos) :return_type(ty_id), def_pos(def_pos),stack_size(0) {}
 	bool has_def() { return def_pos >= 0; }
 	bool add_param(int str, int type_id, bool arr,
 		symbols const& sym);
@@ -60,7 +86,7 @@ struct struct_def {
 	std::vector<int> member_offset;
 	int struct_size;
 	bool is_union;
-	struct_def(bool is_union = false) : is_union(is_union) {}
+	struct_def(bool is_union = false) : is_union(is_union),struct_size(0) {}
 	std::map<std::string, int> id_to_member;
 	int find_member(std::string const& str) {
 		auto it = id_to_member.find(str);
@@ -69,6 +95,7 @@ struct struct_def {
 	}
 	bool add_member(std::string const &str, std::pair<int, int> type_id,
 		symbols & sym);
+
 };
 
 template<class T>
@@ -135,7 +162,7 @@ struct symbols {
 		int base, num = ty.second;
 		if (num <= 1)num = 1;
 		if (is_basic_type(ty.first))base = get_basic_type_size(ty.first);
-		else base = get_basic_type_size(ty.first);
+		else base = get_struct_type_size(ty.first);
 		if (base >= 0)return base*num;
 		else return -1;
 	}
@@ -195,8 +222,8 @@ struct symbols {
 		var_list.push_back({ { {ty_id,arr_size},is_lvalue }, handle });
 		return var_list.size() - 1;
 	}
-	int new_struct() {
-		struct_list.push_back(struct_def());
+	int new_struct(bool is_union) {
+		struct_list.push_back(struct_def(is_union));
 		return struct_list.size() - 1;
 	}
 	int new_func(int ty_id,int def_pos) {
@@ -245,7 +272,10 @@ struct symbols {
 	std::vector<quat> quats;
 
 	//void check_scope(scope::handle_scope hscope, int id);
-	void handle_single_quat(parser::quat_type const & qt, lex_data const & data);
+	void handle_single_quat(parser::quat_type const & qt, lex_data const & data,int quat_pos);
 	symbols(parser const&p);
+	void debug() {
+		root_scope->debug("");
+	}
 
 };

@@ -64,18 +64,29 @@ struct lex_data {
 	std::vector<char		> vlit_chr;
 	std::vector<std::string	> vlit_idt;
 	std::vector<std::string	> vlit_file;
-	
+
 	std::vector<token_P2> lex_result;
 	std::vector<int> word_pos;
 	std::vector<int> lines;
-	lex_data(std::string const&s,std::vector<int> const&lines):lines(lines) {
-		lex_result = lex(s, vlit_str, vlit_int, vlit_dbl, vlit_chr, vlit_idt, vlit_file ,word_pos, lines);
+	std::vector<int> first_pos;
+	lex_data(std::string const&s, std::vector<int> const&lines) :lines(lines) {
+		lex_result = lex(s, vlit_str, vlit_int, vlit_dbl, vlit_chr, vlit_idt, vlit_file, word_pos, lines);
+		for (int now = 0; now != lex_result.size(); now++) {
+			int now_it = lex_result[now].second, ng = true;
+			for (int i = 0; i < lex_result.size(); i++) {
+				if (lex_result[i].first == lex_result[now].first&& lex_result[i].second == now_it) {
+					first_pos.push_back(i);
+					ng = false; break;
+				}
+			}
+			if (ng)first_pos.push_back(now);
+		}
 	}
 
 	std::string in_line_and_chr(int now) {
 		std::string report;
 		auto line = std::lower_bound(lines.begin(), lines.end(), word_pos[now]);
-		if (*line != word_pos[now] )line--;
+		if (*line != word_pos[now])line--;
 
 		int chr = word_pos[now] - *line;
 		report += std::string("In line ") + std::to_string(distance(lines.begin(), line))
@@ -83,7 +94,7 @@ struct lex_data {
 		return report;
 	}
 
-	std::string const& get_id( int now) const{
+	std::string const& get_id(int now) const {
 		return vlit_idt[lex_result[now].second];
 	}
 	std::string const& get_str(int now) const {
@@ -109,11 +120,7 @@ struct lex_data {
 	}
 
 	int find_first_pos(int now) {
-		int now_it = lex_result[now].second;
-		for (int i = 0; i < lex_result.size();i++) {
-			if (lex_result[i].first==type_token::identifier&& lex_result[i].second == now_it)return i;
-		}
-		return now;
+		return first_pos[now];
 	}
 
 	template<class T1, class T2>
@@ -146,10 +153,10 @@ struct lex_data {
 		}
 		return false;
 	}
-	std::string get_token_name ( size_t pos) const {
+	std::string get_token_name(size_t pos) const {
 		return token_name[get_token(pos)];
 	}
-	type_token get_type_token(size_t pos) const{
+	type_token get_type_token(size_t pos) const {
 		return lex_result[pos].first;
 	}
 	token get_token(size_t pos)const {

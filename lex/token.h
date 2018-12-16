@@ -116,7 +116,8 @@ enum class type_token {
 	identifier,
 	delimiter,
 	dummy = 1000000,
-	type
+	type,
+	type_qualifier,
 };
 
 

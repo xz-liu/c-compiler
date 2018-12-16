@@ -166,7 +166,8 @@ void symbols::debug_single_quat(
 	case quat_op::funcend:
 	case quat_op::structdef:
 	case quat_op::structend:
-		cout << get_name_of_now(qt.second[0], data) << endl;
+		cout << get_name_of_now(qt.second[0], data)<< ","
+		<< qt.second[1] << endl;
 		break;
 	case quat_op::cblock:
 	case quat_op::cend:
@@ -371,14 +372,15 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		ty = var_list[handle->get_index(id, data)].first.first;\
 	}\
 
+	auto push_quat = [&](parser::quat_type q) {
+		quats.push_back(make_pair(q, h_curr));
+		//quats.emplace_back(q, h_curr);
+	};
+
 #define type_cast(ty2,size2,id_to_cast,islvalue,id_scope,tvc)\
 	id_scope->insert_new_id(get_name_of_now(tvc, data), new_var(ty2, size2, islvalue, id_scope), scope::variable);\
 	push_quat(std::make_pair(quat_op::type_cast,std::array<int,3>{id_to_cast, ty2, tvc})) ;\
 
-	//#define push_quat(_QT) quats.emplace_back((parser::quat_type)_QT, h_curr)
-	auto push_quat = [&](parser::quat_type q) {
-		quats.emplace_back(q, h_curr);
-	};
 	switch (qt.first) {
 	case quat_op::label:
 	case quat_op::jmp:
@@ -464,7 +466,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		if (h_curr->find_handle_of_id(id, data))
 			throw_scope_error(id, data, h_curr, "redefined");
 		push_quat(qt);
-		curr_struct = new_struct();
+		curr_struct = new_struct(qt.second[1]);
 		h_curr->insert_new_id(get_name_of_now(id, data), curr_struct, scope::struct_type);
 		h_curr = h_curr->create_new_scope("struct " + get_name_of_now(id, data));
 		break;
@@ -492,7 +494,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 			if (ty.first != param_ty.first) {
 				assign_type_check(param_ty, ty, assign_type::init);
 				type_cast(param_ty.first, ty.second, id, false, h_curr, tmp_var_cnt);
-				quats.emplace_back(quat_op::push, std::array<int, 3> { tmp_var_cnt, 0, 0 });
+				push_quat({ quat_op::push, std::array<int, 3> { tmp_var_cnt, 0, 0 } });
 				tmp_var_cnt++;
 			} else { push_quat(qt); }
 		} else if (ty.second&& param_ty.second) {
@@ -710,7 +712,8 @@ bool struct_def::add_member(std::string const & str, std::pair<int, int> type_id
 	} else { member_offset.push_back(struct_size); }
 	int curr_var_size = sym.get_type_size(type_id);
 	if (curr_var_size < 0)throw type_error("struct member type error");
-	struct_size += curr_var_size;
+	if (is_union)struct_size = std::max(struct_size, curr_var_size);
+	else struct_size += curr_var_size;
 	if (set_contains(id_to_member, str))return false;
 	members.push_back(type_id);
 	id_to_member[str] = members.size() - 1;

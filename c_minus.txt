@@ -10,7 +10,8 @@ decl : type_spec id {push_id} var_or_func
 var_or_func : '(' {func_begin}  params ')' func_follow {func_end}
         | var_def_follow var_def_list_follow ;
 func_follow :  code_block ;
-struct_decl : 'struct' id {push_id} '{' {struct_begin}  def_list '}' ';' {struct_end} ; 
+struct_decl : 'struct' id {push_id} '{' {struct_begin}  def_list '}' ';' {struct_end} 
+        | 'union'  id {push_id} '{' {union_begin}  def_list '}' ';' {union_end}  ; 
 exp_or_str : exp  
         | string {push_str} ;
 type_spec : int_type 
@@ -48,7 +49,11 @@ param_suffix :  '[' ']' {param_array}
 code_block :  '{' {code_block} def_list code_list  '}' {code_block_end} ;
 def_list : var_def def_list 
         | ;
-var_def : type_spec var_def_list ;
+var_def : type_qualifier type_spec var_def_list ;
+type_qualifier : 'const' 
+        | 'volatile' 
+        | 'register'
+        | ; 
 var_def_list :  id {push_id} var_def_follow var_def_list_follow  ;
 var_def_list_follow : ',' id {push_id} var_def_follow  var_def_list_follow 
         | ';' {var_def_list_end} ;

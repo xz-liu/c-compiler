@@ -265,7 +265,7 @@ id_suffix : '[' exp ']'  {@[@]} id_suffix
 |func | id | type | 0|名字为id 返回值为type的函数|
 |funcparam | id | type | array|  func的参数，类型是type，array不为零为数组|
 |funcend | id | 0| 0 | 函数的结束|
-|structdef | id | 0 | 0 |    名字为id的struct|
+|structdef | id | is_union | 0 |    名字为id的struct, is_union为1代表是union|
 |structend| id |  0 | 0   |   名字为id的struct定义结束 |
 |cblock | 0 |  0  |   0|  标记一个代码块的开始|
 |cend | 0 | 0  |  0|      ~~~~~~~~~~~~~~结束|

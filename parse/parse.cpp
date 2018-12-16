@@ -190,16 +190,16 @@ parser::parser(lex_data const& d, grammar & g)
 		stack.push_id(data.find_first_pos(now));
 	});
 	_GRAMMAR_ASSIGN_ACT("{push_char}", {
-		stack.push_char(now);
+		stack.push_char(data.find_first_pos(now));
 	});
 	_GRAMMAR_ASSIGN_ACT("{push_float}", {
-		stack.push_float(now);
+		stack.push_float(data.find_first_pos(now));
 	});
 	_GRAMMAR_ASSIGN_ACT("{push_int}", {
-		stack.push_int(now);
+		stack.push_int(data.find_first_pos(now));
 	});
 	_GRAMMAR_ASSIGN_ACT("{push_str}", {
-		stack.push_str(now);
+		stack.push_str(data.find_first_pos(now));
 	});
 #pragma endregion 
 
@@ -615,15 +615,26 @@ parser::parser(lex_data const& d, grammar & g)
 #pragma endregion 
 
 #pragma region struct def
-	
+
 	_GRAMMAR_ASSIGN_ACT("{struct_begin}", {
 		int id = stack.top();
-		add_quat(quat_op::structdef, id, 0, 0);
+	add_quat(quat_op::structdef, id, 0, 0);
 	});
 
 	_GRAMMAR_ASSIGN_ACT("{struct_end}", {
 		int id = stack.pop();
-		add_quat(quat_op::structend, id, 0, 0);
+	add_quat(quat_op::structend, id, 0, 0);
+	});
+
+
+	_GRAMMAR_ASSIGN_ACT("{union_begin}", {
+		int id = stack.top();
+	add_quat(quat_op::structdef, id, 1, 0);
+	});
+
+	_GRAMMAR_ASSIGN_ACT("{union_end}", {
+		int id = stack.pop();
+		add_quat(quat_op::structend, id, 1, 0);
 	});
 
 #pragma endregion 
