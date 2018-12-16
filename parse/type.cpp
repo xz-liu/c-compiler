@@ -460,7 +460,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		break;
 	}
 	//incomplete !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	case quat_op::structdef:
+	case quat_op::structdef: 
 	{
 		int id = qt.second[0];
 		if (h_curr->find_handle_of_id(id, data))
@@ -468,7 +468,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		push_quat(qt);
 		curr_struct = new_struct(qt.second[1]);
 		h_curr->insert_new_id(get_name_of_now(id, data), curr_struct, scope::struct_type);
-		h_curr = h_curr->create_new_scope("struct " + get_name_of_now(id, data));
+		h_curr = h_curr->create_new_scope((qt.second[1]?"union ":"struct ") + get_name_of_now(id, data));
 		break;
 	}
 	case quat_op::structend:
@@ -720,6 +720,17 @@ bool struct_def::add_member(std::string const & str, std::pair<int, int> type_id
 	return true;
 }
 
+void struct_def::debug(symbols & sym) {
+	using std::cout; 
+	cout << (is_union ? "union" : "struct") << ", size:"
+		<<struct_size<<", members cnt:"<<members.size()<< " [" << std::endl;
+	for (auto&& x:id_to_member) {
+		cout << "\t" << x.first << ":" << get_type_name(members[x.second].first, sym.data)
+			<< '[' << members[x.second].second << "], offset=" << member_offset[x.second] << std::endl;
+	}
+	cout << "]" << std::endl;
+}
+
 bool func_def::add_param(int str, int type_id, bool arr, symbols const & sym) {
 	if (set_contains(id_to_param, str))return false;
 	params.emplace_back(type_id, arr);
@@ -729,4 +740,15 @@ bool func_def::add_param(int str, int type_id, bool arr, symbols const & sym) {
 	stack_size += curr_var_size;
 	id_to_param[str] = params.size() - 1;
 	return true;
+}
+
+void func_def::debug(symbols & sym) {
+	using std::cout;
+	cout <<"function" << ", size:"
+		<< stack_size << ", params cnt:" << params.size() << " (" << std::endl;
+	for (auto&& x : id_to_param) {
+		cout<<"\t" << x.first << ":" << get_type_name(params[x.second].first, sym.data)
+			<< '[' << params[x.second].second << "], offset=" << param_offset[x.second] << std::endl;
+	}
+	cout << ")" << std::endl;
 }

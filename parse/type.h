@@ -49,13 +49,13 @@ struct scope
 			cout << prefix << x.first << ":";
 			switch (x.second.first) {
 			case struct_type:
-				cout << "\"STRUCT\" ," << x.second.second << endl;
+				cout << "STRUCT ," << x.second.second << endl;
 				break;
 			case func:
-				cout << "\"FUNCTION\" ," << x.second.second << endl;
+				cout << "FUNCTION ," << x.second.second << endl;
 				break;
 			case variable:
-				cout << "\"VARIABLE\" ," << x.second.second << endl;
+				cout << "VARIABLE ," << x.second.second << endl;
 				break;
 			}
 		}
@@ -79,6 +79,7 @@ struct func_def {
 	bool has_def() { return def_pos >= 0; }
 	bool add_param(int str, int type_id, bool arr,
 		symbols const& sym);
+	void debug(symbols & sym);
 };
 
 struct struct_def {
@@ -95,7 +96,7 @@ struct struct_def {
 	}
 	bool add_member(std::string const &str, std::pair<int, int> type_id,
 		symbols & sym);
-
+	void debug(symbols& sym);
 };
 
 template<class T>
@@ -123,6 +124,11 @@ struct symbols {
 		struct_type = 11;
 	static constexpr int pointer_size = 4;
 
+	void debug_var(with_scope<var_def> const &v) const{
+		std::cout << "<<<" << get_type_name(v.first.first.first, data) << ", "
+			<< v.first.first.second << ">, " << std::boolalpha << v.first.second << ">, "
+			<< v.second->scope_name << ">" << std::endl;
+	}
 	static int struct_id(int now) {
 		return struct_type + now;
 	}
@@ -275,7 +281,20 @@ struct symbols {
 	void handle_single_quat(parser::quat_type const & qt, lex_data const & data,int quat_pos);
 	symbols(parser const&p);
 	void debug() {
+		for (int i = 0; i<var_list.size(); i++) {
+			std::cout << "VAR_LIST[" << i << "]:";
+			debug_var(var_list[i]);
+		}
+		for (int i = 0; i<struct_list.size(); i++) {
+			std::cout << "STRUCT_LIST[" << i << "]:";
+			struct_list[i].debug(*this);
+		}
+		for (int i = 0; i<func_list.size(); i++) {
+			std::cout << "FUNC_LIST[" << i << "]:";
+			func_list[i].debug(*this);
+		}
 		root_scope->debug("");
+
 	}
 
 };

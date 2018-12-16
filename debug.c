@@ -4,6 +4,12 @@ struct my_struct {
 	char ch[10];
 	struct my_struct2 bb[10];
 };
+union my_union{
+	int i;
+	double d;
+	char c;
+	long long int ll;
+};
 int test(int a,int b){
 	int c=a,d=b;
 	int ans=0;
