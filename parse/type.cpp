@@ -604,18 +604,19 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 			push_quat({ qt.first, {tmp_var_cnt,id2,idres} });
 			tyres = ty2;
 			tmp_var_cnt++;
-		}
+		}break;
 		case tyb_to_tya:
 		{
 			type_cast(ty1.first, ty1.second, id2, false, h_curr, tmp_var_cnt);
 			push_quat({ qt.first,{ id1,tmp_var_cnt,idres } });
 			tyres = ty1;
 			tmp_var_cnt++;
-		}
+		}break;
 		case no_type_cast:
 		{
 			tyres = ty1;
-		}
+			push_quat(qt);
+		}break;
 		}
 		h_curr->insert_new_id(get_name_of_now(idres, data), new_var(tyres.first, tyres.second, false, h_curr), scope::variable);
 	}break;
