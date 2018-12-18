@@ -435,8 +435,8 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 			if (!h_type)throw_scope_error(struct_id_pos(ty), data, h_curr, "undefined");
 
 		}
-		h_curr->insert_new_id(get_name_of_now(id, data), new_func(ty, quat_pos), scope::func);
 		h_curr = h_curr->create_new_scope("function " + get_name_of_now(id, data));
+		h_curr->father->insert_new_id(get_name_of_now(id, data), new_func(ty, quat_pos,h_curr), scope::func);
 		push_quat(qt);
 	}
 	break;
@@ -489,6 +489,9 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		int id = qt.second[0];
 		type ty;
 		get_var_or_const_type(ty, id);
+		if(func_list[curr_call_id].params.size()<=curr_push_order) {
+			throw type_error("too many arguments");
+		}
 		auto param_ty = func_list[curr_call_id].params[curr_push_order++];
 		if (!ty.second && !param_ty.second) {
 			if (ty.first != param_ty.first) {
@@ -517,6 +520,9 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 	}break;
 	case quat_op::callend:
 	{
+		if(func_list[curr_call_id].params.size()>curr_push_order) {
+			throw type_error("arguements not enough");
+		}
 		int id = qt.second[0];
 		h_curr->insert_new_id(get_name_of_now(id, data),
 			new_var(func_list[curr_call_id].return_type, 0, false, h_curr), scope::variable);

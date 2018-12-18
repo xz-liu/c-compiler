@@ -74,8 +74,10 @@ struct func_def {
 	std::vector<int> param_offset;
 	int def_pos, stack_size;
 	int return_type;
+	scope::handle_scope function_scope;
 	std::map<int, int> id_to_param;
-	explicit func_def(int ty_id,int def_pos) :return_type(ty_id), def_pos(def_pos),stack_size(0) {}
+	explicit func_def(int ty_id,int def_pos, scope::handle_scope f_scope) 
+		:return_type(ty_id), def_pos(def_pos),stack_size(0), function_scope(f_scope){}
 	bool has_def() { return def_pos >= 0; }
 	bool add_param(int str, int type_id, bool arr,
 		symbols const& sym);
@@ -233,8 +235,8 @@ struct symbols {
 		struct_list.push_back(struct_def(is_union));
 		return struct_list.size() - 1;
 	}
-	int new_func(int ty_id,int def_pos) {
-		func_list.push_back(func_def(ty_id,def_pos));
+	int new_func(int ty_id,int def_pos, scope::handle_scope hs) {
+		func_list.push_back(func_def(ty_id,def_pos,hs));
 		return func_list.size() - 1;
 	}
 	bool is_tmp_var(int id) {

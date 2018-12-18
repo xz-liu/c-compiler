@@ -98,3 +98,15 @@ int main() {
 	//while (1);
 	return 0;
 }
+
+
+
+void cpp(std::ifstream & ifs) {
+	std::map<std::string, std::string> def;
+	std::string curr;
+	while(getline(ifs,curr)) {
+		std::regex INCLUDE(R"([ ]*#[ ]*include[ ]*<.*>)");
+		if(curr.size()) {
+		}
+	}
+}

@@ -131,20 +131,68 @@ array<int,3> &qv = qt.first.second;
         int pos= qv[0];
  }else if(op== quat_op::add){
         // lhs,rhs,to 
+        if(sym.is_const(qv[0])){
+                symbols::type ty= sym.get_const_type(qv[0]);
+                if(ty.first==symbos::int64){
+                        int64_t realVal= data.get_int(qv[0]);
+                }else if(ty.first==symbos::char8){
+                        if(ty.second>=1){
+                                //is array
+                                string realVal= data.get_str(qv[0]);
+                        }else{
+                                char realVal =data.get_char(qv[0]);
+                        }
+                }else if(ty.first== symbos::float64){
+                        double realVal= data.get_double(qv[0]);
+                }
+        }else {
+                //h_curr;
+                auto handle= get_handle(qv[0],h_curr);
+                if(!handle){error;}//找不到这个id
+                int index= get_id_index()
+                switch(get_id_cat(qv[0],handle)){
+                        case scope::variable:{
+                                
+                        }break;
+                        case scope::func:{
+
+                        }break;
+                        case scope::struct_type:{
+                                
+                        }break;
+                }
+        }
  }
+
 ```
 * quat format
      * <<quat_op,<int,int,int>>,scope_pointer>
-     * bool sym.is_const(int) 
-     * type sym.get_const_type(int) 
-        * <int,int>
-        * first-> type id
-        * second->array size
+        * id
+                * string data.get_id(int id) 通过OP内ID获得当前ID(STR)
+                * string syn.get_id_name(int id) 通过ID获取它的名字(STR)
+                * scope::handle_scope sym.get_handle(id, curr_handle);
+                * int get_id_index(id,curr_handle);通过当前作用域和id 找到id对应在表中的位置
+                * id_type get_id_cat(id,curr_handle); 通过。。。找到id的cat
+                * cat
+                        * variable --> sym.var_list
+                        * func  --> sym.func_list
+                        * struct_type -->sym.struct_list
+                * 
+        * const
+                * char data.get_char(int id)
+                * string data.get_str(int id)
+                * 
+                * bool sym.is_const(int id)  
+                * type sym.get_const_type(int id) 
+                        * <int,int>
+                        * first-> type id
+                        * second->array size
+                        * 
 
 * symbol table
-     * var 
-     * 
-     * <<<TYPE(int),ARRAY_SIZE(int)>,CAN_ASSIGN(bool)>,SCOPE_POINTER(handle_scope)>
+     * var : <<<TYPE(int),ARRAY_SIZE(int)>,CAN_ASSIGN(bool)>,SCOPE_POINTER(handle_scope)>
+     * func : func_def
+     * struct : struct_def
 *  
 ### intermediate representation 
 |QUAT TYPE | VAL1 | VAL2 | VAL3 | OPERATION|

@@ -1,5 +1,10 @@
+int input(){
+	return 0;
+}
+void output(int i){
 
-
+}
+ 
 int x[10];
 
 int minloc(int a[], int low, int high)
@@ -7,7 +12,6 @@ int minloc(int a[], int low, int high)
 	int i;
 	int x;
 	int k;
-
 	k = low;
 	x = a[low];
 	i = low + 1;
