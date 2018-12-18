@@ -299,8 +299,22 @@ struct symbols {
 			std::cout << "FUNC_LIST[" << i << "]:";
 			func_list[i].debug(*this);
 		}
-		root_scope->debug("");
+		root_scope->debug("");	
+	}
 
+	std::string get_id_name(int id) {
+		return get_name_of_now(id, data);
+	}
+	scope::handle_scope get_handle(int id, scope::handle_scope curr_handle) {
+		return curr_handle->find_handle_of_id(id, data);
+	}
+	
+	int get_id_index(int id, scope::handle_scope curr) {
+		return curr->get_index(id, data);
+	}
+	
+	scope::id_type get_id_cat(int id, scope::handle_scope curr) {
+		return curr->get_type_of_id(id, data);
 	}
 
 	void testtest(int i) {
