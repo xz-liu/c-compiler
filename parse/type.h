@@ -106,7 +106,8 @@ struct symbols {
 	// type_id , arr
 	using type = std::pair<int, int>;
 	// type , lvalue
-	using var_def = std::pair<type, bool>;
+	using var_type = std::pair<type, bool>;
+	using var_def = with_scope<var_type>;
 	using quat = std::pair<parser::quat_type, scope::handle_scope>;
 	static constexpr int
 		none = -1,
@@ -124,7 +125,7 @@ struct symbols {
 		struct_type = 11;
 	static constexpr int pointer_size = 4;
 
-	void debug_var(with_scope<var_def> const &v) const{
+	void debug_var(with_scope<var_type> const &v) const{
 		std::cout << "<<<" << get_type_name(v.first.first.first, data) << ", "
 			<< v.first.first.second << ">, " << std::boolalpha << v.first.second << ">, "
 			<< v.second->scope_name << ">" << std::endl;
@@ -222,7 +223,7 @@ struct symbols {
 	// <id , <id_type, index> >
 	std::vector<func_def> func_list;
 	std::vector<struct_def> struct_list;
-	std::vector<with_scope<var_def>>var_list;
+	std::vector<var_def>var_list;
 
 	int new_var(int ty_id, int arr_size, bool is_lvalue, scope::handle_scope handle) {
 		var_list.push_back({ { {ty_id,arr_size},is_lvalue }, handle });
@@ -240,7 +241,8 @@ struct symbols {
 		return (id >= tmp_var_begin);
 	}
 
-	static	bool is_const(int id, lex_data const& data) {
+	bool is_const(int id)const { return is_const(id, data); }
+	bool is_const(int id, lex_data const& data) const{
 		if (id < 0 || id >= data.lex_result.size())return false;
 		switch (data.get_type_token(id)) {
 		case type_token::string_literal:
@@ -251,8 +253,10 @@ struct symbols {
 		}
 		return false;
 	}
-
-
+	scope::handle_scope find_handl_of_id(scope::handle_scope curr,int id)const {
+		return curr->find_handle_of_id(id, data);
+	}
+	type get_const_type(int id) const { return get_const_type(id, data); }
 	static type get_const_type(int id, lex_data const& data) {
 		switch (data.get_type_token(id)) {
 		case type_token::string_literal:
@@ -295,6 +299,21 @@ struct symbols {
 		}
 		root_scope->debug("");
 
+	}
+
+	void testtest(int i) {
+		quat qt = quats[i];
+		quat_op op = qt.first.first;
+		std::array<int, 3> &qv = qt.first.second;
+		if (op == quat_op::label) {
+			//label 
+			int pos = qv[0];
+		} else if (op == quat_op::add) {
+			// lhs,rhs,to 
+			scope::handle_scope scopes[3]{ find_handl_of_id(qt.second,qv[0]),
+							find_handl_of_id(qt.second,qv[1]),
+							find_handl_of_id(qt.second,qv[2]) };
+		}
 	}
 
 };

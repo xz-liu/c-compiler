@@ -39,6 +39,7 @@ float_type : 'float' {float32}
 char_type : 'char' {char8}
         | 'unsigned' 'char' {uchar8} ;
 params : param_list 
+        | 'void' 
         | ;
 param_list : param  param_follow ;
 param_follow : ',' param param_follow 

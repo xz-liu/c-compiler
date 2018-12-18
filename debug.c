@@ -1,16 +1,65 @@
-int function(int a)
+
+
+int x[10];
+
+int minloc(int a[], int low, int high)
 {
-	if (a == 1)
-		return 1;
-	else
-		return a * function(a - 1);
+	int i;
+	int x;
+	int k;
+
+	k = low;
+	x = a[low];
+	i = low + 1;
+
+	while (i < high)
+	{
+		if (a[i] < x)
+		{
+			x = a[i];
+			k = i;
+		}
+
+		i = i + 1;
+	}
+
+	return k;
 }
 
-int main()
+void sort(int a[], int low, int high)
 {
-	int a[3] = {2, 3, 6};
-	int b[3];
-	int i = 0;
-	for (i = 0; i < 3; i++)
-		b[i] = function(a[i]);
+	int i;
+	int k;
+
+	i = low;
+	while (i < high - 1)
+	{
+		int t;
+		k = minloc(a, i, high);
+		t = a[k];
+		a[k] = a[i];
+		a[i] = t;
+		i = i + 1;
+	}
+}
+
+int main(void)
+{
+	int i;
+
+	i = 0;
+	while (i < 10)
+	{
+		x[i] = input();
+		i = i + 1;
+	}
+
+	sort(x, 0, 10);
+
+	i = 0;
+	while (i < 10)
+	{
+		output(x[i]);
+		i = i + 1;
+	}
 }
