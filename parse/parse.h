@@ -169,6 +169,7 @@ enum class quat_op {
 	initlst,initlstend,initlstitem,
 	//before type check 
 	type_cast,
+	none
 
 };
 namespace assign_type {

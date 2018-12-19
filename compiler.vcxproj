@@ -163,6 +163,7 @@
     <ClInclude Include="parse\graph.h" />
     <ClInclude Include="parse\parse.h" />
     <ClInclude Include="parse\type.h" />
+    <ClInclude Include="target\target.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cpp\cpp.cpp" />
@@ -172,6 +173,7 @@
     <ClCompile Include="parse\graph.cpp" />
     <ClCompile Include="parse\parse.cpp" />
     <ClCompile Include="parse\type.cpp" />
+    <ClCompile Include="target\target.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

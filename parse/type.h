@@ -262,7 +262,7 @@ struct symbols {
 	static type get_const_type(int id, lex_data const& data) {
 		switch (data.get_type_token(id)) {
 		case type_token::string_literal:
-			return { symbols::char8,data.get_str(id).size() };
+			return { symbols::char8,data.get_str(id).size()+1 };
 		case type_token::int_literal:
 			return { symbols::int64,0 };
 		case type_token::double_literal:

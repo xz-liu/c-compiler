@@ -72,7 +72,7 @@ std::string get_label_type_name(labels::label_type ty) {
 std::string get_name_of_now(int now, lex_data const & data) {
 	if (now < 0)return  "{@False}";
 	if (now >= data.lex_result.size()) {
-		return std::string("{@Temp_") + std::to_string(now - data.lex_result.size()) + "}";
+		return std::string("$Temp_") + std::to_string(now - data.lex_result.size());
 	}
 	switch (data.get_type_token(now)) {
 	case type_token::string_literal:return data.get_str(now);
@@ -359,6 +359,23 @@ void symbols::assign_type_check(type lhs, type rhs, int atype) {
 
 void throw_scope_error(int id, lex_data const &data, scope::handle_scope h_curr, std::string const& def) {
 	throw scope_error("In " + h_curr->scope_name + " :  " + def + " symbol <" + get_name_of_now(id, data) + ">");
+}
+quat_op assign_type_op(int atype) {
+	switch (atype) {
+	case assign_type::normal:return quat_op::none;
+	case assign_type::add:return quat_op::add;
+	case assign_type::sub:return quat_op::sub;
+	case assign_type::mul:return quat_op::mul;
+	case assign_type::init:return quat_op::none;
+	case assign_type::div:return quat_op::div;
+	case assign_type::mod:return quat_op::mod;
+	case assign_type::shl:return quat_op::shl;
+	case assign_type::shr:return quat_op::shr;
+	case assign_type::and:return quat_op::band;
+	case assign_type:: or :return quat_op::bor;
+	case assign_type::xor:return quat_op::bxor;
+	}
+	return quat_op::none;
 }
 void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & data, int quat_pos) {
 #define get_var_or_const_type(ty,id) \
@@ -666,7 +683,14 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		int index1 = h_curr->find_handle_of_id(id1, data)->get_index(id1, data);
 		if (var_list[index1].first.second) {
 			assign_type_check(ty1, ty2, atype);
-			push_quat(qt);
+			quat_op mid_op = assign_type_op(atype);
+			if(mid_op==quat_op::none) {
+				push_quat(qt);
+			} else {
+				push_quat({ mid_op,std::array<int,3>{id1,id2,tmp_var_cnt} });
+				h_curr->insert_new_id(get_name_of_now(tmp_var_cnt, data), new_var(ty1.first, ty1.second, true, h_curr), scope::variable);
+				push_quat({ quat_op::assign,std::array<int,3>{id1,tmp_var_cnt++,assign_type::normal} });
+			}
 		} else throw type_error("cannot assign rvalue : ", get_name_of_now(id1, data));
 	} break;
 	case quat_op::initlst:

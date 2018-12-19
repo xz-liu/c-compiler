@@ -7,6 +7,7 @@
 #include "parse\parse.h"
 #include "parse/exp.h"
 #include "parse/type.h"
+#include "target/target.h"
 //#define _MYDEBUG_NOCATCH
 //
 void debug_string(std::string const& s,std::vector<int> const& vec) {
@@ -23,6 +24,9 @@ void debug_string(std::string const& s,std::vector<int> const& vec) {
 	symbols sym(parse);
 	sym.debug_quat(sym.quats, parse.label_stack, data_c);
 	sym.debug();
+	target t(data_c, sym);
+	cout << " -------------------------" << endl;
+	cout << t.assembly() << endl;
 }
 void handle() {
 	std::set<int64_t> dag;
@@ -101,13 +105,4 @@ int main() {
 
 
 
-void cpp(std::ifstream & ifs) {
-	std::map<std::string, std::string> def;
-	std::string curr;
-	while(getline(ifs,curr)) {
-		std::regex INCLUDE(R"([ ]*#[ ]*include[ ]*<.*>)");
-		if(curr.size()) {
-		}
-	}
-}
 
