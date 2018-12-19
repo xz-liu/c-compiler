@@ -751,7 +751,7 @@ bool func_def::add_param(int str, int type_id, bool arr, symbols const & sym) {
 
 void func_def::debug(symbols & sym) {
 	using std::cout;
-	cout <<"function" << ", size:"
+	cout << get_type_name(return_type,sym.data) << ", size:"
 		<< stack_size << ", params cnt:" << params.size() << " (" << std::endl;
 	for (auto&& x : id_to_param) {
 		cout<<"\t" << x.first << ":" << get_type_name(params[x.second].first, sym.data)

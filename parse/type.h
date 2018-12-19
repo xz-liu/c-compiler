@@ -301,6 +301,7 @@ struct symbols {
 		}
 		root_scope->debug("");	
 	}
+	
 
 	std::string get_id_name(int id) {
 		return get_name_of_now(id, data);

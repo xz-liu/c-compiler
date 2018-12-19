@@ -2,7 +2,7 @@
 #include "graph.h"
 #include "../error/error.h"
 #include "type.h"
-#define _MYDEBUG_PARSER
+//#define _MYDEBUG_PARSER
 #ifdef _MYDEBUG_PARSER
 using std::cout;
 using std::endl;
@@ -159,10 +159,10 @@ parser::parser(lex_data const& d, grammar & g)
 
 #define _GRAMMAR_ASSIGN_ACT(str,code) \
 	grm.assign_action(str, [&](int action_id ,int now) { \
-		stack.debug(data) ;\
+		/*stack.debug(data) ;*/\
 		if(action_id>=0) quat_history.emplace( action_id ,std::make_pair(label_cnt, quat_top) ) ;  \
 		code \
-		stack.debug(data) ;\
+		/*stack.debug(data) ;*/\
 	})
 
 #pragma region predefined operations
