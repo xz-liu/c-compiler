@@ -166,7 +166,6 @@ void target::work() {
 		}
 	}
 }
-
 std::string target::name_of(int id, scope::handle_scope h_curr) {
 	auto it = id_name.find(id);
 	if (it != id_name.end())return it->second;

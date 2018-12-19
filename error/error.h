@@ -26,5 +26,6 @@ define_new_error_type(parse, "ERROR ON PARSING: ");
 define_new_error_type(lex, "ERROR ON LEXICAL ANALYSISING: ");
 define_new_error_type(type, "ERROR ON TYPE CHECK: ");
 define_new_error_type(scope, "ERROR ON SCOPE CHECK: ");
+define_new_error_type(target, "ERROR ON GENERATING ASM: ");
 
 #undef define_new_error_type

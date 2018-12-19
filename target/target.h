@@ -11,6 +11,7 @@ struct target {
 	std::string cseg_end;
 	std::map<int,std::string> id_name;
 	void work();
+	void init_of_var(int id, int id_to_init);
 	std::string name_of(int id, scope::handle_scope h_curr);
 	target(lex_data const& d, symbols & sy);
 	std::string assembly(){
