@@ -259,19 +259,19 @@ std::string target::name_of(int id, scope::handle_scope h_curr) {
 		switch (ty.first) {
 		case symbols::int64:
 		{
-			dseg += cname + " DD " + get_name_of_now(id, data) + "\n";
+			dseg += cname + " QWORD " + get_name_of_now(id, data) + "\n";
 		}break;
 		case symbols::char8:
 		{
 			if (ty.second >= 1) {
-				dseg += cname + " DB \"" + get_name_of_now(id, data) + "\",0\n";
+				dseg += cname + " BYTE \"" + get_name_of_now(id, data) + "\",0\n";
 			} else {
-				dseg += cname + " DB '" + get_name_of_now(id, data) + "'\n";
+				dseg += cname + " BYTE '" + get_name_of_now(id, data) + "'\n";
 			}
 		}break;
 		case symbols::float64:
 		{
-			dseg += cname + " DQ " + get_name_of_now(id, data) + "\n";
+			dseg += cname + " QWORD " + get_name_of_now(id, data) + "\n";
 		}
 		}
 		const_name.emplace(id, cname);
@@ -284,10 +284,10 @@ std::string target::name_of(int id, scope::handle_scope h_curr) {
 		dseg += vname + " ";
 		auto ty = sym.var_list[index].first.first;
 		switch (sym.get_type_size({ ty.first,0 })) {
-		case 1:dseg += "DB "; break;
-		case 2:dseg += "DW "; break;
-		case 4: dseg += "DD "; break;
-		case 8:dseg += "DQ "; break;
+		case 1:dseg += "BYTE "; break;
+		case 2:dseg += "WORD "; break;
+		case 4: dseg += "DWORD "; break;
+		case 8:dseg += "QWORD "; break;
 		}
 		if (ty.second >= 1) {
 			//array
