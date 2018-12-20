@@ -1,12 +1,14 @@
 #include "target.h"
 
 void target::work() {
-	for (int i = 1; i < sym.quats.size() - 1; i++) {
+	for (int i = 1; i < sym.quats.size() - 1; i++) 
+	{
 		symbols::quat &qt = sym.quats[i];
 		auto &qv = qt.first.second;
 		auto hscope = qt.second;
 		auto op = qt.first.first;
-		switch (op) {
+		switch (op) 
+		{
 		case quat_op::label:
 		{
 			cseg += "LABEL_" + std::to_string(qv[0]) + ":\n";
@@ -26,7 +28,8 @@ void target::work() {
 			}break;
 			}
 		}break;
-		case quat_op::btrue:{
+		case quat_op::btrue:
+		{
 			auto v = name_of(qv[1], hscope);
 			cseg += "mov eax," + v + "\nand eax,eax\njnz LABEL_" + std::to_string(qv[0])+"\n";
 		}break;
@@ -35,7 +38,8 @@ void target::work() {
 			auto v = name_of(qv[1], hscope);
 			cseg += "mov eax," + v + "\nand eax,eax\njz LABEL_" + std::to_string(qv[0]) + "\n";
 		}break;
-		case quat_op::add: {
+		case quat_op::add: 
+		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + lhs + "\nadd eax," + rhs + "\nmov " + to + ",eax\n";
 		} break;
@@ -49,7 +53,8 @@ void target::work() {
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + lhs + "\nimul " + rhs + "\nmov " + to + ",eax\n";
 		}break;
-		case quat_op::div: {
+		case quat_op::div: 
+		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov edx,0\nmov eax," + lhs + "\nmov ecx," + rhs + "\nidiv ecx\nmov " + to + ",eax\n";
 		}  break;
@@ -58,15 +63,18 @@ void target::work() {
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov edx,0\nmov eax," + lhs + "\nmov ecx," + rhs + "\nidiv ecx\nmov " + to + ",edx\n";
 		}  break;
-		case quat_op::shl: {
+		case quat_op::shl: 
+		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + lhs + "\nmov ecx," + rhs + "\nshl eax,cl\nmov " + to + ",eax\n";
 		}break;
-		case quat_op::shr: {
+		case quat_op::shr: 
+		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + lhs + "\nmov ecx," + rhs + "\nshr eax,cl\nmov " + to + ",eax\n";
 		}  break;
-		case quat_op::e: {
+		case quat_op::e: 
+		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + lhs + "\nsub " + rhs + "\nnot eax\nmov " + to + ",eax\n";
 		}break;
@@ -75,7 +83,8 @@ void target::work() {
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + lhs + "\nsub " + rhs + "\nmov " + to + ",eax\n";
 		} break;
-		case quat_op::ge: {
+		case quat_op::ge: 
+		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + lhs + "\nsub " + rhs + "\n";
 			cseg += "shr eax,31\nnot eax\nmov " + to + ",eax\n";
@@ -117,7 +126,8 @@ void target::work() {
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + rhs + "\nor " + lhs + "\nmov " + to + ",eax\n";
 		} break;
-		case quat_op::land: {
+		case quat_op::land:
+		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + rhs + "\nmov ebx," + lhs+"\n";
 			cseg += R"(
@@ -125,16 +135,18 @@ void target::work() {
 			mov ecx,eflags
 			test ebx,ebx
 			and ecx,eflags
-			and ecx,0040h
+			and ecx,0040h  ;ZF == 0x0040
 			not ecx
 			)";//ZF == 0x0040
 			cseg += "mov " + to + ",ecx\n";
 		} break;
-		case quat_op::inc: {
+		case quat_op::inc: 
+		{
 			auto v = name_of(qv[0], hscope);
 			cseg += "inc " + v + "\n";
 		}break;
-		case quat_op::dec:{
+		case quat_op::dec:
+		{
 			auto v = name_of(qv[0], hscope);
 			cseg += "dec " + v + "\n";
 		} break;
@@ -148,25 +160,28 @@ void target::work() {
 			auto v = name_of(qv[0], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + v + "\nnot eax\nmov " + to + ",eax\n";
 		}  break;
-		case quat_op::pos: {
+		case quat_op::pos: 
+		{
 
 			auto v = name_of(qv[0], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + v + "\nmov " + to + ",eax\n";
 		} break;
-		case quat_op::neg: {
+		case quat_op::neg: 
+		{
 
 			auto v = name_of(qv[0], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + v + "\nneg eax\nmov " + to + ",eax\n";
 		} break;
 			//before type check 
-		case quat_op::type_cast: {
+		case quat_op::type_cast: 
+		{
 			auto v = name_of(qv[0], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + v + "\nmov " + to + ",eax\n";
 		} break;
 		}
 	}
 }
-std::string target::name_of(int id, scope::handle_scope h_curr) {
+std::string target::name_of(int id, scope::handle_scope h_curr) {//通过id获取变量名字
 	auto it = id_name.find(id);
 	if (it != id_name.end())return it->second;
 
@@ -176,38 +191,41 @@ std::string target::name_of(int id, scope::handle_scope h_curr) {
 		switch (ty.first) {
 		case symbols::int64:
 		{
-			dseg += cname + " DWORD " + get_name_of_now(id, data) + "\n";
+			dseg += cname + " DD " + get_name_of_now(id, data) + "\n";
 		}break;
 		case symbols::char8:
 		{
 			if (ty.second >= 1) {
-				dseg += cname + " BYTE \"" + get_name_of_now(id, data) + "\",0\n";
+				dseg += cname + " DB \"" + get_name_of_now(id, data) + "\",0\n";
 			} else {
-				dseg += cname + " BYTE '" + get_name_of_now(id, data) + "'\n";
+				dseg += cname + " DB '" + get_name_of_now(id, data) + "'\n";
 			}
 		}break;
 		case symbols::float64:
 		{
-			dseg += cname + " QWORD " + get_name_of_now(id, data) + "\n";
+			dseg += cname + " DQ " + get_name_of_now(id, data) + "\n";
 		}
 		}
 		id_name.emplace(id, cname);
 		return  cname;
-	} else {
+	} 
+	else 
+	{
 		int index = h_curr->find_handle_of_id(id, data)->get_index(id, data);
 		std::string vname = get_name_of_now(id, data);
 		dseg += vname + " ";
 		auto ty = sym.var_list[index].first.first;
 		switch (sym.get_type_size({ ty.first,0 })) {
-		case 1:dseg += "BYTE "; break;
-		case 2:dseg += "WORD "; break;
-		case 4: dseg += "DWORD "; break;
-		case 8:dseg += "QWORD "; break;
+		case 1:dseg += "DB "; break;
+		case 2:dseg += "DW "; break;
+		case 4: dseg += "DD "; break;
+		case 8:dseg += "DQ "; break;
 		}
 		if (ty.second >= 1) {
 			//array
 			dseg += std::to_string(ty.second) + " DUP(?)\n";
-		} else {
+		} 
+		else {
 			dseg += " ?\n";
 		}
 		id_name.emplace(id, vname);
