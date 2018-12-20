@@ -3,7 +3,7 @@
 #include "../parse/type.h"
 
 struct target {
-	lex_data const & data;
+	lex_data const & data;//���ֱ�����������������
 	symbols & sym;
 	std::string struct_def;
 	std::string dseg;
