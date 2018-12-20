@@ -302,6 +302,9 @@ struct symbols {
 		root_scope->debug("");	
 	}
 	
+	type get_var_type(int id,scope::handle_scope hscope) {
+		return var_list[hscope->find_handle_of_id(id, data)->get_index(id, data)].first.first;
+	}
 
 	std::string get_id_name(int id) {
 		return get_name_of_now(id, data);
