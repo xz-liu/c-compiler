@@ -166,8 +166,8 @@ void symbols::debug_single_quat(
 	case quat_op::funcend:
 	case quat_op::structdef:
 	case quat_op::structend:
-		cout << get_name_of_now(qt.second[0], data)<< ","
-		<< qt.second[1] << endl;
+		cout << get_name_of_now(qt.second[0], data) << ","
+			<< qt.second[1] << endl;
 		break;
 	case quat_op::cblock:
 	case quat_op::cend:
@@ -395,7 +395,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 	};
 
 #define type_cast(ty2,size2,id_to_cast,islvalue,id_scope,tvc)\
-	id_scope->insert_new_id(get_name_of_now(tvc, data), new_var(ty2, size2, islvalue, id_scope), scope::variable);\
+	id_scope->insert_new_id(get_name_of_now(tvc, data), new_var(ty2, size2, islvalue, id_scope), scope::variable,*this);\
 	push_quat(std::make_pair(quat_op::type_cast,std::array<int,3>{id_to_cast, ty2, tvc})) ;\
 
 	switch (qt.first) {
@@ -435,7 +435,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		}
 		if (arr <= 0) arr = 0;
 		else arr = data.get_int(arr);
-		h_curr->insert_new_id(get_name_of_now(id, data), new_var(ty, arr, true, h_curr), scope::variable);
+		h_curr->insert_new_id(get_name_of_now(id, data), new_var(ty, arr, true, h_curr), scope::variable,*this);
 		if (curr_struct >= 0) {
 			struct_list[curr_struct].add_member(get_name_of_now(id, data), { ty,arr }, *this);
 		}
@@ -452,8 +452,8 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 			if (!h_type)throw_scope_error(struct_id_pos(ty), data, h_curr, "undefined");
 
 		}
-		h_curr = h_curr->create_new_scope("function " + get_name_of_now(id, data));
-		h_curr->father->insert_new_id(get_name_of_now(id, data), new_func(ty, quat_pos,h_curr), scope::func);
+		h_curr = h_curr->create_new_scope("function " + get_name_of_now(id, data) ,scope::function,*this,ty);
+		h_curr->father->insert_new_id(get_name_of_now(id, data), new_func(ty, quat_pos, h_curr), scope::func,*this);
 		push_quat(qt);
 	}
 	break;
@@ -466,7 +466,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 			auto h_type = h_curr->find_handle_of_id(struct_id_pos(ty), data);
 			if (!h_type)throw_scope_error(struct_id_pos(ty), data, h_curr, "undefined");
 		}
-		h_curr->insert_new_id(get_name_of_now(id, data), new_var(ty, pt, true, h_curr), scope::variable);
+		h_curr->insert_new_id(get_name_of_now(id, data), new_var(ty, pt, true, h_curr), scope::variable,*this);
 		func_list[func_list.size() - 1].add_param(id, ty, pt, *this);
 	}
 	break;
@@ -477,15 +477,15 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		break;
 	}
 	//incomplete !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	case quat_op::structdef: 
+	case quat_op::structdef:
 	{
 		int id = qt.second[0];
 		if (h_curr->find_handle_of_id(id, data))
 			throw_scope_error(id, data, h_curr, "redefined");
 		push_quat(qt);
 		curr_struct = new_struct(qt.second[1]);
-		h_curr->insert_new_id(get_name_of_now(id, data), curr_struct, scope::struct_type);
-		h_curr = h_curr->create_new_scope((qt.second[1]?"union ":"struct ") + get_name_of_now(id, data));
+		h_curr->insert_new_id(get_name_of_now(id, data), curr_struct, scope::struct_type,*this);
+		h_curr = h_curr->create_new_scope((qt.second[1] ? "union " : "struct ") + get_name_of_now(id, data),scope::structure,*this);
 		break;
 	}
 	case quat_op::structend:
@@ -495,7 +495,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 	}		break;
 	case quat_op::cblock:
 	{
-		h_curr = h_curr->create_new_scope("_");
+		h_curr = h_curr->create_new_scope("_",scope::normal,*this);
 	}break;
 	case quat_op::cend:
 	{
@@ -506,7 +506,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		int id = qt.second[0];
 		type ty;
 		get_var_or_const_type(ty, id);
-		if(func_list[curr_call_id].params.size()<=curr_push_order) {
+		if (func_list[curr_call_id].params.size() <= curr_push_order) {
 			throw type_error("too many arguments");
 		}
 		auto param_ty = func_list[curr_call_id].params[curr_push_order++];
@@ -537,12 +537,12 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 	}break;
 	case quat_op::callend:
 	{
-		if(func_list[curr_call_id].params.size()>curr_push_order) {
+		if (func_list[curr_call_id].params.size() > curr_push_order) {
 			throw type_error("arguements not enough");
 		}
 		int id = qt.second[0];
 		h_curr->insert_new_id(get_name_of_now(id, data),
-			new_var(func_list[curr_call_id].return_type, 0, false, h_curr), scope::variable);
+			new_var(func_list[curr_call_id].return_type, 0, false, h_curr), scope::variable,*this);
 		push_quat(qt);
 	}break;
 	case quat_op::ret:
@@ -575,7 +575,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		if (!ty1.second || ty2.second || !is_int_or_char(ty2.first)) {
 			throw type_error("array subscription with wrong param :" + get_type_name(ty1.first, data) + " , " + get_type_name(ty2.first, data));
 		}
-		h_curr->insert_new_id(get_name_of_now(idres, data), new_var(ty1.first, 0, true, h_curr), scope::variable);
+		h_curr->insert_new_id(get_name_of_now(idres, data), new_var(ty1.first, 0, true, h_curr), scope::variable,*this);
 		push_quat(qt);
 
 	}break;
@@ -593,7 +593,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 			throw_scope_error(id2, data, h_curr, "undefined");
 		}
 		tyres = struct_list[index1].members[memb];
-		h_curr->insert_new_id(get_name_of_now(idres, data), new_var(tyres.first, tyres.second, true, h_curr), scope::variable);
+		h_curr->insert_new_id(get_name_of_now(idres, data), new_var(tyres.first, tyres.second, true, h_curr), scope::variable,*this);
 		push_quat(qt);
 	}break;
 	case quat_op::add:
@@ -641,7 +641,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 			push_quat(qt);
 		}break;
 		}
-		h_curr->insert_new_id(get_name_of_now(idres, data), new_var(tyres.first, tyres.second, false, h_curr), scope::variable);
+		h_curr->insert_new_id(get_name_of_now(idres, data), new_var(tyres.first, tyres.second, false, h_curr), scope::variable,*this);
 	}break;
 	case quat_op::inc:
 	case quat_op::dec:
@@ -673,7 +673,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 			auto handle = h_curr->find_handle_of_id(id1, data);
 			if (!handle) {
 				if (is_tmp_var(id1)) {
-					h_curr->insert_new_id(get_name_of_now(id1, data), new_var(ty2.first, ty2.second, true, h_curr), scope::variable);
+					h_curr->insert_new_id(get_name_of_now(id1, data), new_var(ty2.first, ty2.second, true, h_curr), scope::variable,*this);
 					handle = h_curr;
 				} else throw_scope_error(id1, data, h_curr, "undefined");
 			}if (handle->get_type_of_id(id1, data) != scope::variable)
@@ -684,11 +684,11 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		if (var_list[index1].first.second) {
 			assign_type_check(ty1, ty2, atype);
 			quat_op mid_op = assign_type_op(atype);
-			if(mid_op==quat_op::none) {
+			if (mid_op == quat_op::none) {
 				push_quat(qt);
 			} else {
 				push_quat({ mid_op,std::array<int,3>{id1,id2,tmp_var_cnt} });
-				h_curr->insert_new_id(get_name_of_now(tmp_var_cnt, data), new_var(ty1.first, ty1.second, true, h_curr), scope::variable);
+				h_curr->insert_new_id(get_name_of_now(tmp_var_cnt, data), new_var(ty1.first, ty1.second, true, h_curr), scope::variable,*this);
 				push_quat({ quat_op::assign,std::array<int,3>{id1,tmp_var_cnt++,assign_type::normal} });
 			}
 		} else throw type_error("cannot assign rvalue : ", get_name_of_now(id1, data));
@@ -697,7 +697,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 	{
 		int id = qt.second[0];
 		curr_init_list = new_var(none, 0, false, h_curr);
-		h_curr->insert_new_id(get_name_of_now(id, data), curr_init_list, scope::variable);
+		h_curr->insert_new_id(get_name_of_now(id, data), curr_init_list, scope::variable,*this);
 	}
 	break;
 	case quat_op::initlstend:
@@ -725,7 +725,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 
 symbols::symbols(parser const& p)
 	:data(p.data),
-	root_scope(std::make_shared<scope>(nullptr, "GLOBAL")),
+	root_scope(std::make_shared<scope>(nullptr, "GLOBAL",scope::global)),
 	curr_call_id(-1), curr_struct(-1), curr_push_order(0), curr_init_list(-1),
 	tmp_var_cnt(p.tmp_var_cnt + p.input_data_cnt), tmp_var_begin(p.input_data_cnt) {
 	h_curr = root_scope;
@@ -752,10 +752,10 @@ bool struct_def::add_member(std::string const & str, std::pair<int, int> type_id
 }
 
 void struct_def::debug(symbols & sym) {
-	using std::cout; 
+	using std::cout;
 	cout << (is_union ? "union" : "struct") << ", size:"
-		<<struct_size<<", members cnt:"<<members.size()<< " [" << std::endl;
-	for (auto&& x:id_to_member) {
+		<< struct_size << ", members cnt:" << members.size() << " [" << std::endl;
+	for (auto&& x : id_to_member) {
 		cout << "\t" << x.first << ":" << get_type_name(members[x.second].first, sym.data)
 			<< '[' << members[x.second].second << "], offset=" << member_offset[x.second] << std::endl;
 	}
@@ -775,11 +775,47 @@ bool func_def::add_param(int str, int type_id, bool arr, symbols const & sym) {
 
 void func_def::debug(symbols & sym) {
 	using std::cout;
-	cout << get_type_name(return_type,sym.data) << ", size:"
+	cout << get_type_name(return_type, sym.data) << ", size:"
 		<< stack_size << ", params cnt:" << params.size() << " (" << std::endl;
 	for (auto&& x : id_to_param) {
-		cout<<"\t" << x.first << ":" << get_type_name(params[x.second].first, sym.data)
+		cout << "\t" << x.first << ":" << get_type_name(params[x.second].first, sym.data)
 			<< '[' << params[x.second].second << "], offset=" << param_offset[x.second] << std::endl;
 	}
 	cout << ")" << std::endl;
+}
+
+int scope::calculate_scope_size(symbols & sym) {
+	int _sz = 0;
+	for (auto&& x : id_map) {
+		if (x.second.first == variable)
+			_sz += sym.get_type_size(sym.var_list[x.second.second].first.first);
+	}
+	return _sz;
+}
+
+scope::handle_scope scope::create_new_scope(std::string const & name, scope_type s_ty, symbols &sym, int ret_type) {
+	handle_scope handle = std::make_shared<scope>
+		(shared_from_this(), scope_name + "::" + name, s_ty);
+	inner.push_back(handle);
+	const int func_offset = 4;
+	switch (s_ty) {
+	case function:
+	{
+		handle->scope_size += func_offset;
+		if (sym.is_basic_type(ret_type) || sym.is_struct(ret_type)) {
+			handle->insert_new_id("$return_value", sym.new_var(ret_type, 0, true, handle), variable, sym);
+		}
+	}break;
+	case normal:break;
+	case structure:break;
+	}
+	return handle;
+}
+
+void scope::insert_new_id(std::string const & id, int pos, id_type ty, symbols & sym) {
+	id_map.emplace(id, std::make_pair(ty, pos));
+	if (ty == variable) {
+		id_offset.emplace(id, scope_size);
+		scope_size += sym.get_type_size(sym.var_list[pos].first.first);
+	}
 }

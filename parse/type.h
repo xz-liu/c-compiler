@@ -8,23 +8,35 @@ struct scope
 		func,
 		struct_type,
 		variable,
+		
 	};
+	enum scope_type {
+		structure,
+		function,
+		global,
+		normal
+	};
+	scope_type s_type;
 	using id_info = std::pair <id_type, int >;
 	std::string scope_name;
 	using handle_scope = std::shared_ptr<scope>;
 	std::vector<handle_scope> inner;
 	handle_scope father;
-	scope(handle_scope hs, std::string const& sn) : father(hs), scope_name(sn) {}
-	handle_scope create_new_scope(std::string const& name) {
-		handle_scope handle = std::make_shared<scope>
-			(shared_from_this(), scope_name + "::" + name);
-		inner.push_back(handle);
-		return handle;
+	int calculate_scope_size(symbols & sym);
+	scope(handle_scope hs, std::string const& sn,scope_type s_ty) 
+		: father(hs), scope_name(sn),s_type(s_ty) {
+		if (father&& father->s_type!=global)scope_size=(father->scope_size);
+		else scope_size = 0;
 	}
+
+	handle_scope create_new_scope(std::string const& name, scope_type s_ty,symbols &sym,  int ret_type = -1);
 	std::map<std::string, id_info> id_map;
-	void insert_new_id(std::string const& id, int pos, id_type ty) {
-		id_map.emplace(id, std::make_pair(ty, pos));
-	}
+	std::map<std::string, int > id_offset;
+	int scope_size;
+	void insert_new_id(std::string const& id, int pos, id_type ty, symbols &sym);
+	//!!!!!!!!!!!incomplete!!!!!
+	void insert_new_ref_arr(std::string const& id , std::string const& arr_id, int rank, int varlist_pos, symbols& sym){}
+	void insert_new_ref_str(std::string const& id,std::string const& strvar_id, std::string const& field_id, int varlist_pos, symbols& sym){}
 	id_type get_type_of_id(int id, lex_data const& data) {
 		return id_map[get_name_of_now(id, data)].first;
 	}
@@ -49,13 +61,13 @@ struct scope
 			cout << prefix << x.first << ":";
 			switch (x.second.first) {
 			case struct_type:
-				cout << "STRUCT ," << x.second.second << endl;
+				cout << "STRUCT ,"  << x.second.second << endl;
 				break;
 			case func:
 				cout << "FUNCTION ," << x.second.second << endl;
 				break;
 			case variable:
-				cout << "VARIABLE ," << x.second.second << endl;
+				cout << "VARIABLE ,offset="<<id_offset[x.first]<<", " << x.second.second << endl;
 				break;
 			}
 		}
