@@ -38,3 +38,4 @@ Release/*
 *.txt
 ! c_minus.txt
 lex.cpp
+debug.asm

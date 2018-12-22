@@ -7,11 +7,13 @@ struct target {
 	struct univ_var {
 		enum type {
 			array_val,
-			normal
+			normal,
+			param_array_val
 		}ty;
 		target* tg;
 		std::string pos_id;
 		std::string normal_var;
+		std::string ptr_type;
 		int type_size;
 		std::string reg(std::string which="a") {
 			std::string real_reg;
@@ -31,7 +33,11 @@ struct target {
 		operator std::string() {
 			if (ty == array_val) {
 				tg->cseg += "mov esi," + pos_id + "\n";
-				return normal_var + "[esi]";
+				return ptr_type+ normal_var + "["+std::to_string(type_size)+"*esi]";
+			} else if (ty== param_array_val) {
+				tg->cseg += "mov esi," + pos_id + "\n";
+				tg->cseg += "mov ebx,[" + normal_var + "]\n";
+				return ptr_type + "[ebx+" + std::to_string(type_size) + "*esi]";
 			} else return normal_var;
 		}
 		univ_var() :ty(normal){}
@@ -45,8 +51,17 @@ struct target {
 		univ_var(std::string const& s) {
 			this->operator=(s);
 		}
-		univ_var(target *t, std::string const& pos_id, std::string const& arr_id)
-			:tg(t), normal_var(arr_id), pos_id(pos_id), ty(array_val) {}
+		univ_var(target *t, std::string const& pos_id, std::string const& arr_id, bool is_param, int type_size)
+			:tg(t), normal_var(arr_id), pos_id(pos_id),type_size(type_size) {
+			if (is_param)ty = param_array_val;
+			else { ty = array_val; }
+			switch (type_size) {
+			case 1:ptr_type = "byte ptr "; break;
+			case 2:ptr_type = "word ptr "; break;
+			case 4:case 8:
+				ptr_type = "dword ptr "; break;
+			}
+		}
 	};
 
 	lex_data const & data;

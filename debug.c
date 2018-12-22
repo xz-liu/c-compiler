@@ -11,6 +11,20 @@ struct test_struct{
 	int a,b,c;
 };
 
+void print_str(char str[]){
+	int cur;
+	for(cur=0;str[cur]!=0;cur++){
+		putchar(str[cur]);
+	}
+}
+void print_own_str(){
+	char str[20];
+	int cur;
+	for(cur=0;cur<20;cur++){
+		str[cur]= '0'+cur;
+		putchar(str[cur]);
+	}
+}
 void print_int(int i){
 	char cs[20];
 	int cnt=0;
@@ -77,5 +91,8 @@ int main()
 	print_int(fuck[a]);
 	putchar(' ');
 	print_int(ts.a);
+	print_own_str();
+	print_str("fucK!!!!!!!!!!\n");
+
 	
 }

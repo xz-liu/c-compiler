@@ -570,7 +570,10 @@ target::univ_var &target::name_of_struct_member(int id,int s_id, int f_id, scope
 }
 
 target::univ_var &target::name_of_array_member(int id, int arr_id, int pos_id, scope::handle_scope h_curr) {
-	return id_name[{id, h_curr}] = univ_var(this, name_of(pos_id, h_curr), name_of(arr_id, h_curr));
+	bool is_param = (h_curr->find_handle_of_id(arr_id, data))->s_type == scope::function;
+	auto ty = sym.get_var_type(arr_id,h_curr);
+	
+	return id_name[{id, h_curr}] = univ_var(this, name_of(pos_id, h_curr), name_of(arr_id, h_curr),is_param,sym.get_type_size({ty.first,0}));
 }
 
 target::target(lex_data const & d, symbols & sy)
