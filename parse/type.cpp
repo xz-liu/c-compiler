@@ -79,7 +79,7 @@ std::string get_name_of_now(int now, lex_data const & data) {
 	switch (data.get_type_token(now)) {
 	case type_token::string_literal:return data.get_str(now);
 	case type_token::int_literal:return std::to_string(data.get_int(now));
-	case type_token::char_literal:return std::to_string(data.get_char(now));
+	case type_token::char_literal:return std::string(1,data.get_char(now));
 	case type_token::double_literal:return std::to_string(data.get_double(now));
 	case type_token::identifier:return (data.get_id(now));
 	case type_token::type: return get_type_name(now, data);
@@ -105,7 +105,7 @@ std::string get_assign_type_name(int now) {
 }
 std::string get_type_name(int now, lex_data const &data) {
 	if (symbols::is_struct(now)) {
-		return "{@struct}" + get_name_of_now(symbols::struct_id_pos(now), data);
+		return get_name_of_now(symbols::struct_id_pos(now), data);
 	}
 	switch (now) {
 	case symbols::none: return "none";

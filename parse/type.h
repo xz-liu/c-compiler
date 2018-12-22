@@ -300,6 +300,10 @@ struct symbols {
 
 	std::vector<quat> quats;
 
+	std::string get_struct_name(int ty) {
+		return get_type_name(ty, data);
+	}
+
 	//void check_scope(scope::handle_scope hscope, int id);
 	void handle_single_quat(parser::quat_type const & qt, lex_data const & data,int quat_pos);
 	symbols(parser const&p);

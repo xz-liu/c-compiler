@@ -1,6 +1,6 @@
 #include "target.h"
 
-std::string target::return_value_of(int curr_call_id) {
+target::univ_var &target::return_value_of(int curr_call_id) {
 	return return_value_names[sym.func_list[sym.root_scope->get_index(curr_call_id, data)].function_scope];
 }
 
@@ -14,8 +14,9 @@ void target::work() {
 		case quat_op::input: {
 			cseg += "xor edx,edx\nmov ah,1\nint 21h\nmov dl,al\nmov " + name_of(qv[0], hscope) + ",edx\n";
 		}break;
-		case quat_op::output: {
-			cseg += "mov edx," + name_of(qv[0], hscope) + "\nmov ah,5\nint 21h\n";
+		case quat_op::output:
+		{
+			cseg += "invoke StdOut, addr " + name_of(qv[0], hscope) + "\n";
 		}break;
 		case quat_op::func:
 		{
@@ -28,7 +29,7 @@ void target::work() {
 
 		}break;
 		case quat_op::funcparam: {
-			name_of(qv[0], hscope);
+			name_of(qv[0], hscope,true);
 		}break;
 		case quat_op::funcend:
 		{
@@ -58,14 +59,23 @@ void target::work() {
 			if (func_retval != symbols::void_type) {
 				auto rto = name_of(qv[0], hscope);
 				auto rfrom = return_value_of(curr_call_id);
-				cseg += "mov eax," + rfrom + "\nmov " + rto + ",eax\n";
+				cseg += "mov eax," + rfrom + "\n";
+				cseg +="mov " + rto + ",eax\n";
 			}
 		}break;
 		case quat_op::push: {
 			auto &func = sym.func_list[sym.root_scope->get_index(curr_call_id, data)];
-			auto rto = name_of(func.id_pos[curr_push_pos++], func.function_scope);
+			auto rto = name_of(func.id_pos[curr_push_pos], func.function_scope);
 			auto rfrom = name_of(qv[0],hscope);
-			cseg += "mov eax," + rfrom + "\nmov " + rto + ",eax\n";
+			if (func.params[curr_push_pos].second) {
+				cseg += "mov eax,offset " + rfrom + "\n";
+				cseg += "mov " + rto + ",eax\n";
+			}
+			else {
+				cseg += "mov eax " + rfrom + "\n";
+				cseg += "mov " + rto + ",eax\n";
+			}
+			curr_push_pos++;
 		}break;
 		case  quat_op::structdef: {
 			int index = sym.get_id_index(qv[0], hscope);
@@ -79,6 +89,12 @@ void target::work() {
 				case 2:struct_def += "WORD "; break;
 				case 4: struct_def += "DWORD "; break;
 				case 8:struct_def += "QWORD "; break;
+				default:
+				{
+					if(sym.is_struct(ty.first)) {
+						struct_def += sym.get_struct_name(ty.first)+" ";
+					}
+				}
 				}
 				if (ty.second >= 1) {
 					//array
@@ -105,7 +121,8 @@ void target::work() {
 			case assign_type::init:
 			{
 				auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope);
-				cseg += "mov eax," + rhs + "\nmov " + lhs + ",eax\n";
+				cseg += "mov eax," + rhs + "\n";
+				cseg+="mov " + lhs + ",eax\n";
 			}break;
 			}
 		}break;
@@ -125,11 +142,15 @@ void target::work() {
 			auto ty = sym.get_var_type(qv[0], hscope);
 			switch (ty.first) {
 			case symbols::int32:
-				cseg += "mov eax," + lhs + "\nadd eax," + rhs + "\nmov " + to + ",eax\n";
+				cseg += "mov eax," + lhs + "\n";
+				cseg += "add eax," + rhs + "\n";
+				cseg += "mov " + to + ",eax\n";
 				break;
 			case symbols::float32:
 			case symbols::float64:
-				cseg += "fld " + lhs + "\nfld " + rhs + "\nfadd\nfst " + to + "\n";
+				cseg += "fld " + lhs + "\n";
+				cseg += "fld " + rhs + "\nfadd\n";
+				cseg += "fst " + to + "\n";
 				break;
 			}
 		} break;
@@ -139,11 +160,15 @@ void target::work() {
 			auto ty = sym.get_var_type(qv[0], hscope);
 			switch (ty.first) {
 			case symbols::int32:
-				cseg += "mov eax," + lhs + "\nsub eax," + rhs + "\nmov " + to + ",eax\n";
+				cseg += "mov eax," + lhs + "\n";
+				cseg += "sub eax," + rhs + "\n";
+				cseg += "mov " + to + ",eax\n";
 				break;
 			case symbols::float32:
 			case symbols::float64:
-				cseg += "fld " + lhs + "\nfld " + rhs + "\nfsub\nfst " + to + "\n";
+				cseg += "fld " + lhs + "\n";
+				cseg += "fld " + rhs + "\nfsub\n";
+				cseg += "fst " + to + "\n";
 				break;
 			}
 		} break;
@@ -153,11 +178,15 @@ void target::work() {
 			auto ty = sym.get_var_type(qv[0], hscope);
 			switch (ty.first) {
 			case symbols::int32:
-				cseg += "mov eax," + lhs + "\nimul eax," + rhs + "\nmov " + to + ",eax\n";
+				cseg += "mov eax," + lhs + "\n";
+				cseg += "imul eax," + rhs + "\n";
+				cseg+="mov " + to + ",eax\n";
 				break;
 			case symbols::float32:
 			case symbols::float64:
-				cseg += "fld " + lhs + "\nfld " + rhs + "\nfmul\nfst " + to + "\n";
+				cseg += "fld " + lhs + "\n";
+				cseg += "fld " + rhs + "\nfmul\n";
+				cseg+="fst " + to + "\n";
 				break;
 			}
 		} break;
@@ -167,86 +196,116 @@ void target::work() {
 			auto ty = sym.get_var_type(qv[0], hscope);
 			switch (ty.first) {
 			case symbols::int32:
-				cseg += "mov eax," + lhs + "\nidiv eax," + rhs + "\nmov " + to + ",eax\n";
+				cseg += "mov eax," + lhs + "\n";
+				cseg += "idiv eax," + rhs + "\n";
+				cseg+="mov " + to + ",eax\n";
 				break;
 			case symbols::float32:
 			case symbols::float64:
-				cseg += "fld " + lhs + "\nfld " + rhs + "\nfdiv\nfst " + to + "\n";
+				cseg += "fld " + lhs + "\n";
+				cseg += "fld " + rhs + "\nfdiv\n";
+				cseg+="fst " + to + "\n";
 				break;
 			}
 		} break;
 		case quat_op::mod:
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov edx,0\nmov eax," + lhs + "\nmov ecx," + rhs + "\nidiv ecx\nmov " + to + ",edx\n";
+			cseg += "mov edx,0\nmov eax," + lhs + "\n";
+			cseg += "mov ecx," + rhs + "\nidiv ecx\n";
+			cseg += "mov " + to + ",edx\n";
 		}  break;
 		case quat_op::shl: 
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + lhs + "\nmov ecx," + rhs + "\nshl eax,cl\nmov " + to + ",eax\n";
+			cseg += "mov eax," + lhs + "\n";
+			cseg += "mov ecx," + rhs + "\nshl eax,cl\n";
+			cseg+="mov " + to + ",eax\n";
 		}break;
 		case quat_op::shr: 
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + lhs + "\nmov ecx," + rhs + "\nshr eax,cl\nmov " + to + ",eax\n";
+			cseg += "mov eax," + lhs + "\n";
+			cseg += "mov ecx," + rhs + "\nshr eax,cl\n";
+			cseg += "mov " + to + ",eax\n";
 		}  break;
 		case quat_op::e: 
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + lhs + "\nsub eax," + rhs + "\nnot eax\nmov " + to + ",eax\n";
+			cseg += "mov eax," + lhs + "\n";
+			cseg+="sub eax," + rhs + "\nnot eax\n";
+			cseg += "mov " + to + ",eax\n";
 		}break;
 		case quat_op::ne:
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + lhs + "\nsub eax," + rhs + "\nmov " + to + ",eax\n";
+			cseg += "mov eax," + lhs + "\n";
+			cseg += "sub eax," + rhs + "\n";
+			cseg += "mov " + to + ",eax\n";
 		} break;
 		case quat_op::ge: 
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + lhs + "\nsub eax," + rhs + "\n";
-			cseg += "shr eax,31\nnot eax\nmov " + to + ",eax\n";
+			cseg += "mov eax," + lhs + "\n";
+			cseg += "sub eax," + rhs + "\n";
+			cseg += "shr eax,31\nnot eax\n";
+			cseg += "mov " + to + ",eax\n";
 		} break;
 		case quat_op::le:
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + rhs + "\nsub eax," + lhs + "\n";
-			cseg += "shr eax,31\nnot eax\nmov " + to + ",eax\n";
+			cseg += "mov eax," + rhs + "\n";
+			cseg += "sub eax," + lhs + "\n";
+			cseg += "shr eax,31\n";
+			cseg += "not eax\n";
+			cseg += "mov " + to + ",eax\n";
 		} break;
 		case quat_op::l:
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + lhs + "\nsub eax," + rhs + "\n";
+			cseg += "mov eax," + lhs + "\n";
+			cseg += "sub eax," + rhs + "\n";
 			cseg += "shr eax,31\nmov " + to + ",eax\n";
 		}  break;
 		case quat_op::g:
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + rhs + "\nsub eax," + lhs + "\n";
+			cseg += "mov eax," + rhs + "\n";
+			cseg += "sub eax," + lhs + "\n";
 			cseg += "shr eax,31\nmov " + to + ",eax\n";
 		} break;
 		case quat_op::bxor: {
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + rhs + "\nxor eax," + lhs + "\nmov " + to + ",eax\n";
+			cseg += "mov eax," + rhs + "\n";
+			cseg += "xor eax," + lhs + "\n";
+			cseg += "mov " + to + ",eax\n";
 		} break;
 		case quat_op::bor:
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + rhs + "\nor eax," + lhs + "\nmov " + to + ",eax\n";
+			cseg += "mov eax," + rhs + "\n";
+			cseg += "or eax," + lhs + "\n";
+			cseg += "mov " + to + ",eax\n";
 		}  break;
 		case quat_op::band:
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + rhs + "\nand eax," + lhs + "\nmov " + to + ",eax\n";
+			cseg += "mov eax," + rhs + "\n";
+			cseg += "and eax," + lhs + "\n";
+			cseg += "mov " + to + ",eax\n";
 		} break;
 		case quat_op::lor:
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + rhs + "\nor eax," + lhs + "\nmov " + to + ",eax\n";
+			cseg += "mov eax," + rhs + "\n";
+			cseg += "or eax," + lhs + "\n";
+			cseg += "mov " + to + ",eax\n";
 		} break;
 		case quat_op::land:
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + rhs + "\nmov ebx," + lhs+"\n";
+			cseg += "mov eax," + rhs + "\n";
+			cseg += "mov ebx," + lhs+"\n";
 			cseg += R"(
 			test eax,eax
 			mov ecx,eflags
@@ -270,38 +329,64 @@ void target::work() {
 		case quat_op::bnot:
 		{
 			auto v = name_of(qv[0], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + v + "\nnot eax\nmov " + to + ",eax\n";
+			cseg += "mov eax," + v + "\n";
+			cseg += "not eax\nmov " + to + ",eax\n";
 		}  break;
 		case quat_op::lnot:
 		{// not true
 			auto v = name_of(qv[0], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + v + "\nnot eax\nmov " + to + ",eax\n";
+			cseg += "mov eax," + v + "\n";
+			cseg += "not eax\n";
+			cseg += "mov " + to + ",eax\n";
 		}  break;
 		case quat_op::pos: 
 		{
 
 			auto v = name_of(qv[0], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + v + "\nmov " + to + ",eax\n";
+			cseg += "mov eax," + v + "\n";
+			cseg += "mov " + to + ",eax\n";
 		} break;
 		case quat_op::neg: 
 		{
 
 			auto v = name_of(qv[0], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + v + "\nneg eax\nmov " + to + ",eax\n";
+			cseg += "mov eax," + v + "\n";
+			cseg += "neg eax\n";
+			cseg += "mov " + to + ",eax\n";
 		} break;
+		case quat_op::arrayval: {
+			name_of_array_member(qv[2], qv[0], qv[1], hscope);
+		}break;
+		case quat_op::structval: {
+			name_of_struct_member(qv[2], qv[0], qv[1], hscope);
+		}break;
 			//before type check 
 		case quat_op::type_cast: 
 		{
 			auto v = name_of(qv[0], hscope), to = name_of(qv[2], hscope);
 			auto dty = qv[1], sty = sym.get_var_type(qv[0], hscope).first;
 			if(sym.is_float(dty)) {
-				cseg += "fild " + v + "\nfst " + to + "\n";
+				cseg += "fild " + v + "\n";
+				cseg += "fst " + to + "\n";
 			}
 			else {
 				if(sym.is_float(sty)) {
-					cseg += "fld " + v + "\nfist eax\n";
+					cseg += "fld " + v + "\n";
+					cseg += "fist eax\n";
 				}else {
-					cseg += "mov eax," + v + "\n";
+					cseg += "xor eax,eax\n";
+					switch (sym.get_type_size({ sty,0 })) {
+					case 1:
+						cseg += "mov al," + v + "\n";
+						break;
+					case 2:
+						cseg += "mov ax," + v + "\n";
+						break;
+					case 4:
+					case 8:
+						cseg += "mov eax," + v + "\n";
+						break;
+					}
 				}
 				switch (dty) {
 				case symbols::int32:
@@ -324,17 +409,24 @@ void target::work() {
 		}
 	}
 }
-std::string target::insert_retval( scope::handle_scope h_curr) {
+target::univ_var &target::insert_retval( scope::handle_scope h_curr) {
 	auto real_scope = h_curr->find_handle_of_id("$return_value");
 	int index = real_scope->id_map["$return_value"].second;
 	std::string vname = "$return_value_" + std::to_string(index);
 	dseg += vname + " ";
 	auto ty = sym.var_list[index].first.first;
 	switch (sym.get_type_size({ ty.first,0 })) {
+	case -1:
+	case 0:break;
 	case 1:dseg += "BYTE "; break;
 	case 2:dseg += "WORD "; break;
 	case 4: dseg += "DWORD "; break;
 	case 8:dseg += "DWORD "; break;
+	default:{
+		if (sym.is_struct(ty.first)) {
+			dseg += sym.get_struct_name(ty.first) + " ";
+		}
+	}
 	}
 	if (ty.second >= 1) {
 		//array
@@ -342,10 +434,9 @@ std::string target::insert_retval( scope::handle_scope h_curr) {
 	} else {
 		dseg += " ?\n";
 	}
-	return_value_names.emplace(real_scope, vname);
-	return vname;
+	return return_value_names[real_scope]= vname;
 }
-std::string target::name_of(int id, scope::handle_scope h_curr) {
+target::univ_var &target::name_of(int id, scope::handle_scope h_curr, bool is_array_param) {
 	auto r_scope = h_curr;
 	while (r_scope) {
 		auto it = id_name.find({ id,r_scope });
@@ -375,8 +466,7 @@ std::string target::name_of(int id, scope::handle_scope h_curr) {
 			dseg += cname + " DWORD " + get_name_of_now(id, data) + "\n";
 		}
 		}
-		const_name.emplace(id, cname);
-		return  cname;
+		return const_name[id] = cname;
 	} 
 	else 
 	{
@@ -384,28 +474,44 @@ std::string target::name_of(int id, scope::handle_scope h_curr) {
 		int index =real_scope->get_index(id, data);
 		std::string vname = get_name_of_now(id, data) + "_" + std::to_string(index);
 		dseg += vname + " ";
-		auto ty = sym.var_list[index].first.first;
-		switch (sym.get_type_size({ ty.first,0 })) {
-		case 1:dseg += "BYTE "; break;
-		case 2:dseg += "WORD "; break;
-		case 4: dseg += "DWORD "; break;
-		case 8:dseg += "DWORD "; break;
+		if (is_array_param) {
+			dseg += "DWORD ?\n";
 		}
-		if (ty.second >= 1) {
-			//array
-			dseg += std::to_string(ty.second) + " DUP(?)\n";
-		} 
 		else {
-			dseg += " ?\n";
+			auto ty = sym.var_list[index].first.first;
+			switch (sym.get_type_size({ ty.first,0 })) {
+			case 1:dseg += "BYTE "; break;
+			case 2:dseg += "WORD "; break;
+			case 4: dseg += "DWORD "; break;
+			case 8:dseg += "DWORD "; break;
+			default:{
+				if (sym.is_struct(ty.first)) {
+					dseg += sym.get_struct_name(ty.first) + " ";
+				}
+			}
+			}
+			if (ty.second >= 1) {
+				//array
+				dseg += std::to_string(ty.second) + " DUP(?)\n";
+			} else {
+				dseg += " ?\n";
+			}
 		}
-		id_name.insert(std::make_pair(std::make_pair( id,real_scope), vname));
-		return vname;
+		return id_name[std::make_pair(id, real_scope)] = vname;
 	}
+}
+
+target::univ_var &target::name_of_struct_member(int id,int s_id, int f_id, scope::handle_scope h_curr) {
+	return id_name[{id, h_curr}] = name_of(s_id, h_curr) + "." + get_name_of_now(f_id,data);
+}
+
+target::univ_var &target::name_of_array_member(int id, int arr_id, int pos_id, scope::handle_scope h_curr) {
+	return id_name[{id, h_curr}] = univ_var(this, name_of(pos_id, h_curr), name_of(arr_id, h_curr));
 }
 
 target::target(lex_data const & d, symbols & sy)
 	:sym(sy), data(d) {
-	
+
 	dseg = ".data\n";
 	cseg_begin = R"(
 .code
@@ -415,6 +521,23 @@ END main
 		)";
 	incl = R"(includelib kernel32.lib  
 .model flat,stdcall 
+	
+option casemap :none
+ 
+includelib kernel32.lib
+includelib masm32.lib
+ 
+ExitProcess PROTO STDCALL:DWORD
+StdOut		PROTO STDCALL:DWORD
+
 )";
 	work();
+}
+
+std::string operator+(std::string const & lhs, target::univ_var & rhs) {
+	return lhs + std::string(rhs);
+}
+
+std::string operator+(target::univ_var & lhs, std::string const & rhs) {
+	return std::string(lhs) + rhs;
 }
