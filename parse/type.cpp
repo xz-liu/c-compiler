@@ -666,13 +666,17 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 	case quat_op::neg:
 	{
 		int id = qt.second[0];
+		int idres = qt.second[2];
 		type ty;
 		get_var_or_const_type(ty, id);
 		monocular_type_check(ty, qt.first);
+		h_curr->insert_new_id(get_name_of_now(idres, data), new_var(ty.first, ty.second, false, h_curr), scope::variable, *this);
+
 		push_quat(qt);
 	} break;
 	case quat_op::assign:
 	{
+		//type_cast(param_ty.first, ty.second, id, false, h_curr, tmp_var_cnt);
 		int id1 = qt.second[0], id2 = qt.second[1], atype = qt.second[2];
 		type ty1, ty2;
 		get_var_or_const_type(ty2, id2);
@@ -691,9 +695,13 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		int index1 = h_curr->find_handle_of_id(id1, data)->get_index(id1, data);
 		if (var_list[index1].first.second) {
 			assign_type_check(ty1, ty2, atype);
+			if(ty1!=ty2) {
+				type_cast(ty1.first, ty1.second, id2, false, h_curr, tmp_var_cnt);
+				id2 = tmp_var_cnt++;
+			}
 			quat_op mid_op = assign_type_op(atype);
 			if (mid_op == quat_op::none) {
-				push_quat(qt);
+				push_quat({ quat_op::assign,std::array<int,3>{id1,id2,assign_type::normal} });
 			} else {
 				push_quat({ mid_op,std::array<int,3>{id1,id2,tmp_var_cnt} });
 				h_curr->insert_new_id(get_name_of_now(tmp_var_cnt, data), new_var(ty1.first, ty1.second, true, h_curr), scope::variable,*this);
@@ -729,6 +737,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 	}break;
 	default:push_quat(qt);
 	}
+	//debug_single_quat(quats.back(), labels_lst, data);
 
 }
 
@@ -736,7 +745,7 @@ symbols::symbols(parser const& p)
 	:data(p.data),
 	root_scope(std::make_shared<scope>(nullptr, "GLOBAL",scope::global)),
 	curr_call_id(-1), curr_struct(-1), curr_push_order(0), curr_init_list(-1),
-	tmp_var_cnt(p.tmp_var_cnt + p.input_data_cnt), tmp_var_begin(p.input_data_cnt) {
+	tmp_var_cnt(p.tmp_var_cnt + p.input_data_cnt), tmp_var_begin(p.input_data_cnt),labels_lst(p.label_stack) {
 	h_curr = root_scope;
 	int cnt = 0;
 	for (auto &&qt : p.quats) {

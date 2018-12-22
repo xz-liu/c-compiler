@@ -72,7 +72,7 @@ void target::work() {
 				cseg += "mov " + rto + ",eax\n";
 			}
 			else {
-				cseg += "mov eax " + rfrom + "\n";
+				cseg += "mov eax," + rfrom + "\n";
 				cseg += "mov " + rto + ",eax\n";
 			}
 			curr_push_pos++;
@@ -114,7 +114,7 @@ void target::work() {
 		}break;
 		case quat_op::label:
 		{
-			cseg += "LABEL_" + std::to_string(qv[0]) + ":\n";
+			cseg += "LABEL_" + std::to_string(qv[0]) + ":nop\n";
 		}break;
 		case quat_op::jmp:
 		{
@@ -127,8 +127,17 @@ void target::work() {
 			case assign_type::init:
 			{
 				auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope);
-				cseg += "mov eax," + rhs + "\n";
-				cseg+="mov " + lhs + ",eax\n";
+				int ty = sym.get_type_size(sym.get_var_type(qv[0], hscope));
+				std::string reg;
+				switch (ty) {
+				case 1:reg = "al"; break;
+				case 2:reg = "ax"; break;
+				case 4:
+				case 8:
+					reg = "eax"; break;
+				}
+				cseg += "mov " + reg +"," + rhs + "\n";
+				cseg += "mov " + lhs + "," + reg + "\n";
 			}break;
 			}
 		}break;
@@ -148,6 +157,7 @@ void target::work() {
 			auto ty = sym.get_var_type(qv[0], hscope);
 			switch (ty.first) {
 			case symbols::int32:
+			case symbols::int64:
 				cseg += "mov eax," + lhs + "\n";
 				cseg += "add eax," + rhs + "\n";
 				cseg += "mov " + to + ",eax\n";
@@ -201,9 +211,11 @@ void target::work() {
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
 			auto ty = sym.get_var_type(qv[0], hscope);
 			switch (ty.first) {
+			case symbols::int64:
 			case symbols::int32:
 				cseg += "mov eax," + lhs + "\n";
-				cseg += "idiv eax," + rhs + "\n";
+				cseg += "cdq\n";
+				cseg += "idiv " + rhs + "\n";
 				cseg+="mov " + to + ",eax\n";
 				break;
 			case symbols::float32:
@@ -217,7 +229,7 @@ void target::work() {
 		case quat_op::mod:
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov edx,0\nmov eax," + lhs + "\n";
+			cseg += "\nmov eax," + lhs + "\ncdq\n";
 			cseg += "mov ecx," + rhs + "\nidiv ecx\n";
 			cseg += "mov " + to + ",edx\n";
 		}  break;
@@ -239,7 +251,14 @@ void target::work() {
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + lhs + "\n";
-			cseg+="sub eax," + rhs + "\nnot eax\n";
+			cseg+="sub eax," + rhs + "\n";
+			cseg += R"(
+test eax,eax
+pushfd
+pop eax
+and eax,0040h  ;ZF == 0x0040
+shr eax,6
+			)";
 			cseg += "mov " + to + ",eax\n";
 		}break;
 		case quat_op::ne:
@@ -247,6 +266,14 @@ void target::work() {
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + lhs + "\n";
 			cseg += "sub eax," + rhs + "\n";
+			cseg += R"(
+test eax,eax
+pushfd
+pop eax
+and eax,0040h  ;ZF == 0x0040
+shr eax,6
+xor eax,1
+			)";
 			cseg += "mov " + to + ",eax\n";
 		} break;
 		case quat_op::ge: 
@@ -254,7 +281,7 @@ void target::work() {
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + lhs + "\n";
 			cseg += "sub eax," + rhs + "\n";
-			cseg += "shr eax,31\nnot eax\n";
+			cseg += "shr eax,31\nxor eax,1\n";
 			cseg += "mov " + to + ",eax\n";
 		} break;
 		case quat_op::le:
@@ -263,7 +290,7 @@ void target::work() {
 			cseg += "mov eax," + rhs + "\n";
 			cseg += "sub eax," + lhs + "\n";
 			cseg += "shr eax,31\n";
-			cseg += "not eax\n";
+			cseg += "xor eax,1\n";
 			cseg += "mov " + to + ",eax\n";
 		} break;
 		case quat_op::l:
@@ -271,7 +298,8 @@ void target::work() {
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + lhs + "\n";
 			cseg += "sub eax," + rhs + "\n";
-			cseg += "shr eax,31\nmov " + to + ",eax\n";
+			cseg += "shr eax,31\n";
+			cseg += "mov " + to + ",eax\n";
 		}  break;
 		case quat_op::g:
 		{
@@ -305,6 +333,14 @@ void target::work() {
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + rhs + "\n";
 			cseg += "or eax," + lhs + "\n";
+			cseg += R"(
+test eax,eax
+pushfd
+pop eax
+and eax,0040h  ;ZF == 0x0040
+shr eax,6
+xor eax,1
+			)";
 			cseg += "mov " + to + ",eax\n";
 		} break;
 		case quat_op::land:
@@ -313,12 +349,16 @@ void target::work() {
 			cseg += "mov eax," + rhs + "\n";
 			cseg += "mov ebx," + lhs+"\n";
 			cseg += R"(
-			test eax,eax
-			mov ecx,eflags
-			test ebx,ebx
-			and ecx,eflags
-			and ecx,0040h  ;ZF == 0x0040
-			not ecx
+test eax,eax
+pushfd
+pop ecx
+test ebx,ebx		
+pushfd
+pop edx
+or ecx,edx
+and ecx,0040h  ;ZF == 0x0040
+shr ecx,6
+xor ecx,1
 			)";//ZF == 0x0040
 			cseg += "mov " + to + ",ecx\n";
 		} break;
@@ -342,7 +382,13 @@ void target::work() {
 		{// not true
 			auto v = name_of(qv[0], hscope), to = name_of(qv[2], hscope);
 			cseg += "mov eax," + v + "\n";
-			cseg += "not eax\n";
+			cseg += R"(
+test eax,eax
+pushfd
+pop eax
+and eax,0040h  ;ZF == 0x0040
+shr eax,6
+			)";
 			cseg += "mov " + to + ",eax\n";
 		}  break;
 		case quat_op::pos: 
@@ -532,6 +578,7 @@ target::target(lex_data const & d, symbols & sy)
 
 	dseg = ".data\n";
 	cseg_begin = R"(
+.stack 100
 .code
 )";
 	cseg_end = R"(

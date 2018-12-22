@@ -26,7 +26,10 @@ void debug_string(std::string const& s,std::vector<int> const& vec) {
 	sym.debug();
 	target t(data_c, sym);
 	cout << " -------------------------" << endl;
-	cout << t.assembly() << endl;
+	std::ofstream ofs("debug.asm");
+
+	ofs << t.assembly();
+	ofs.close();
 }
 void handle() {
 	std::set<int64_t> dag;
@@ -93,7 +96,7 @@ int main(int argc,char **argv) {
 		}
 		vec.push_back(cnt);
 		debug_string(c,vec);
-		std::cout << "DONE" << std::endl;
+		//std::cout << "DONE" << std::endl;
 #ifndef _MYDEBUG_NOCATCH
 	}catch(std::exception& e) {
 		std::cout << e.what();

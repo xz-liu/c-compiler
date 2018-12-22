@@ -275,7 +275,11 @@ parser::parser(lex_data const& d, grammar & g)
 #pragma region  exp op:: bino op
 
 	_GRAMMAR_ASSIGN_ACT("{@*@}", {
-		binocular_operator("*",quat_op::mul,{type_token::string_literal});
+		binocular_operator("*",quat_op::mul,{ type_token::string_literal });
+	});
+
+	_GRAMMAR_ASSIGN_ACT("{@%@}", {
+		binocular_operator("%",quat_op::mod,{ type_token::string_literal });
 	});
 
 	_GRAMMAR_ASSIGN_ACT("{@/@}", {

@@ -342,29 +342,5 @@ struct symbols {
 	scope::id_type get_id_cat(int id, scope::handle_scope curr) {
 		return curr->get_type_of_id(id, data);
 	}
-
-	void testtest(int i) {
-		quat qt = quats[i];
-		quat_op op = qt.first.first;
-		std::array<int, 3> &qv = qt.first.second;
-		if (op == quat_op::label) {
-			//label 
-			int pos = qv[0];
-		} else if (op == quat_op::add) {
-			// lhs,rhs,to 
-			scope::handle_scope scopes[3]{ find_handl_of_id(qt.second,qv[0]),
-							find_handl_of_id(qt.second,qv[1]),
-							find_handl_of_id(qt.second,qv[2]) };
-			var_def vars[3];
-			for(int v=0;v<3;v++) {
-				vars[v] = var_list[scopes[v]->get_index(qv[v], data)];
-			}
-			int size=get_type_size(vars[0].first.first);
-			//<int, 30> 4*30=120
-		}else if(op == quat_op::newvar) {
-			// id, type, array
-			
-		}
-	}
-
+	labels const& labels_lst;
 };

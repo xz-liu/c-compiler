@@ -12,6 +12,22 @@ struct target {
 		target* tg;
 		std::string pos_id;
 		std::string normal_var;
+		int type_size;
+		std::string reg(std::string which="a") {
+			std::string real_reg;
+			switch (type_size) {
+			case 1:
+				real_reg = which + "l";
+				break;
+			case 2:
+				real_reg = which + "x"; break;
+			case 4:
+			case 8:
+				real_reg = "e"+ which + "x"; break;
+			}
+			tg->cseg += "xor " + real_reg + "," + real_reg + "\n";
+			return real_reg;
+		}
 		operator std::string() {
 			if (ty == array_val) {
 				tg->cseg += "mov esi," + pos_id + "\n";
@@ -23,9 +39,12 @@ struct target {
 		univ_var& operator= (std::string const& s) {
 			ty = normal;
 			normal_var = s;
+			type_size = s.back() - '0';
 			return *this;
 		}
-		univ_var(std::string const& s) :normal_var(s), ty(normal) {}
+		univ_var(std::string const& s) {
+			this->operator=(s);
+		}
 		univ_var(target *t, std::string const& pos_id, std::string const& arr_id)
 			:tg(t), normal_var(arr_id), pos_id(pos_id), ty(array_val) {}
 	};

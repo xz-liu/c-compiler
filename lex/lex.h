@@ -81,6 +81,7 @@ struct lex_data {
 			}
 			if (ng)first_pos.push_back(now);
 		}
+		for (auto&& x : vlit_idt)if(x!="main")x+= "$";
 	}
 
 	std::string in_line_and_chr(int now) {
