@@ -53,10 +53,13 @@ void target::work() {
 			curr_push_pos = 0;
 		}break;
 		case quat_op::callend: {
+			auto func_retval = sym.func_list[sym.root_scope->get_index(curr_call_id, data)].return_type;
 			cseg += "call " + get_name_of_now(curr_call_id, data) + "\n";
-			auto rto = name_of(qv[0],hscope);
-			auto rfrom = return_value_of(curr_call_id);
-			cseg += "mov eax," + rfrom + "\nmov " + rto + ",eax\n";
+			if (func_retval != symbols::void_type) {
+				auto rto = name_of(qv[0], hscope);
+				auto rfrom = return_value_of(curr_call_id);
+				cseg += "mov eax," + rfrom + "\nmov " + rto + ",eax\n";
+			}
 		}break;
 		case quat_op::push: {
 			auto &func = sym.func_list[sym.root_scope->get_index(curr_call_id, data)];
