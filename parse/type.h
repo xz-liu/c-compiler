@@ -320,6 +320,7 @@ struct symbols {
 	}
 	
 	type get_var_type(int id,scope::handle_scope hscope) {
+		if (is_const(id))return get_const_type(id);
 		return var_list[hscope->find_handle_of_id(id, data)->get_index(id, data)].first.first;
 	}
 

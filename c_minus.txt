@@ -81,7 +81,9 @@ code : normal_stmt
 normal_stmt : ';' 
         | exp_or_str ';' {pop_top}
         | 'break' ';' {break}
-        | 'continue' ';' {continue} ;
+        | 'continue' ';' {continue} 
+        | 'input' exp {input} ';'
+        | 'output' exp {output} ';' ; 
 call_func : '(' {call_func_begin} call_params ')' {call_func_end} ;
 call_params : call_param_list 
         | ;

@@ -2,6 +2,8 @@
 
 #include "../basic/basic.h"
 enum class token {
+	__builtin_input,
+	__builtin_output,
 	toktypedef,	//	typedef
 	tokvoid,	//	void
 	tokconst,	//	const

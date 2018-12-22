@@ -164,7 +164,16 @@ parser::parser(lex_data const& d, grammar & g)
 		code \
 		/*stack.debug(data) ;*/\
 	})
-
+#pragma region input & output 
+	_GRAMMAR_ASSIGN_ACT("{input}", {
+		int n = stack.pop();
+		add_quat(quat_op::input, n, 0, 0);
+	});
+	_GRAMMAR_ASSIGN_ACT("{output}", {
+		int n = stack.pop();
+		add_quat(quat_op::output, n, 0, 0);
+	});
+#pragma endregion 
 #pragma region predefined operations
 	_GRAMMAR_ASSIGN_ACT("return_to", {
 		//cout << " \t-- call [return_to] , RETURN TO " << action_id <<" STACK "<< rec_stack_vars.size() << endl;

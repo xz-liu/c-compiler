@@ -4,6 +4,8 @@
 
 regex_table::regex_table() :table{
 	make_pair(std::regex(R"QWERTY(typedef)QWERTY"),token::toktypedef),
+	make_pair(std::regex(R"QWERTY(__builtin_input)QWERTY"),token::__builtin_input),
+	make_pair(std::regex(R"QWERTY(__builtin_output)QWERTY"),token::__builtin_output),
 	make_pair(std::regex(R"QWERTY(void)QWERTY"),token::tokvoid),
 	make_pair(std::regex(R"QWERTY(const)QWERTY"),token::tokconst),
 	make_pair(std::regex(R"QWERTY(volatile)QWERTY"),token::tokvolatile),
@@ -196,6 +198,8 @@ token_name_type::token_name_type() {
 	_name.emplace(token::comma, ",");
 	_name.emplace(token::whitespace, " ");
 	_name.emplace(token::dummy, "end of file");
+	_name.emplace(token::__builtin_input, "__builtin_input");
+	_name.emplace(token::__builtin_output, "__builtin_output");
 }
 
 token_name_type token_name;
@@ -481,6 +485,8 @@ std::map<std::string, token> get_token_map() {
 	ADD_TOKEN(id, token::identifier);
 	ADD_TOKEN(string, token::string_literal);
 	ADD_TOKEN(enumeration_const, token::identifier);
+	ADD_TOKEN('input', token::__builtin_input);
+	ADD_TOKEN('output', token::__builtin_output);
 
 	return tok_Mp;
 }

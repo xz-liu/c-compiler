@@ -50,7 +50,9 @@ std::string & get_quat_op_name(quat_op op) {
 		{quat_op::initlst, "initlst" },
 		{quat_op::initlstend, "initlstend" },
 		{quat_op::initlstitem, "initlstitem" },
-		{quat_op::type_cast,"type_cast"},
+		{ quat_op::type_cast,"type_cast" },
+		{ quat_op::input,"input" },
+		{ quat_op::output,"output" },
 	};
 	return mp[op];
 }
@@ -210,6 +212,8 @@ void symbols::debug_single_quat(
 		break;
 	case quat_op::inc:
 	case quat_op::dec:
+	case quat_op::input:
+	case quat_op::output:
 		cout << get_name_of_now(qt.second[0], data) << endl;
 		break;
 	case quat_op::bnot:
@@ -723,6 +727,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		var_list[curr_init_list].first.first.second++;
 		push_quat(qt);
 	}break;
+	default:push_quat(qt);
 	}
 
 }

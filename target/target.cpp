@@ -11,9 +11,19 @@ void target::work() {
 		auto hscope = qt.second;
 		auto op = qt.first.first;
 		switch (op) {
+		case quat_op::input: {
+			cseg += "xor edx,edx\nmov ah,1\nint 21h\nmov dl,al\nmov " + name_of(qv[0], hscope) + ",edx\n";
+		}break;
+		case quat_op::output: {
+			cseg += "mov edx," + name_of(qv[0], hscope) + "\nmov ah,5\nint 21h\n";
+		}break;
 		case quat_op::func:
 		{
+			curr_funcdef_id = qv[0];
 			cseg += get_name_of_now(qv[0], data) + " PROC\n";
+			if (get_name_of_now(qv[0], data) == "main") {
+				cseg += ".startup\n";
+			}
 			//insert_param(hscope);
 
 		}break;
@@ -22,18 +32,20 @@ void target::work() {
 		}break;
 		case quat_op::funcend:
 		{
-			if(get_name_of_now(qv[0],data)=="main") {
-				cseg += "exit\n";
+			if(!has_return_command[curr_funcdef_id]) {
+				cseg += "ret\n";
 			}
 			cseg += get_name_of_now(qv[0], data) + " ENDP\n";
 		}break;
 		case quat_op::retval:{
+			has_return_command[curr_funcdef_id] = true;
 			auto v= insert_retval(hscope);
 			auto n = name_of(qv[2],hscope);
 			cseg += "mov eax," + n + "\nmov " + v + ",eax\n";
 			cseg += "ret\n";
 		}break;
 		case quat_op::ret: {
+			has_return_command[curr_funcdef_id] = true;
 			cseg += "ret\n";
 		}break;
 		case quat_op::call: {
