@@ -496,9 +496,11 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 	case quat_op::cblock:
 	{
 		h_curr = h_curr->create_new_scope("_",scope::normal,*this);
+		push_quat(qt);
 	}break;
 	case quat_op::cend:
 	{
+		push_quat(qt);
 		h_curr = h_curr->father;
 	}break;
 	case quat_op::push:

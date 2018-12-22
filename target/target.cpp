@@ -259,7 +259,7 @@ std::string target::name_of(int id, scope::handle_scope h_curr) {
 		switch (ty.first) {
 		case symbols::int64:
 		{
-			dseg += cname + " QWORD " + get_name_of_now(id, data) + "\n";
+			dseg += cname + " DWORD " + get_name_of_now(id, data) + "\n";
 		}break;
 		case symbols::char8:
 		{
@@ -271,7 +271,7 @@ std::string target::name_of(int id, scope::handle_scope h_curr) {
 		}break;
 		case symbols::float64:
 		{
-			dseg += cname + " QWORD " + get_name_of_now(id, data) + "\n";
+			dseg += cname + " DWORD " + get_name_of_now(id, data) + "\n";
 		}
 		}
 		const_name.emplace(id, cname);
@@ -287,7 +287,7 @@ std::string target::name_of(int id, scope::handle_scope h_curr) {
 		case 1:dseg += "BYTE "; break;
 		case 2:dseg += "WORD "; break;
 		case 4: dseg += "DWORD "; break;
-		case 8:dseg += "QWORD "; break;
+		case 8:dseg += "DWORD "; break;
 		}
 		if (ty.second >= 1) {
 			//array
@@ -310,5 +310,7 @@ target::target(lex_data const & d, symbols & sy)
 	cseg_end = R"(
 END main
 		)";
+	incl = R"(INCLUDELIB kernel32.lib  
+.MODEL flat,stdcall )";
 	work();
 }
