@@ -22,9 +22,9 @@ void target::work() {
 		{
 			curr_funcdef_id = qv[0];
 			cseg += get_name_of_now(qv[0], data) + " PROC\n";
-			if (get_name_of_now(qv[0], data) == "main") {
-				cseg += ".startup\n";
-			}
+			//if (get_name_of_now(qv[0], data) == "main") {
+			//	cseg += ".startup\n";
+			//}
 			//insert_param(hscope);
 
 		}break;
@@ -99,14 +99,14 @@ void target::work() {
 				if (ty.second >= 1) {
 					//array
 					if (sym.is_struct(ty.first))
-						dseg += std::to_string(ty.second) + " DUP(<>)\n";
+						struct_def += std::to_string(ty.second) + " DUP(<>)\n";
 					else
-						dseg += std::to_string(ty.second) + " DUP(?)\n";
+						struct_def += std::to_string(ty.second) + " DUP(?)\n";
 				} else {
 					if (sym.is_struct(ty.first))
-						dseg += " <>\n";
+						struct_def += " <>\n";
 					else
-						dseg += " ?\n";
+						struct_def += " ?\n";
 				}
 			}
 			struct_def += get_name_of_now(qv[0], data) + " ENDS\n";
