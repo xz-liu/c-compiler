@@ -80,25 +80,52 @@ void target::work() {
 				break;
 			case symbols::float32:
 			case symbols::float64:
-				cseg += "fld " + lhs + "\nfld" + rhs + "\nfadd\nfst " + to + "\n";
+				cseg += "fld " + lhs + "\nfld " + rhs + "\nfadd\nfst " + to + "\n";
 				break;
 			}
 		} break;
 		case quat_op::sub:
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + lhs + "\nsub eax," + rhs + "\nmov " + to + ",eax\n";
+			auto ty = sym.get_var_type(qv[0], hscope);
+			switch (ty.first) {
+			case symbols::int32:
+				cseg += "mov eax," + lhs + "\nsub eax," + rhs + "\nmov " + to + ",eax\n";
+				break;
+			case symbols::float32:
+			case symbols::float64:
+				cseg += "fld " + lhs + "\nfld " + rhs + "\nfsub\nfst " + to + "\n";
+				break;
+			}
 		} break;
 		case quat_op::mul:
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov eax," + lhs + "\nimul " + rhs + "\nmov " + to + ",eax\n";
-		}break;
+			auto ty = sym.get_var_type(qv[0], hscope);
+			switch (ty.first) {
+			case symbols::int32:
+				cseg += "mov eax," + lhs + "\nimul eax," + rhs + "\nmov " + to + ",eax\n";
+				break;
+			case symbols::float32:
+			case symbols::float64:
+				cseg += "fld " + lhs + "\nfld " + rhs + "\nfmul\nfst " + to + "\n";
+				break;
+			}
+		} break;
 		case quat_op::div: 
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
-			cseg += "mov edx,0\nmov eax," + lhs + "\nmov ecx," + rhs + "\nidiv ecx\nmov " + to + ",eax\n";
-		}  break;
+			auto ty = sym.get_var_type(qv[0], hscope);
+			switch (ty.first) {
+			case symbols::int32:
+				cseg += "mov eax," + lhs + "\nidiv eax," + rhs + "\nmov " + to + ",eax\n";
+				break;
+			case symbols::float32:
+			case symbols::float64:
+				cseg += "fld " + lhs + "\nfld " + rhs + "\nfdiv\nfst " + to + "\n";
+				break;
+			}
+		} break;
 		case quat_op::mod:
 		{
 			auto lhs = name_of(qv[0], hscope), rhs = name_of(qv[1], hscope), to = name_of(qv[2], hscope);
