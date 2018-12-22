@@ -98,9 +98,15 @@ void target::work() {
 				}
 				if (ty.second >= 1) {
 					//array
-					struct_def += std::to_string(ty.second) + " DUP(?)\n";
+					if (sym.is_struct(ty.first))
+						dseg += std::to_string(ty.second) + " DUP(<>)\n";
+					else
+						dseg += std::to_string(ty.second) + " DUP(?)\n";
 				} else {
-					struct_def += " ?\n";
+					if (sym.is_struct(ty.first))
+						dseg += " <>\n";
+					else
+						dseg += " ?\n";
 				}
 			}
 			struct_def += get_name_of_now(qv[0], data) + " ENDS\n";
@@ -430,9 +436,15 @@ target::univ_var &target::insert_retval( scope::handle_scope h_curr) {
 	}
 	if (ty.second >= 1) {
 		//array
-		dseg += std::to_string(ty.second) + " DUP(?)\n";
+		if (sym.is_struct(ty.first))
+			dseg += std::to_string(ty.second) + " DUP(<>)\n";
+		else 
+			dseg += std::to_string(ty.second) + " DUP(?)\n";
 	} else {
-		dseg += " ?\n";
+		if (sym.is_struct(ty.first))
+			dseg += " <>\n";
+		else
+			dseg += " ?\n";
 	}
 	return return_value_names[real_scope]= vname;
 }
@@ -492,9 +504,15 @@ target::univ_var &target::name_of(int id, scope::handle_scope h_curr, bool is_ar
 			}
 			if (ty.second >= 1) {
 				//array
-				dseg += std::to_string(ty.second) + " DUP(?)\n";
+				if (sym.is_struct(ty.first))
+					dseg += std::to_string(ty.second) + " DUP(<>)\n";
+				else
+					dseg += std::to_string(ty.second) + " DUP(?)\n";
 			} else {
-				dseg += " ?\n";
+				if (sym.is_struct(ty.first))
+					dseg += " <>\n";
+				else
+					dseg += " ?\n";
 			}
 		}
 		return id_name[std::make_pair(id, real_scope)] = vname;
