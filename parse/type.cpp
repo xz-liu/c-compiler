@@ -257,6 +257,7 @@ void symbols::debug_quat(std::vector<quat> const & quats,
 
 void symbols::debug_single_quat(quat const & qt, labels const & label_lst, lex_data const & data) {
 	debug_single_quat(qt.first, label_lst, data);
+	std::cout << "\tscope=" << qt.second->to_string() << std::endl;
 }
 
 
@@ -468,6 +469,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		}
 		h_curr->insert_new_id(get_name_of_now(id, data), new_var(ty, pt, true, h_curr), scope::variable,*this);
 		func_list[func_list.size() - 1].add_param(id, ty, pt, *this);
+		push_quat(qt);
 	}
 	break;
 	case quat_op::funcend:
@@ -772,6 +774,7 @@ bool func_def::add_param(int str, int type_id, bool arr, symbols const & sym) {
 	if (curr_var_size < 0)throw type_error("function param type error");
 	stack_size += curr_var_size;
 	id_to_param[str] = params.size() - 1;
+	id_pos.push_back(str);
 	return true;
 }
 

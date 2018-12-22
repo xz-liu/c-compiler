@@ -29,6 +29,8 @@ struct scope
 		else scope_size = 0;
 	}
 
+	std::string to_string() { return scope_name; }
+
 	handle_scope create_new_scope(std::string const& name, scope_type s_ty,symbols &sym,  int ret_type = -1);
 	std::map<std::string, id_info> id_map;
 	std::map<std::string, int > id_offset;
@@ -43,14 +45,16 @@ struct scope
 	int get_index(int id, lex_data const& data) {
 		return id_map[get_name_of_now(id, data)].second;
 	}
-
-	handle_scope find_handle_of_id(int id, lex_data const& data) {
-		auto it = id_map.find(get_name_of_now(id, data));
+	handle_scope find_handle_of_id(std::string const& str) {
+		auto it = id_map.find(str);
 		if (it != id_map.end())
 			return shared_from_this();
 		if (father)
-			return father->find_handle_of_id(id, data);
+			return father->find_handle_of_id(str);
 		return nullptr;
+	}
+	handle_scope find_handle_of_id(int id, lex_data const& data) {
+		return find_handle_of_id(get_name_of_now(id, data));
 	}
 	void debug(std::string prefix="") {
 		using std::cout;
@@ -88,6 +92,7 @@ struct func_def {
 	int return_type;
 	scope::handle_scope function_scope;
 	std::map<int, int> id_to_param;
+	std::vector<int> id_pos;
 	explicit func_def(int ty_id,int def_pos, scope::handle_scope f_scope) 
 		:return_type(ty_id), def_pos(def_pos),stack_size(0), function_scope(f_scope){}
 	bool has_def() { return def_pos >= 0; }

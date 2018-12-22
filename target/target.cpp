@@ -1,5 +1,9 @@
 #include "target.h"
 
+std::string target::return_value_of(int curr_call_id) {
+	return return_value_names[sym.func_list[sym.root_scope->get_index(curr_call_id, data)].function_scope];
+}
+
 void target::work() {
 	for (int i = 0; i < sym.quats.size(); i++) {
 		symbols::quat &qt = sym.quats[i];
@@ -10,6 +14,11 @@ void target::work() {
 		case quat_op::func:
 		{
 			cseg += get_name_of_now(qv[0], data) + " PROC\n";
+			//insert_param(hscope);
+
+		}break;
+		case quat_op::funcparam: {
+			name_of(qv[0], hscope);
 		}break;
 		case quat_op::funcend:
 		{
@@ -17,6 +26,31 @@ void target::work() {
 				cseg += "exit\n";
 			}
 			cseg += get_name_of_now(qv[0], data) + " ENDP\n";
+		}break;
+		case quat_op::retval:{
+			auto v= insert_retval(hscope);
+			auto n = name_of(qv[2],hscope);
+			cseg += "mov eax," + n + "\nmov " + v + ",eax\n";
+			cseg += "ret\n";
+		}break;
+		case quat_op::ret: {
+			cseg += "ret\n";
+		}break;
+		case quat_op::call: {
+			curr_call_id = qv[0];
+			curr_push_pos = 0;
+		}break;
+		case quat_op::callend: {
+			cseg += "call " + get_name_of_now(curr_call_id, data) + "\n";
+			auto rto = name_of(qv[0],hscope);
+			auto rfrom = return_value_of(curr_call_id);
+			cseg += "mov eax," + rfrom + "\nmov " + rto + ",eax\n";
+		}break;
+		case quat_op::push: {
+			auto &func = sym.func_list[sym.root_scope->get_index(curr_call_id, data)];
+			auto rto = name_of(func.id_pos[curr_push_pos++], func.function_scope);
+			auto rfrom = name_of(qv[0],hscope);
+			cseg += "mov eax," + rfrom + "\nmov " + rto + ",eax\n";
 		}break;
 		case  quat_op::structdef: {
 			int index = sym.get_id_index(qv[0], hscope);
@@ -275,9 +309,34 @@ void target::work() {
 		}
 	}
 }
+std::string target::insert_retval( scope::handle_scope h_curr) {
+	auto real_scope = h_curr->find_handle_of_id("$return_value");
+	int index = real_scope->id_map["$return_value"].second;
+	std::string vname = "$return_value_" + std::to_string(index);
+	dseg += vname + " ";
+	auto ty = sym.var_list[index].first.first;
+	switch (sym.get_type_size({ ty.first,0 })) {
+	case 1:dseg += "BYTE "; break;
+	case 2:dseg += "WORD "; break;
+	case 4: dseg += "DWORD "; break;
+	case 8:dseg += "DWORD "; break;
+	}
+	if (ty.second >= 1) {
+		//array
+		dseg += std::to_string(ty.second) + " DUP(?)\n";
+	} else {
+		dseg += " ?\n";
+	}
+	return_value_names.emplace(real_scope, vname);
+	return vname;
+}
 std::string target::name_of(int id, scope::handle_scope h_curr) {
-	auto it = id_name.find({id,h_curr});
-	if (it != id_name.end())return it->second;
+	auto r_scope = h_curr;
+	while (r_scope) {
+		auto it = id_name.find({ id,r_scope });
+		if (it != id_name.end())return it->second;
+		r_scope = r_scope->father;
+	}
 	auto it_const = const_name.find(id);
 	if (it_const != const_name.end())return it_const->second;
 	if (sym.is_const(id)) {
@@ -306,7 +365,8 @@ std::string target::name_of(int id, scope::handle_scope h_curr) {
 	} 
 	else 
 	{
-		int index = h_curr->find_handle_of_id(id, data)->get_index(id, data);
+		auto real_scope = h_curr->find_handle_of_id(id, data);
+		int index =real_scope->get_index(id, data);
 		std::string vname = get_name_of_now(id, data) + "_" + std::to_string(index);
 		dseg += vname + " ";
 		auto ty = sym.var_list[index].first.first;
@@ -323,13 +383,14 @@ std::string target::name_of(int id, scope::handle_scope h_curr) {
 		else {
 			dseg += " ?\n";
 		}
-		id_name.insert(std::make_pair(std::make_pair( id,h_curr ), vname));
+		id_name.insert(std::make_pair(std::make_pair( id,real_scope), vname));
 		return vname;
 	}
 }
 
 target::target(lex_data const & d, symbols & sy)
 	:sym(sy), data(d) {
+	
 	dseg = ".data\n";
 	cseg_begin = R"(
 .code
@@ -337,7 +398,8 @@ target::target(lex_data const & d, symbols & sy)
 	cseg_end = R"(
 END main
 		)";
-	incl = R"(INCLUDELIB kernel32.lib  
-.MODEL flat,stdcall )";
+	incl = R"(includelib kernel32.lib  
+.model flat,stdcall 
+)";
 	work();
 }
