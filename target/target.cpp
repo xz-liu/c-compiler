@@ -12,7 +12,8 @@ void target::work() {
 		auto op = qt.first.first;
 		switch (op) {
 		case quat_op::input: {
-			cseg += "xor edx,edx\nmov ah,1\nint 21h\nmov dl,al\nmov " + name_of(qv[0], hscope) + ",edx\n";
+			std::string str = name_of(qv[0], hscope);
+			cseg += "invoke scanf, offset $$read_char, offset " + str + "\n";
 		}break;
 		case quat_op::output:
 		{
@@ -50,6 +51,7 @@ void target::work() {
 			cseg += "ret\n";
 		}break;
 		case quat_op::call: {
+			call_id_stack.push({ curr_call_id,curr_push_pos });
 			curr_call_id = qv[0];
 			curr_push_pos = 0;
 		}break;
@@ -61,7 +63,10 @@ void target::work() {
 				auto rfrom = return_value_of(curr_call_id);
 				cseg += "mov eax," + rfrom + "\n";
 				cseg +="mov " + rto + ",eax\n";
-			}
+			}		
+			curr_call_id = call_id_stack.top().first;
+			curr_push_pos = call_id_stack.top().second;
+			call_id_stack.pop();
 		}break;
 		case quat_op::push: {
 			auto &func = sym.func_list[sym.root_scope->get_index(curr_call_id, data)];
@@ -176,6 +181,7 @@ void target::work() {
 			auto ty = sym.get_var_type(qv[0], hscope);
 			switch (ty.first) {
 			case symbols::int32:
+			case symbols::int64:
 				cseg += "mov eax," + lhs + "\n";
 				cseg += "sub eax," + rhs + "\n";
 				cseg += "mov " + to + ",eax\n";
@@ -194,6 +200,7 @@ void target::work() {
 			auto ty = sym.get_var_type(qv[0], hscope);
 			switch (ty.first) {
 			case symbols::int32:
+			case symbols::int64:
 				cseg += "mov eax," + lhs + "\n";
 				cseg += "imul eax," + rhs + "\n";
 				cseg+="mov " + to + ",eax\n";
@@ -462,7 +469,10 @@ shr eax,6
 	}
 }
 target::univ_var &target::insert_retval( scope::handle_scope h_curr) {
+	
 	auto real_scope = h_curr->find_handle_of_id("$return_value");
+	auto it = return_value_names.find(real_scope);
+	if (it != return_value_names.end())return it->second;
 	int index = real_scope->id_map["$return_value"].second;
 	std::string vname = "$return_value_" + std::to_string(index);
 	dseg += vname + " ";
@@ -580,6 +590,7 @@ target::target(lex_data const & d, symbols & sy)
 	:sym(sy), data(d) {
 
 	dseg = ".data\n";
+	dseg += "$$read_char BYTE '%c',0\n";
 	cseg_begin = R"(
 .stack 100
 .code
@@ -587,16 +598,20 @@ target::target(lex_data const & d, symbols & sy)
 	cseg_end = R"(
 END main
 		)";
-	incl = R"(includelib kernel32.lib  
-.model flat,stdcall 
+	incl = R"(.model flat,stdcall 
 	
 option casemap :none
  
 includelib kernel32.lib
 includelib masm32.lib
- 
+includelib msvcrt.lib
+
+printf PROTO C:ptr sbyte,:vararg
+scanf PROTO C:ptr sbyte,:vararg
+
 ExitProcess PROTO STDCALL:DWORD
 StdOut		PROTO STDCALL:DWORD
+StdIn       PROTO :DWORD,:DWORD
 
 )";
 	work();

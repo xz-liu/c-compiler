@@ -539,6 +539,7 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		if (!handle)throw_scope_error(id, data, h_curr, "undefined");
 		if (handle->get_type_of_id(id, data) != scope::func)
 			throw type_error("call op used on symbol " + get_name_of_now(id, data));
+		call_id_stack.push({ curr_call_id,curr_push_order });
 		curr_call_id = handle->get_index(id, data);
 		curr_push_order = 0;
 		push_quat(qt);
@@ -552,6 +553,9 @@ void symbols::handle_single_quat(parser::quat_type const & qt, lex_data const & 
 		h_curr->insert_new_id(get_name_of_now(id, data),
 			new_var(func_list[curr_call_id].return_type, 0, false, h_curr), scope::variable,*this);
 		push_quat(qt);
+		curr_call_id = call_id_stack.top().first;
+		curr_push_order = call_id_stack.top().second;
+		call_id_stack.pop();
 	}break;
 	case quat_op::ret:
 	{
@@ -751,6 +755,7 @@ symbols::symbols(parser const& p)
 	for (auto &&qt : p.quats) {
 		//debug_single_quat(qt, p.label_stack, data);
 		handle_single_quat(qt, data, cnt++);
+	//	call_id_stack.push({ -1, 0 });
 	}
 	//curr_call_id, curr_struct, curr_push_order, curr_init_list, tmp_var_cnt;
 }

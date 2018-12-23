@@ -289,7 +289,7 @@ struct symbols {
 		}
 		return { symbols::none ,0 };
 	}
-
+	std::stack<std::pair<int,int>> call_id_stack;
 	int curr_call_id, curr_struct,curr_func, curr_push_order, curr_init_list, tmp_var_cnt;
 	const int tmp_var_begin;
 	lex_data const& data;

@@ -79,7 +79,7 @@ struct target {
 	univ_var& return_value_of(int curr_call_id);
 	void work();
 	int curr_call_id,curr_push_pos,curr_funcdef_id;
-
+	std::stack<std::pair<int, int>> call_id_stack;
 	//void init_of_var(int id, int id_to_init);
 	univ_var& insert_retval( scope::handle_scope h_curr);
 	univ_var & name_of(int id, scope::handle_scope h_curr,bool is_array_param =false);
