@@ -221,4 +221,31 @@ array<int,3> &qv = qt.first.second;
 |initend|id|0|0| 初始化列表结束|
 |initlstitem | val | 0 |0 | 初始化列表元素|
 |type_cast|id|type|to| |
+|arrayval|id|pos|to| |
+|structval|id|id|to| |
+|input|id| | | |
+|output|id| | | |
+
+
+## backend 
+
+
+*  Instruction set
+    *  IA-32
+    *  MASM(assembler)
+*  supports
+    *  type
+        * int32
+        * float32
+        * array
+        * struct
+    *  function
+        * call
+        * return (value of basic type)
+        * param (value of basic type)
+        * param (reference of array of basic type)
+    *  struct
+    *  putchar
+    *  getchar
+
 
