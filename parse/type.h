@@ -137,9 +137,9 @@ struct symbols {
 		uint16 = 4,
 		int32 = 5,
 		uint32 = 6,
-		float32 = 7,
-		int64 = 8,
-		uint64 = 9,
+		int64 = 7,
+		uint64 = 8,
+		float32 = 9,
 		float64 = 10,
 		struct_type = 11;
 	static constexpr int pointer_size = 4;
@@ -164,7 +164,12 @@ struct symbols {
 	static void debug_quat(std::vector<quat> const & quats, labels const & label_lst, lex_data const & data);
 	static void debug_single_quat(quat const & qt, labels const & label_lst, lex_data const & data);
 	static bool is_int(int ty) {
-		return ty <= uint64 && ty >= int16;
+		return ty == int16
+			|| ty == uint16
+			|| ty == int32
+			|| ty == uint32
+			|| ty == int64
+			|| ty == uint64;
 	}
 	static bool is_float(int ty) {
 		return ty == float32 || ty == float64;

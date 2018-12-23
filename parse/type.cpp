@@ -288,7 +288,7 @@ int symbols::binocular_type_cast(type ta, type tb, quat_op op) {
 	if (ta.second == 0 && tb.second == 0) {
 		switch (op) {
 		case quat_op::mod:
-			if (!(is_int_or_char(tya) && is_int_or_char(tyb)))
+			if (!is_int_or_char(tya) ||! is_int_or_char(tyb))
 				throw type_error("No % op for " + get_type_name(tya, data) + " and " + get_type_name(tyb, data));
 		case quat_op::add:
 		case quat_op::sub:

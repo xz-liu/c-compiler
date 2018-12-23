@@ -8,7 +8,7 @@
 #include "parse/exp.h"
 #include "parse/type.h"
 #include "target/target.h"
-#define _MYDEBUG_NOCATCH
+//#define _MYDEBUG_NOCATCH
 //
 void debug_string(std::string const& s,std::vector<int> const& vec) {
 	static grammar grm;
