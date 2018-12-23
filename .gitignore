@@ -40,3 +40,5 @@ Release/*
 lex.cpp
 debug.asm
 debug2.c
+*.asm
+debug.asm
